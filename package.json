@@ -1,0 +1,60 @@
+{
+  "name": "my-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.10.2",
+    "@mui/material": "^5.10.2",
+    "@mui/x-data-grid": "^5.17.11",
+    "@mui/x-data-grid-generator": "^5.17.11",
+    "@mui/x-data-grid-pro": "^5.17.11",
+    "@mui/x-date-pickers": "^5.0.7",
+    "@tarzui/date-fns-be": "^1.0.10",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^0.26.1",
+    "date-fns": "^2.29.3",
+    "dayjs": "^1.11.6",
+    "jwt-decode": "^3.1.2",
+    "moment": "^2.29.4",
+    "react": "^17.0.2",
+    "react-bootstrap": "^2.5.0",
+    "react-bootstrap-date-picker": "^5.1.0",
+    "react-calendar": "^3.7.0",
+    "react-dom": "^17.0.2",
+    "react-moment": "^1.1.2",
+    "react-pdf": "^5.7.2",
+    "react-router-dom": "^6.2.2",
+    "react-scripts": "^4.0.3",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.1.2",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
