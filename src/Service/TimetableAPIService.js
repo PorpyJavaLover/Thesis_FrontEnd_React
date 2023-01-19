@@ -47,8 +47,16 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
         return axios.get(this.url + '/timetable/staff/show/start/time' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId + '/' + dayOfWeek + '/' + endTime, { headers: this.headers });
     }
 
+    getStartTimeOption(yId, sId, cId, cType, gId, dayOfWeek, endTime) {
+        return axios.get(this.url + '/timetable/staff/show/start/time/option' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId + '/' + dayOfWeek + '/' + endTime, { headers: this.headers });
+    }
+
     getEndTime(yId, sId, cId, cType, gId, dayOfWeek, startTime) {
         return axios.get(this.url + '/timetable/staff/show/end/time' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId + '/' + dayOfWeek + '/' + startTime, { headers: this.headers });
+    }
+
+    getEndTimeOption(yId, sId, cId, cType, gId, dayOfWeek, startTime) {
+        return axios.get(this.url + '/timetable/staff/show/end/time/option' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId + '/' + dayOfWeek + '/' + startTime, { headers: this.headers });
     }
 
     getRoom(yId, sId, cId, cType, gId, dayOfWeek, startTime, endTime) {
@@ -88,7 +96,6 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
         };
         return axios.put(this.url + '/timetable/staff/update/locker' + '/' + yId + '/' + sId + '/' + cId  + '/' + cType + '/' + gId, body, { headers: this.headers });
     }
-
 
     deletTimetable(yId, sId, cId , cType, gId, memberId) {
         return axios.delete(this.url + '/timetable/staff/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/'+ cType + '/' + gId + '/' + memberId, { headers: this.headers });

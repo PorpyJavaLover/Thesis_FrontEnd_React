@@ -20,6 +20,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import TodayIcon from '@mui/icons-material/Today';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { CommentsDisabledOutlined } from '@mui/icons-material';
 
 export default class NotTeachTeacher extends Component {
 
@@ -65,7 +66,7 @@ function ManagementBox(props) {
     { key: '1', value: 1, text: 'วันจันทร์' },
     { key: '2', value: 2, text: 'วันอังคาร' },
     { key: '3', value: 3, text: 'วันพุธ' },
-    { key: '4', value: 4, text: 'วันพฤหสับดี' },
+    { key: '4', value: 4, text: 'วันพฤหัสบดี' },
     { key: '5', value: 5, text: 'วันศุกร์' },
     { key: '6', value: 6, text: 'วันเสาร์' },
     { key: '7', value: 7, text: 'วันอาทิตย์' }
@@ -122,37 +123,52 @@ function ManagementBox(props) {
     handleConfirmTiggle();
   }, [dayOfWeekSelected, timeStartSelected, timeEndSelected]);
 
+  useEffect(() => {
+    console.log(timeEndSelected);
+  }, [timeEndSelected]);
+
+
+
   const handleChangeDayOfWeek = (data) => (event) => {
     setDayOfWeekSelected(event.target.value);
-    TimetableAPIServiceStaff.getStartTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
+    TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeStartOptions(res.data);
     })
-    TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
+    TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeEndOptions(res.data);
     })
-    TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, timeStartSelected, timeEndSelected).then((res) => {
-      setRoomOptions(res.data);
-    })
+    if(timeStartSelected !== null && timeEndSelected!= null){
+      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, timeStartSelected, timeEndSelected).then((res) => {
+        setRoomOptions(res.data);
+      })
+    }
   };
 
   const handleChangeTimeStart = (data) => (event) => {
     setTimeStartSelected(event.target.value);
-    TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((res) => {
-      setTimeEndOptions(res.data);
+    TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
+      setTimeEndSelected(resA.data.value);
+      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value, resA.data.value).then((resB) => {
+        setRoomOptions(resB.data);
+      })
     })
-    TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value, timeEndSelected).then((res) => {
-      setRoomOptions(res.data);
+    TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
+      setTimeEndOptions(resA.data);
     })
   };
 
   const handleChangeTimeEnd = (data) => (event) => {
     setTimeEndSelected(event.target.value);
-    TimetableAPIServiceStaff.getStartTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((res) => {
-      setTimeStartOptions(res.data);
+    TimetableAPIServiceStaff.getStartTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
+      setTimeStartSelected(resA.data.value);
+      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, resA.data.value, event.target.value).then((resB) => {
+        setRoomOptions(resB.data);
+      })
     })
-    TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, timeStartSelected, event.target.value).then((res) => {
-      setRoomOptions(res.data);
+    TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
+      setTimeStartOptions(resA.data);
     })
+    
   };
 
   const handleChangeRoom = (data) => (event) => {
@@ -192,8 +208,8 @@ function ManagementBox(props) {
     setTimeStartSelected(null);
     setTimeEndSelected(null);
     setEditTemp(null);
-    setTimeStartOptions([...timeStartOptionTemplate]);
-    setTimeEndOptions([...timeEndOptionTemplate]);
+    setTimeStartOptions([]);
+    setTimeEndOptions([]);
   }
 
   const handleEdit = (dataInside) => () => {
@@ -203,10 +219,10 @@ function ManagementBox(props) {
     setTimeEndSelected(dataInside.end_time);
     setRoomSelected(dataInside.room_id);
     if (dataInside.day_of_week !== null) {
-      TimetableAPIServiceStaff.getEndTime(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
+      TimetableAPIServiceStaff.getEndTimeOption(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
         setTimeEndOptions(res.data);
       })
-      TimetableAPIServiceStaff.getStartTime(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
+      TimetableAPIServiceStaff.getStartTimeOption(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
         setTimeStartOptions(res.data);
       })
     } else {
@@ -224,10 +240,9 @@ function ManagementBox(props) {
   }
 
   const handleDelete = (dataInside) => () => {
-    console.log(dataInside.notId);
-    /*APIService.deleteNotTeach(dataInside.notId).then(() => {
+    TimetableAPIServiceStaff.deletTimetable(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id , dataInside.member_Id).then(() => {
       props.updateState();
-    })*/
+    })
   }
 
   const dayConvert = (dayOfWeek_Number) => {
@@ -257,60 +272,7 @@ function ManagementBox(props) {
     }
     return day;
   }
-
-  const timeConvert = (timeEndOptions_Number) => {
-
-    let time;
-    switch (timeEndOptions_Number) {
-      case '08:00:00':
-        time = 1;
-        break;
-      case '09:00:00':
-        time = 2;
-        break;
-      case '10:00:00':
-        time = 3;
-        break;
-      case '11:00:00':
-        time = 4;
-        break;
-      case '12:00:00':
-        time = 5;
-        break;
-      case '13:00:00':
-        time = 6;
-        break;
-      case '14:00:00':
-        time = 7;
-        break;
-      case '15:00:00':
-        time = 8;
-        break;
-      case '16:00:00':
-        time = 9;
-        break;
-      case '17:00:00':
-        time = 10;
-        break;
-      case '18:00:00':
-        time = 11;
-        break;
-      case '19:00:00':
-        time = 12;
-        break;
-      case '20:00:00':
-        time = 13;
-        break;
-      case '21:00:00':
-        time = 14;
-        break;
-      case '22:00:00':
-        time = 15;
-        break;
-    }
-    return time;
-  }
-
+  
   //render
 
   const [filteredData, setFilteredData] = useState(props.dataNotTeach);
@@ -506,7 +468,7 @@ function ManagementBox(props) {
           <CardSelect labelPara="เริ่มสอน" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart(row)} valuePara={timeStartSelected} />
         </TableCell>
         <TableCell align="left">
-          {row.end_time}
+        <CardSelect labelPara="สิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd(row)} valuePara={timeEndSelected} />
         </TableCell>
       </>
     }
