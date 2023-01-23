@@ -443,7 +443,7 @@ function ManagementBox(props) {
       return <>
         <TableCell width="10%" align="left">{dayConvert(row.day_of_week)}  🔒</TableCell>
         <TableCell width="10%" align="left">{row.start_time}  🔒</TableCell>
-        <TableCell width="10%" align="left">{row.end_time}</TableCell>
+        <TableCell width="10%" align="left">{row.end_time}  🔒</TableCell>
       </>
     } else {
       return <>
@@ -456,9 +456,9 @@ function ManagementBox(props) {
 
   const CardSelectTime = (row) => {
     if (row.time_locker === true) {
-      return <><TableCell align="left">{dayConvert(row.day_of_week)}  🔒</TableCell>
-        <TableCell align="left">{row.start_time}  🔒</TableCell>
-        <TableCell align="left">{row.end_time}</TableCell></>
+      return <><TableCell align="left">  🔒<CardSelect labelPara="วันที่สอน" menuItemPara={dayOfWeekOptions} onChangePara={handleChangeDayOfWeek(row)} valuePara={dayOfWeekSelected} /></TableCell>
+        <TableCell align="left">  🔒<CardSelect labelPara="เริ่มสอน" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart(row)} valuePara={timeStartSelected} /></TableCell>
+        <TableCell align="left">   🔒<CardSelect labelPara="สิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd(row)} valuePara={timeEndSelected} /></TableCell></>
     } else {
       return <>
         <TableCell >
@@ -491,8 +491,10 @@ function ManagementBox(props) {
   };
 
   const autoPilot = () => {
+    console.log("auto1");
     TimetableAPIServiceStaff.autoPilot().then((res) => {
       props.updateState();
+      console.log("auto2");
     });
   };
 
