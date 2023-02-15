@@ -181,7 +181,7 @@ function ManagementBox(props) {
       if (dayOfWeekSelected === '' || timeStartSelected === '' || timeEndSelected === '') {
         setButtonState(true)
       } else {
-        setButtonState(false)
+        setButtonState(false) 
       }
     } else {
       setButtonState(true)
