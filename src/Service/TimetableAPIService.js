@@ -101,4 +101,8 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
         return axios.delete(this.url + '/timetable/staff/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/'+ cType + '/' + gId + '/' + memberId, { headers: this.headers });
     }
 
+    cleanAll() {
+        return axios.delete(this.url + '/timetable/staff/clean/all', { headers: this.headers });
+    }
+
 }

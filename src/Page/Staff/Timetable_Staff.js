@@ -20,7 +20,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import TodayIcon from '@mui/icons-material/Today';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import { CommentsDisabledOutlined } from '@mui/icons-material';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 
 export default class NotTeachTeacher extends Component {
 
@@ -137,7 +137,7 @@ function ManagementBox(props) {
     TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeEndOptions(res.data);
     })
-    if(timeStartSelected !== null && timeEndSelected!= null){
+    if (timeStartSelected !== null && timeEndSelected != null) {
       TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, timeStartSelected, timeEndSelected).then((res) => {
         setRoomOptions(res.data);
       })
@@ -168,7 +168,7 @@ function ManagementBox(props) {
     TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
       setTimeStartOptions(resA.data);
     })
-    
+
   };
 
   const handleChangeRoom = (data) => (event) => {
@@ -181,7 +181,7 @@ function ManagementBox(props) {
       if (dayOfWeekSelected === '' || timeStartSelected === '' || timeEndSelected === '') {
         setButtonState(true)
       } else {
-        setButtonState(false) 
+        setButtonState(false)
       }
     } else {
       setButtonState(true)
@@ -240,7 +240,7 @@ function ManagementBox(props) {
   }
 
   const handleDelete = (dataInside) => () => {
-    TimetableAPIServiceStaff.deletTimetable(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id , dataInside.member_Id).then(() => {
+    TimetableAPIServiceStaff.deletTimetable(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.member_Id).then(() => {
       props.updateState();
     })
   }
@@ -272,7 +272,7 @@ function ManagementBox(props) {
     }
     return day;
   }
-  
+
   //render
 
   const [filteredData, setFilteredData] = useState(props.dataNotTeach);
@@ -468,7 +468,7 @@ function ManagementBox(props) {
           <CardSelect labelPara="เริ่มสอน" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart(row)} valuePara={timeStartSelected} />
         </TableCell>
         <TableCell align="left">
-        <CardSelect labelPara="สิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd(row)} valuePara={timeEndSelected} />
+          <CardSelect labelPara="สิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd(row)} valuePara={timeEndSelected} />
         </TableCell>
       </>
     }
@@ -491,10 +491,14 @@ function ManagementBox(props) {
   };
 
   const autoPilot = () => {
-    console.log("auto1");
     TimetableAPIServiceStaff.autoPilot().then((res) => {
       props.updateState();
-      console.log("auto2");
+    });
+  };
+
+  const cleanAll = () => {
+    TimetableAPIServiceStaff.cleanAll().then((res) => {
+      props.updateState();
     });
   };
 
@@ -507,9 +511,12 @@ function ManagementBox(props) {
           <Grid item sm={12} xs={12}>
             <TableContainer >
               <Grid container spacing={2} sx={{ pt: 0, pb: 3, pl: 3, pr: 3 }} >
-                <Grid item sm={6} xs={6}>
-                  <Box dir="ltr" sx={{ pt: 2, display: 'flex', alignItems: 'flex-start', }}>
-                    <Button sx={{ width: 150 }} color="inherit" endIcon={<AutoAwesomeIcon />} onClick={autoPilot} variant="contained" >นำร่องอัตโนมัติ</Button>
+                <Grid item sm={6} xs={12}>
+                  <Box dir="ltr" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-start', }}>
+                    <Stack direction="row" spacing={2}>
+                      <Button sx={{ width: 150 }} color="inherit" endIcon={<AutoAwesomeIcon />} onClick={autoPilot} variant="contained" >นำร่องอัตโนมัติ</Button>
+                      <Button sx={{ width: 150 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={cleanAll} variant="contained" >ล้าง</Button>
+                    </Stack >
                   </Box>
                 </Grid>
                 <Grid item sm={6} xs={6}>
