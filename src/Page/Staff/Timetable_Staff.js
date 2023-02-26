@@ -484,7 +484,7 @@ function ManagementBox(props) {
 
   const CardSelectRoom = (row) => {
     if (row.room_locker === true) {
-      return <TableCell width="10%" align="left">{row.room_name} 🔒</TableCell>
+      return <TableCell width="10%" align="left">  🔒<CardSelect disabledPara={buttonState} labelPara="ห้อง" menuItemPara={roomOptions} onChangePara={handleChangeRoom(row)} valuePara={roomSelected} /></TableCell>
     } else {
       return <TableCell align="left"><CardSelect disabledPara={buttonState} labelPara="ห้อง" menuItemPara={roomOptions} onChangePara={handleChangeRoom(row)} valuePara={roomSelected} /></TableCell>
     }
@@ -492,6 +492,12 @@ function ManagementBox(props) {
 
   const autoPilot = () => {
     TimetableAPIServiceStaff.autoPilot().then((res) => {
+      props.updateState();
+    });
+  };
+
+  const clean = (dataInside) => () => {
+    TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time, dataInside.room_id ,dataInside.time_locker ,dataInside.room_locker).then((res) => {
       props.updateState();
     });
   };
@@ -512,15 +518,7 @@ function ManagementBox(props) {
             <TableContainer >
               <Grid container spacing={2} sx={{ pt: 0, pb: 3, pl: 3, pr: 3 }} >
                 <Grid item sm={6} xs={12}>
-                  <Box dir="ltr" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-start', }}>
-                    <Stack direction="row" spacing={2}>
-                      <Button sx={{ width: 150 }} color="inherit" endIcon={<AutoAwesomeIcon />} onClick={autoPilot} variant="contained" >นำร่องอัตโนมัติ</Button>
-                      <Button sx={{ width: 150 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={cleanAll} variant="contained" >ล้าง</Button>
-                    </Stack >
-                  </Box>
-                </Grid>
-                <Grid item sm={6} xs={6}>
-                  <Box dir="rtl" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>
+                  <Box dir="ltr" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>
                     <TextField
                       dir="ltr"
                       sx={{ width: 300, }}
@@ -532,6 +530,14 @@ function ManagementBox(props) {
                       variant="standard"
                     />
                     <SearchIcon />
+                  </Box>
+                </Grid>
+                <Grid item sm={6} xs={6}>
+                  <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}>
+                    <Stack dir="ltr" direction="row" spacing={2}>
+                      <Button sx={{ width: 150 }} color="inherit" endIcon={<AutoAwesomeIcon />} onClick={autoPilot} variant="contained" >นำร่องอัตโนมัติ</Button>
+                      <Button sx={{ width: 150 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={cleanAll} variant="contained" >ล้างทั้งหมด</Button>
+                    </Stack >
                   </Box>
                 </Grid>
               </Grid>
@@ -549,7 +555,7 @@ function ManagementBox(props) {
                       if (editTemp !== row.id) {
                         return (
                           <TableRow key={row.id} >
-                            <TableCell width="20%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
+                            <TableCell width="10%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
                             <TableCell width="20%" align="left">{row.course_name}</TableCell>
                             <TableCell width="10%" align="left">{row.course_type_name}</TableCell>
                             <TableCell width="10%" align="left">{row.member_name}</TableCell>
@@ -557,8 +563,10 @@ function ManagementBox(props) {
                             {TableCellRoom(row)}
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
+                                <ToggleButton sx={{ width: 40, height: 40 }} value='time' onClick={updateTimeLock(row)} selected={row.time_locker}  ><TodayIcon /></ToggleButton>
+                                <ToggleButton sx={{ width: 40, height: 40 }} value='room' onClick={updateRoomLock(row)} selected={row.room_locker}   ><MeetingRoomIcon /></ToggleButton>
+                                <Button sx={{ width: 75, height: 40 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                <Button sx={{ width: 75, height: 40 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={clean(row)} variant="contained"  >ล้าง</Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
@@ -566,7 +574,7 @@ function ManagementBox(props) {
                       } else {
                         return (
                           <TableRow key={row.id} >
-                            <TableCell width="20%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
+                            <TableCell width="10%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
                             <TableCell width="20%" align="left">{row.course_name}</TableCell>
                             <TableCell width="10%" align="left">{row.course_type_name}</TableCell>
                             <TableCell width="10%" align="left">{row.member_name}</TableCell>
@@ -574,10 +582,9 @@ function ManagementBox(props) {
                             {CardSelectRoom(row)}
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
-                                <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
-                                <ToggleButton value='time' onClick={updateTimeLock(row)} selected={row.time_locker}  ><TodayIcon /></ToggleButton>
-                                <ToggleButton value='room' onClick={updateRoomLock(row)} selected={row.room_locker}   ><MeetingRoomIcon /></ToggleButton>
+                                <Button sx={{ width: 95, height: 40 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >บันทึก</Button>
+                                <Button sx={{ width: 75, height: 40 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                                <Button sx={{ width: 75, height: 40 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
                               </Stack>
                             </TableCell>
                           </TableRow>

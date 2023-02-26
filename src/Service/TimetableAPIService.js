@@ -101,6 +101,10 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
         return axios.delete(this.url + '/timetable/staff/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/'+ cType + '/' + gId + '/' + memberId, { headers: this.headers });
     }
 
+    clean(yId, sId, cId , cType, gId , dayOfWeek, startTime, endTime, roomId , timeLocker , roomLocker) {
+        return axios.delete(this.url + '/timetable/staff/clean' + '/' + yId + '/' + sId + '/' + cId + '/'+ cType + '/' + gId + '/' + dayOfWeek + '/' + startTime + '/' + endTime + '/' + roomId + '/' + timeLocker + '/' + roomLocker  , { headers: this.headers });
+    }
+
     cleanAll() {
         return axios.delete(this.url + '/timetable/staff/clean/all', { headers: this.headers });
     }
