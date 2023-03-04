@@ -330,19 +330,25 @@ function ManagementBox(props) {
 
   const headCells = [
     {
-      id: 'group_name',
+      id: 'course_type_name',
       numeric: true,
-      label: 'กลุ่มเรียน',
+      label: 'ประเภทวิชา',
+    },
+    {
+      id: 'course_code',
+      numeric: true,
+      label: 'รหัสวิชา',
     },
     {
       id: 'course_name',
       numeric: true,
-      label: 'รายวิชา',
+      label: 'ชื่อวิชา',
     },
+
     {
-      id: 'course_type_name',
+      id: 'group_name',
       numeric: true,
-      label: 'ประเภทวิชา',
+      label: 'กลุ่มเรียน',
     },
     {
       id: 'member_name',
@@ -441,15 +447,15 @@ function ManagementBox(props) {
   const TableCellTime = (row) => {
     if (row.time_locker === true) {
       return <>
-        <TableCell width="10%" align="left">{dayConvert(row.day_of_week)}  🔒</TableCell>
-        <TableCell width="10%" align="left">{row.start_time}  🔒</TableCell>
-        <TableCell width="10%" align="left">{row.end_time}  🔒</TableCell>
+        <TableCell width="8%" align="left">{dayConvert(row.day_of_week)}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.start_time}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.end_time}  🔒</TableCell>
       </>
     } else {
       return <>
-        <TableCell width="10%" align="left">{dayConvert(row.day_of_week)}</TableCell>
-        <TableCell width="10%" align="left">{row.start_time}</TableCell>
-        <TableCell width="10%" align="left">{row.end_time}</TableCell>
+        <TableCell width="8%" align="left">{dayConvert(row.day_of_week)}</TableCell>
+        <TableCell width="8%" align="left">{row.start_time}</TableCell>
+        <TableCell width="8%" align="left">{row.end_time}</TableCell>
       </>
     }
   };
@@ -476,15 +482,15 @@ function ManagementBox(props) {
 
   const TableCellRoom = (row) => {
     if (row.room_locker === true) {
-      return <TableCell width="10%" align="left">{row.room_name} 🔒</TableCell>
+      return <TableCell width="8%" align="left">{row.room_name} 🔒</TableCell>
     } else {
-      return <TableCell width="10%" align="left">{row.room_name}</TableCell>
+      return <TableCell width="8%" align="left">{row.room_name}</TableCell>
     }
   };
 
   const CardSelectRoom = (row) => {
     if (row.room_locker === true) {
-      return <TableCell width="10%" align="left">  🔒<CardSelect disabledPara={buttonState} labelPara="ห้อง" menuItemPara={roomOptions} onChangePara={handleChangeRoom(row)} valuePara={roomSelected} /></TableCell>
+      return <TableCell width="8%" align="left">  🔒<CardSelect disabledPara={buttonState} labelPara="ห้อง" menuItemPara={roomOptions} onChangePara={handleChangeRoom(row)} valuePara={roomSelected} /></TableCell>
     } else {
       return <TableCell align="left"><CardSelect disabledPara={buttonState} labelPara="ห้อง" menuItemPara={roomOptions} onChangePara={handleChangeRoom(row)} valuePara={roomSelected} /></TableCell>
     }
@@ -497,7 +503,7 @@ function ManagementBox(props) {
   };
 
   const clean = (dataInside) => () => {
-    TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time, dataInside.room_id ,dataInside.time_locker ,dataInside.room_locker).then((res) => {
+    TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time, dataInside.room_id, dataInside.time_locker, dataInside.room_locker).then((res) => {
       props.updateState();
     });
   };
@@ -555,18 +561,21 @@ function ManagementBox(props) {
                       if (editTemp !== row.id) {
                         return (
                           <TableRow key={row.id} >
-                            <TableCell width="10%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
-                            <TableCell width="20%" align="left">{row.course_name}</TableCell>
-                            <TableCell width="10%" align="left">{row.course_type_name}</TableCell>
-                            <TableCell width="10%" align="left">{row.member_name}</TableCell>
+                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.course_type_name}</TableCell>
+                            <TableCell width="10%" align="left">{row.course_code}</TableCell>
+                            <TableCell width="25%" align="left">{row.course_name}</TableCell>
+                            <TableCell width="8%" align="left">{row.group_name}</TableCell>
+                            <TableCell width="15%" align="left">{row.member.map((inMember) => {
+                              return  <TableRow> {inMember.member_name} </TableRow>;
+                            })}</TableCell>
                             {TableCellTime(row)}
                             {TableCellRoom(row)}
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
                                 <ToggleButton sx={{ width: 40, height: 40 }} value='time' onClick={updateTimeLock(row)} selected={row.time_locker}  ><TodayIcon /></ToggleButton>
                                 <ToggleButton sx={{ width: 40, height: 40 }} value='room' onClick={updateRoomLock(row)} selected={row.room_locker}   ><MeetingRoomIcon /></ToggleButton>
-                                <Button sx={{ width: 75, height: 40 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                <Button sx={{ width: 75, height: 40 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={clean(row)} variant="contained"  >ล้าง</Button>
+                                <Button sx={{ width: 50, height: 40 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                <Button sx={{ width: 50, height: 40 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={clean(row)} variant="contained"  >ล้าง</Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
@@ -574,17 +583,20 @@ function ManagementBox(props) {
                       } else {
                         return (
                           <TableRow key={row.id} >
-                            <TableCell width="10%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
-                            <TableCell width="20%" align="left">{row.course_name}</TableCell>
-                            <TableCell width="10%" align="left">{row.course_type_name}</TableCell>
-                            <TableCell width="10%" align="left">{row.member_name}</TableCell>
+                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
+                            <TableCell width="10%" align="left">{row.course_code}</TableCell>
+                            <TableCell width="25%" align="left">{row.course_name}</TableCell>
+                            <TableCell width="8%" align="left">{row.course_type_name}</TableCell>
+                            <TableCell width="15%" align="left">{row.member.map((inMember) => {
+                              return  <TableRow> {inMember.member_name} </TableRow>;
+                            })}</TableCell>
                             {CardSelectTime(row)}
                             {CardSelectRoom(row)}
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
                                 <Button sx={{ width: 95, height: 40 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >บันทึก</Button>
-                                <Button sx={{ width: 75, height: 40 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
-                                <Button sx={{ width: 75, height: 40 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
+                                <Button sx={{ width: 50, height: 40 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                                <Button sx={{ width: 50, height: 40 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
