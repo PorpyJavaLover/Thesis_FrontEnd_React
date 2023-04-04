@@ -515,7 +515,9 @@ function ManagementBox(props) {
   };
 
   return (
+    
     <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+        
       <Card sx={{ boxShadow: 5, }}>
         <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
         <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
@@ -566,7 +568,7 @@ function ManagementBox(props) {
                             <TableCell width="25%" align="left">{row.course_name}</TableCell>
                             <TableCell width="8%" align="left">{row.group_name}</TableCell>
                             <TableCell width="15%" align="left">{row.member.map((inMember) => {
-                              return  <TableRow> {inMember.member_name} </TableRow>;
+                              return  <TableRow key={inMember.member_id}> {inMember.member_name} </TableRow>;
                             })}</TableCell>
                             {TableCellTime(row)}
                             {TableCellRoom(row)}
@@ -588,7 +590,7 @@ function ManagementBox(props) {
                             <TableCell width="25%" align="left">{row.course_name}</TableCell>
                             <TableCell width="8%" align="left">{row.course_type_name}</TableCell>
                             <TableCell width="15%" align="left">{row.member.map((inMember) => {
-                              return  <TableRow> {inMember.member_name} </TableRow>;
+                              return  <TableRow key={inMember.member_id} > {inMember.member_name} </TableRow>;
                             })}</TableCell>
                             {CardSelectTime(row)}
                             {CardSelectRoom(row)}

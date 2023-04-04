@@ -20,6 +20,7 @@ const pages = [
     { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Teacher/NotTeach' },
     { key: 3, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
     { key: 4, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
+    { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
 ];
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];

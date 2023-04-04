@@ -25,6 +25,7 @@ export default class Home extends Component {
     }
 
     handleLogin = (event) => {
+        console.log("login");
         APIService.login(this.state.username, this.state.password);
     }
 

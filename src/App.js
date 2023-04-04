@@ -5,6 +5,7 @@ import TimetableTeacher from "./Page/Staff/Timetable_Staff";
 import SelectSubjectStaff from "./Page/Staff/SelectSubject_Staff";
 import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
+import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
 import Replace2 from "./Page/Replace2";
 import Singin from "./Page/Singin";
 import Singup from "./Page/Singup";
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/Teacher/Timetable" element={<TimetableTeacher />} />
         <Route path="/Teacher/NotTeach"  element={<SelectNotTeachTeacher />} />
         <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
+        <Route path="/Teacher/ReplaceTeach" element={<ReplaceTeachTeacher />} />
         <Route path="/R2" element={<Replace2 />} />
         <Route path="/T1" element={<TableExampleApprove />} />
         <Route path="/Singin" element={<Singin />} />
