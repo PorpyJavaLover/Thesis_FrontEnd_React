@@ -41,7 +41,5 @@ export default function CardDatePicker({labelPara, onChangePara, valuePara}) {
 
         test 1
 
-        test 2
-
     )
 }
