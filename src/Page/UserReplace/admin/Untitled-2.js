@@ -18,7 +18,6 @@ const App = () => {
       {/* <Route element={<PrivateRoute />}></Route> */}
       {/* <Navbar /> <br /> <br /> <br /> <br /> */}
       <Menu />
-      {/* <Menuadmin /> */}
       <br /> <br />
       <Routes>
         <Route path="/home" element={<Menu />} />
@@ -32,6 +31,7 @@ const App = () => {
         <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
         <Route path="/view-replace" element={<ViewReplace />} />
         <Route path="/input-replace" element={<InputReplace />} />
+        <Route path="/menu" element={<Menuadmin />} />
       </Routes>
     </BrowserRouter>
   );

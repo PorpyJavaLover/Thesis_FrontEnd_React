@@ -72,7 +72,7 @@ export default class SelectSubjectStaff extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if ((Number(plan.years_name)-543) + plan.semester + plan.course_id + plan.group_id === timetable.years + timetable.semester + timetable.course_id + timetable.group_id) {
+                if (plan.years + plan.semester + plan.course_id + plan.group_id === timetable.years + timetable.semester + timetable.course_id + timetable.group_id) {
                     if (timetable.course_type == 0) {
                         plan.selected_lect = true;
                     } else {
@@ -197,7 +197,7 @@ function ManagementBox(props) {
 
     const headCells = [
         {
-            id: 'years_name',
+            id: 'years',
             numeric: false,
             label: 'ปีการศึกษา',
         },
@@ -277,12 +277,12 @@ function ManagementBox(props) {
     const handleSwitchLect = (value) => () => {
         const courseType = 0;
         if (value.selected_lect === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.createTimetable(value.years, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_lect = true;
                 props.updatePlanState();
             });
         } else if (value.selected_lect === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.deletTimetable(value.years, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_lect = false;
                 props.updatePlanState();
             });
@@ -291,12 +291,12 @@ function ManagementBox(props) {
     const handleSwitchPerf = (value) => () => {
         const courseType = 1;
         if (value.selected_perf === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.createTimetable(value.years, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_perf = true;
                 props.updatePlanState();
             });
         } else if (value.selected_perf === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.deletTimetable(value.years, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_perf = false;
                 props.updatePlanState();
             });
@@ -336,14 +336,14 @@ function ManagementBox(props) {
                                             const labelId = index;
                                             return (
                                                 <TableRow key={row.years + row.semester + row.course_id + row.group_id} >
-                                                    <TableCell id={labelId} scope="row" align="center" >{row.years_name}</TableCell>
+                                                    <TableCell id={labelId} scope="row" align="center" >{row.years}</TableCell>
                                                     <TableCell align="center">{row.semester}</TableCell>
                                                     <TableCell align="left">{row.group_name}</TableCell>
                                                     <TableCell align="left">{row.course_code}</TableCell>
                                                     <TableCell align="left">{row.course_title}</TableCell>
                                                     <TableCell align="left">
-                                                        <FormControlLabel control={<Switch disabled={row.disable_lect} checked={row.selected_lect} onClick={handleSwitchLect(row)} />} label="ทฤษฎี" labelPlacement="start" />
-                                                        <FormControlLabel control={<Switch disabled={row.disable_perf} checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />
+                                                        <FormControlLabel control={<Switch checked={row.selected_lect} onClick={handleSwitchLect(row)} />} label="ทฤษฎี" labelPlacement="start" />
+                                                        <FormControlLabel control={<Switch checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />
                                                     </TableCell>
                                                 </TableRow>
                                             );
