@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./Component/Menu/Navbar";
-import Login from "./pages/Login/Login";
-import Logup from "./pages/Logup/Logup";
-import Hompages from "./pages/Homepages/index";
+import Login from "./Page/Login/Login";
+import Logup from "./Page/Logup/Logup";
+import Hompages from "./Page/Homepages/index";
 import Menu from "./Component/Menu/Menu";
-import TimetableTeacher from "./pages/Staff/Timetable_Staff";
-import SelectSubjectStaff from "./pages/Staff/SelectSubject_Staff";
-import SelectNotTeachTeacher from "./pages/Teacher/NotTeach_Teacher";
-import LeaveTeachTeacher from "./pages/Teacher/LeaveTeach_Teacher";
-import ViewReplace from "./pages/Replace/ViewReplce";
-import InputReplace from "./pages/Replace/InputReplace";
-import Menuadmin from "./pages/UserReplace/admin/Menuadmin";
+import TimetableTeacher from "./Page/Staff/Timetable_Staff";
+import SelectSubjectStaff from "./Page/Staff/SelectSubject_Staff";
+import SelectNotTeachTeacher from "./Page/Teacher/SelectSubject_Teacher";
+import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
+import ViewReplace from "./Page/Replace/ViewReplce";
+import InputReplace from "./Page/Replace/InputReplace";
+import Menuadmin from "./Page/UserReplace/admin/Menuadmin";
 const App = () => {
   return (
     <BrowserRouter>
