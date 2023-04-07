@@ -1,7 +1,8 @@
 import React, { Component, useState, useEffect } from 'react'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography, } from '@mui/material';
 import CardSelect from '../../Component/CardSelect'
-import { NotTeachAPIServiceTeacher } from '../../Service/NotTeachAPIService'
+import { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
+import { NotTeachAPIServiceStaff } from '../../Service/NotTeachAPIService'
 import SendIcon from '@mui/icons-material/Send';
 import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
@@ -22,19 +23,33 @@ export default class NotTeachTeacher extends Component {
 
     constructor(props) {
         super(props);
-        this.updateState.bind(this);
+        this.updateState = this.updateState.bind(this);
+        this.setMemberSelected = this.setMemberSelected.bind(this);
         this.state = {
-            dataNotTeach: []
+            dataNotTeach: [],
+            member: [],
+            memberSelected: null,
+            disableState:true
         }
     }
 
     componentDidMount() {
-        this.updateState();
+        MemberAPIServiceStaff.getAllMember().then((res) => {
+            this.setState({ member: res.data });
+            console.log(res.data);
+        });
     }
 
-    updateState = () => {
-        NotTeachAPIServiceTeacher.getAllNotTeach().then((res) => {
+    updateState = (memberId) => {
+        NotTeachAPIServiceStaff.getAllNotTeachByMemberId(memberId).then((res) => {
             this.setState({ dataNotTeach: res.data });
+        })
+    }
+
+    setMemberSelected = (item) => {
+        this.setState({
+            memberSelected: item,
+            disableState:false
         })
     }
 
@@ -42,8 +57,9 @@ export default class NotTeachTeacher extends Component {
         return (
             <div >
                 <HeaderBox title={"การจัดการวันที่ไม่ขอสอน"} />
-                <CreationBox title={"เมนูสร้างรายการ"} updateState={this.updateState} />
-                <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState} dataNotTeach={this.state.dataNotTeach} />
+                <SelectTeacherBox title={"เมนูเลือกอาจารย์"} setMemberSelected={this.setMemberSelected.bind(this)} updateState={this.updateState} member={this.state.member} />
+                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} updateState={this.updateState} memberSelected={this.state.memberSelected}  />
+                <MenagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updateState={this.updateState}  memberSelected={this.state.memberSelected} dataNotTeach={this.state.dataNotTeach} />
             </div>
         )
     }
@@ -54,6 +70,35 @@ function HeaderBox(props) {
         <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
             <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
         </Box>
+    )
+}
+
+function SelectTeacherBox(props) {
+
+    const [member, setMember] = useState(props.member);
+    const [memberSelected, setMemberSelected] = useState(null);
+
+    const handleChangeMember = (event) => {
+        props.setMemberSelected(event.target.value);
+        setMemberSelected(event.target.value);
+        props.updateState(event.target.value);
+    };
+
+    useEffect(() => {
+        setMember(props.member);
+    }, [props.member])
+
+    return (
+        <Container maxWidth='false' sx={{ pt: 2, pb: 3 }} >
+            <Card sx={{ boxShadow: 5, }}>
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+                    <Grid item sm={12} xs={12}>
+                        <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={member} onChangePara={handleChangeMember} valuePara={memberSelected} />
+                    </Grid>
+                </Grid>
+            </Card>
+        </Container >
     )
 }
 
@@ -103,18 +148,21 @@ function CreationBox(props) {
         { key: '14', value: '22:00:00', text: '22:00:00' }
     ];
 
-
-
     const [timeStartOptions, setTimeStartOptions] = useState([...timeStartOptionTemplate]);
     const [timeEndOptions, setTimeEndOptions] = useState([...timeEndOptionTemplate]);
     const [dayOfWeekSelected, setDayOfWeekSelected] = useState(null);
     const [timeStartSelected, setTimeStartSelected] = useState(null);
     const [timeEndSelected, setTimeEndSelected] = useState(null);
     const [buttonState, setButtonState] = useState(true);
+    const [disableState, setDisableState] = useState(true)
 
     useEffect(() => {
         handleSubmitTiggle();
     }, [dayOfWeekSelected, timeStartSelected, timeEndSelected]);
+
+    useEffect(() => { 
+        setDisableState(props.disableState);
+    }, [props.disableState])
 
     const handleChangeDayOfWeek = (event) => {
         setDayOfWeekSelected(event.target.value);
@@ -139,16 +187,13 @@ function CreationBox(props) {
     };
 
     const handleSubmit = (event, data) => {
-        console.log(dayOfWeekSelected);
-        console.log(timeStartSelected);
-        console.log(timeEndSelected);
-        NotTeachAPIServiceTeacher.createNotTeach(dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
+        NotTeachAPIServiceStaff.createNotTeach(dayOfWeekSelected, timeStartSelected, timeEndSelected , props.memberSelected ).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
             setTimeEndSelected(null);
             setTimeStartOptions([...timeStartOptionTemplate]);
             setTimeEndOptions([...timeEndOptionTemplate]);
-            props.updateState();
+            props.updateState(props.memberSelected);
         });
     };
 
@@ -225,7 +270,7 @@ function CreationBox(props) {
     }
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2 , display: disableState ? 'none' : 'block'  }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
@@ -308,6 +353,8 @@ function MenagementBox(props) {
     const [timeEndSelected, setTimeEndSelected] = useState(null);
     const [buttonState, setButtonState] = useState(true);
 
+  
+
     //function
 
     useEffect(() => {
@@ -350,14 +397,14 @@ function MenagementBox(props) {
     }
 
     const handleConfirm = (dataInside) => () => {
-        NotTeachAPIServiceTeacher.updateNotTeach(dataInside.notId, dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
+        NotTeachAPIServiceStaff.updateNotTeach(dataInside.notId, dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
             setTimeEndSelected(null);
             setEditTemp(null);
             setTimeStartOptions([...timeStartOptionTemplate]);
             setTimeEndOptions([...timeEndOptionTemplate]);
-            props.updateState();
+            props.updateState(props.memberSelected);
         });
     }
 
@@ -389,8 +436,8 @@ function MenagementBox(props) {
 
     const handleDelete = (dataInside) => () => {
         console.log(dataInside.notId);
-        NotTeachAPIServiceTeacher.deleteNotTeach(dataInside.notId).then(() => {
-            props.updateState();
+        NotTeachAPIServiceStaff.deleteNotTeach(dataInside.notId).then(() => {
+            props.updateState(props.memberSelected);
         })
     }
 
@@ -555,6 +602,8 @@ function MenagementBox(props) {
         return stabilizedThis.map((el) => el[0]);
     }
 
+    
+
     function EnhancedTableHead(props) {
         const { order, orderBy, onRequestSort } = props;
         const createSortHandler = (property) => (event) => {
@@ -604,84 +653,87 @@ function MenagementBox(props) {
         setOrderBy(property);
     };
 
+
+
     //render
 
-    return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
-            <Card sx={{ boxShadow: 5, }}>
-                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
-                <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
-                    <Grid item sm={12} xs={12}>
-                        <TableContainer >
-                            <Box dir="rtl" sx={{ pb: 3, display: 'flex', alignItems: 'flex-end', }}>
-                                <TextField
-                                    dir="ltr"
-                                    sx={{ width: 300, }}
-                                    fullWidth
-                                    id="filled-flexible"
-                                    label="ค้นหา"
-                                    value={searchValue || ''}
-                                    onChange={handleChange}
-                                    variant="standard"
-                                />
-                                <SearchIcon />
-                            </Box>
-                            <Table sx={{ minWidth: 650, }} aria-label="simple table">
-                                <EnhancedTableHead
-                                    order={order}
-                                    orderBy={orderBy}
-                                    onRequestSort={handleRequestSort}
-                                    rowCount={filteredData.length}
-                                />
-                                <TableBody>
-                                    {stableSort(filteredData, getComparator(order, orderBy))
-                                        .map((row, index) => {
-                                            const labelId = index;
-                                            if (editTemp !== row.notId) {
-                                                return (
-                                                    <TableRow key={row.notId} >
-                                                        <TableCell width="25%" id={labelId} scope="row" align="left" >{dayConvert(row.dayOfWeek)}</TableCell>
-                                                        <TableCell width="25%" align="left">{row.timeStart}</TableCell>
-                                                        <TableCell width="25%" align="left">{row.timeEnd}</TableCell>
-                                                        <TableCell align="left">
-                                                            <Stack direction="row" spacing={2}>
-                                                                <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                                                <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
-                                                            </Stack>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            } else {
-                                                return (
-                                                    <TableRow key={row.notId} >
-                                                        <TableCell id={labelId} scope="row" align="left">
-                                                            <CardSelect labelPara="วันที่ไม่สะดวกสอน" menuItemPara={dayOfWeekOptions} onChangePara={handleChangeDayOfWeek} valuePara={dayOfWeekSelected} />
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            <CardSelect labelPara="เลือกเวลาเริ่ม" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart} valuePara={timeStartSelected} />
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            <CardSelect labelPara="เลือกเวลาสิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd} valuePara={timeEndSelected} />
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            <Stack direction="row" spacing={2}>
-                                                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
-                                                                <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
-                                                            </Stack>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            }
-                                        })
-                                    }
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+        return (
+            <Container maxWidth='false' sx={{ pt: 2, pb: 2 , display: props.disableState ? 'none' : 'block' }}   >
+                <Card sx={{ boxShadow: 5, }}>
+                    <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                    <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+                        <Grid item sm={12} xs={12}>
+                            <TableContainer >
+                                <Box dir="rtl" sx={{ pb: 3, display: 'flex', alignItems: 'flex-end', }}>
+                                    <TextField
+                                        dir="ltr"
+                                        sx={{ width: 300, }}
+                                        fullWidth
+                                        id="filled-flexible"
+                                        label="ค้นหา"
+                                        value={searchValue || ''}
+                                        onChange={handleChange}
+                                        variant="standard"
+                                    />
+                                    <SearchIcon />
+                                </Box>
+                                <Table sx={{ minWidth: 650, }} aria-label="simple table">
+                                    <EnhancedTableHead
+                                        order={order}
+                                        orderBy={orderBy}
+                                        onRequestSort={handleRequestSort}
+                                        rowCount={filteredData.length}
+                                    />
+                                    <TableBody>
+                                        {stableSort(filteredData, getComparator(order, orderBy))
+                                            .map((row, index) => {
+                                                const labelId = index;
+                                                if (editTemp !== row.notId) {
+                                                    return (
+                                                        <TableRow key={row.notId} >
+                                                            <TableCell width="25%" id={labelId} scope="row" align="left" >{dayConvert(row.dayOfWeek)}</TableCell>
+                                                            <TableCell width="25%" align="left">{row.timeStart}</TableCell>
+                                                            <TableCell width="25%" align="left">{row.timeEnd}</TableCell>
+                                                            <TableCell align="left">
+                                                                <Stack direction="row" spacing={2}>
+                                                                    <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                                                    <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
+                                                                </Stack>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    );
+                                                } else {
+                                                    return (
+                                                        <TableRow key={row.notId} >
+                                                            <TableCell id={labelId} scope="row" align="left">
+                                                                <CardSelect labelPara="วันที่ไม่สะดวกสอน" menuItemPara={dayOfWeekOptions} onChangePara={handleChangeDayOfWeek} valuePara={dayOfWeekSelected} />
+                                                            </TableCell>
+                                                            <TableCell align="left">
+                                                                <CardSelect labelPara="เลือกเวลาเริ่ม" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart} valuePara={timeStartSelected} />
+                                                            </TableCell>
+                                                            <TableCell align="left">
+                                                                <CardSelect labelPara="เลือกเวลาสิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd} valuePara={timeEndSelected} />
+                                                            </TableCell>
+                                                            <TableCell align="left">
+                                                                <Stack direction="row" spacing={2}>
+                                                                    <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
+                                                                    <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                                                                </Stack>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Card>
-        </Container>
-    )
+                </Card>
+            </Container>
+        )
+    
 }
 
 

@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from "./Page/Home";
 import SelectSubjectTeacher from "./Page/Teacher/SelectSubject_Teacher";
-import TimetableTeacher from "./Page/Staff/Timetable_Staff";
+import TimetableStaff from "./Page/Staff/Timetable_Staff";
 import SelectSubjectStaff from "./Page/Staff/SelectSubject_Staff";
 import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
+import SelectNotTeachStaff from "./Page/Staff/NotTeach_Staff";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
 import Replace2 from "./Page/Replace2";
@@ -22,9 +23,11 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Home" element={<Home />} />
-        <Route path="/Teacher/SelectSubject" element={<SelectSubjectStaff />} />
-        <Route path="/Teacher/Timetable" element={<TimetableTeacher />} />
+        <Route path="/Teacher/SelectSubject" element={<SelectSubjectTeacher />} />
+        <Route path="/Staff/SelectSubject" element={<SelectSubjectStaff />} />
+        <Route path="/Staff/Timetable" element={<TimetableStaff />} />
         <Route path="/Teacher/NotTeach"  element={<SelectNotTeachTeacher />} />
+        <Route path="/Staff/NotTeach"  element={<SelectNotTeachStaff />} />
         <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
         <Route path="/Teacher/ReplaceTeach" element={<ReplaceTeachTeacher />} />
         <Route path="/R2" element={<Replace2 />} />

@@ -30,27 +30,30 @@ export default class SelectSubjectStaff extends Component {
             plans: [],
             timetables: [],
             member: [],
-            memberSelected: null
+            memberSelected: null,
+            disableState:true
         }
     }
 
-    setMemberSelected = (item) => {
-        this.setState({
-            memberSelected: item
-        })
-    }
-
     componentDidMount() {
-
         MemberAPIServiceStaff.getAllMember().then((res) => {
             this.setState({ member: res.data });
             console.log(res.data);
         });
+    }
 
+    updatePlanState = () => {
+        this.setState({ plans: this.state.plans });
+    }
+
+    setMemberSelected = (item) => {
+        this.setState({
+            memberSelected: item,
+            disableState:false
+        })
     }
 
     getPlanState = (memberId) => {
-
         PlanAPIServiceStaff.getPlan().then((resPlan) => {
             this.setState({ plans: resPlan.data });
             TimetableAPIServiceStaff.getTimetableByMemberId(memberId).then((resTimetable) => {
@@ -58,11 +61,6 @@ export default class SelectSubjectStaff extends Component {
                 this.tableMapping();
             });
         });
-
-    }
-
-    updatePlanState = () => {
-        this.setState({ plans: this.state.plans });
     }
 
     tableMapping = () => {
@@ -72,7 +70,7 @@ export default class SelectSubjectStaff extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if ((Number(plan.years_name)-543) + plan.semester + plan.course_id + plan.group_id === timetable.years + timetable.semester + timetable.course_id + timetable.group_id) {
+                if ((Number(plan.years_name) - 543) + plan.semester + plan.course_id + plan.group_id === timetable.years + timetable.semester + timetable.course_id + timetable.group_id) {
                     if (timetable.course_type == 0) {
                         plan.selected_lect = true;
                     } else {
@@ -89,14 +87,12 @@ export default class SelectSubjectStaff extends Component {
         });
     }
 
-
-
     render() {
         return (
             <div>
                 <HeaderBox title={"การจัดการรายวิชาที่จะเปิดสอน"} />
-                <CreationBox title={"เมนูเลือกอาจารย์"} setMemberSelected={this.setMemberSelected.bind(this)} getPlanState={this.getPlanState.bind(this)} member={this.state.member} />
-                <ManagementBox title={"เมนูจัดการรายการ"} updatePlanState={this.updatePlanState.bind(this)} memberSelected={this.state.memberSelected} plans={this.state.plans} timetables={this.state.timetables} />
+                <SelectTeacherBox title={"เมนูเลือกอาจารย์"} setMemberSelected={this.setMemberSelected.bind(this)} getPlanState={this.getPlanState.bind(this)} member={this.state.member} />
+                <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updatePlanState={this.updatePlanState.bind(this)} memberSelected={this.state.memberSelected} plans={this.state.plans} timetables={this.state.timetables} />
             </div>
         )
     }
@@ -110,7 +106,7 @@ function HeaderBox(props) {
     )
 }
 
-function CreationBox(props) {
+function SelectTeacherBox(props) {
 
     const [member, setMember] = useState(props.member);
     const [memberSelected, setMemberSelected] = useState(null);
@@ -142,58 +138,44 @@ function CreationBox(props) {
 
 function ManagementBox(props) {
 
-    const [filteredData, setFilteredData] = useState(props.plans);
-    const [searchValue, setSearchValue] = useState('')
+    //state
+
+    //function
 
     const handleChange = (e) => {
         setSearchValue(e.target.value)
     }
 
-    function escapeRegExp(value) {
-        return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-    }
-
-    useEffect(() => {
-        const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
-        setFilteredData(searchValue === '' ? props.plans : props.plans.filter((data) => {
-            return Object.keys(data).some((field) => {
-                return searchRegex.test(data[field].toString());
+    const handleSwitchLect = (value) => () => {
+        const courseType = 0;
+        if (value.selected_lect === false) {
+            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+                value.selected_lect = true;
+                props.updatePlanState();
             });
-
-        }))
-    }, [searchValue])
-
-    useEffect(() => {
-        setFilteredData(props.plans);
-    }, [props.plans])
-
-    function descendingComparator(a, b, orderBy) {
-        if (b[orderBy] < a[orderBy]) {
-            return -1;
+        } else if (value.selected_lect === true) {
+            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+                value.selected_lect = false;
+                props.updatePlanState();
+            });
         }
-        if (b[orderBy] > a[orderBy]) {
-            return 1;
+    };
+    const handleSwitchPerf = (value) => () => {
+        const courseType = 1;
+        if (value.selected_perf === false) {
+            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+                value.selected_perf = true;
+                props.updatePlanState();
+            });
+        } else if (value.selected_perf === true) {
+            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+                value.selected_perf = false;
+                props.updatePlanState();
+            });
         }
-        return 0;
-    }
+    };
 
-    function getComparator(order, orderBy) {
-        return order === 'desc'
-            ? (a, b) => descendingComparator(a, b, orderBy)
-            : (a, b) => -descendingComparator(a, b, orderBy);
-    }
-
-    function stableSort(array, comparator) {
-        const stabilizedThis = array.map((el, index) => [el, index]);
-        stabilizedThis.sort((a, b) => {
-            const order = comparator(a[0], b[0]);
-            if (order !== 0) {
-                return order;
-            }
-            return a[1] - b[1];
-        });
-        return stabilizedThis.map((el) => el[0]);
-    }
+    //sort and search
 
     const headCells = [
         {
@@ -228,6 +210,57 @@ function ManagementBox(props) {
             label: 'ตัวเลือก',
         },
     ];
+
+    const [filteredData, setFilteredData] = useState(props.plans);
+    const [searchValue, setSearchValue] = useState('')
+
+    useEffect(() => {
+        setFilteredData(props.plans);
+    }, [props.plans])
+
+    useEffect(() => {
+        const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
+        setFilteredData(searchValue === '' ? props.plans : props.plans.filter((data) => {
+            return Object.keys(data).some((field) => {
+                return searchRegex.test(data[field].toString());
+            });
+
+        }))
+    }, [searchValue])
+
+    function escapeRegExp(value) {
+        return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    }
+
+    function descendingComparator(a, b, orderBy) {
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if (b[orderBy] > a[orderBy]) {
+            return 1;
+        }
+        return 0;
+    }
+
+    function getComparator(order, orderBy) {
+        return order === 'desc'
+            ? (a, b) => descendingComparator(a, b, orderBy)
+            : (a, b) => -descendingComparator(a, b, orderBy);
+    }
+
+    function stableSort(array, comparator) {
+        const stabilizedThis = array.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if (order !== 0) {
+                return order;
+            }
+            return a[1] - b[1];
+        });
+        return stabilizedThis.map((el) => el[0]);
+    }
+
+    
 
     function EnhancedTableHead(props) {
         const { order, orderBy, onRequestSort } = props;
@@ -274,37 +307,10 @@ function ManagementBox(props) {
         setOrderBy(property);
     };
 
-    const handleSwitchLect = (value) => () => {
-        const courseType = 0;
-        if (value.selected_lect === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
-                value.selected_lect = true;
-                props.updatePlanState();
-            });
-        } else if (value.selected_lect === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
-                value.selected_lect = false;
-                props.updatePlanState();
-            });
-        }
-    };
-    const handleSwitchPerf = (value) => () => {
-        const courseType = 1;
-        if (value.selected_perf === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
-                value.selected_perf = true;
-                props.updatePlanState();
-            });
-        } else if (value.selected_perf === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
-                value.selected_perf = false;
-                props.updatePlanState();
-            });
-        }
-    };
+    //render
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 3 }} >
+        <Container maxWidth='false' sx={{ pt: 2, pb: 3 , display: props.disableState ? 'none' : 'block' }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
@@ -335,7 +341,7 @@ function ManagementBox(props) {
                                         .map((row, index) => {
                                             const labelId = index;
                                             return (
-                                                <TableRow key={row.years + row.semester + row.course_id + row.group_id} >
+                                                <TableRow key={row.years_name + row.semester + row.course_id + row.group_id} >
                                                     <TableCell id={labelId} scope="row" align="center" >{row.years_name}</TableCell>
                                                     <TableCell align="center">{row.semester}</TableCell>
                                                     <TableCell align="left">{row.group_name}</TableCell>

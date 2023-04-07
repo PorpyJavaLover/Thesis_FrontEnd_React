@@ -17,10 +17,12 @@ import { Link } from 'react-router-dom';
 
 const pages = [
     { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน', path: '/Teacher/SelectSubject' },
-    { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Teacher/NotTeach' },
-    { key: 3, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
-    { key: 4, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
-    { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
+    { key: 2, name: 'การจัดการรายวิชาที่จะเปิดสอน(เจ้าหน้าที่)', path: '/Staff/SelectSubject' },
+    { key: 3, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Teacher/NotTeach' },
+    { key: 4, name: 'การจัดการวันเวลาที่ไม่ขอสอน(เจ้าหน้าที่)', path: '/Staff/NotTeach' },
+    { key: 5, name: 'การจัดการรายวิชา', path: '/Staff/Timetable' },
+    { key: 6, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
+    { key: 7, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
 ];
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
