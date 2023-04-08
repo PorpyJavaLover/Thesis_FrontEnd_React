@@ -20,9 +20,10 @@ const pages = [
     { key: 2, name: 'การจัดการรายวิชาที่จะเปิดสอน(เจ้าหน้าที่)', path: '/Staff/SelectSubject' },
     { key: 3, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Teacher/NotTeach' },
     { key: 4, name: 'การจัดการวันเวลาที่ไม่ขอสอน(เจ้าหน้าที่)', path: '/Staff/NotTeach' },
-    { key: 5, name: 'การจัดการรายวิชา', path: '/Staff/Timetable' },
-    { key: 6, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
-    { key: 7, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
+    { key: 5, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
+    { key: 6, name: 'การจัดการรายวิชา(เจ้าหน้าที่)', path: '/Staff/Timetable' },
+    { key: 7, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
+    { key: 8, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
 ];
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -126,8 +127,6 @@ function ResponsiveAppBar() {
                             >
                                 <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
                             </Button>
-
-
                         ))}
                     </Box>
 

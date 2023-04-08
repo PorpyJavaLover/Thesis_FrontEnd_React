@@ -11,8 +11,6 @@ const headers = {
 
 export default new class APIService {
 
-
-
     //
     getPlan() {
         return axios.get(API_REST_URL + '/plan/teacher/show/all', { headers });
@@ -138,7 +136,9 @@ export default new class APIService {
         axios.post(API_REST_URL + '/member/anonymous/login', body)
             .then(response => {
                 localStorage.setItem('token', JSON.stringify(response.data.token));
-                localStorage.setItem('user', JSON.stringify(jwt_decode(JSON.parse(localStorage.getItem('token')))));
+                localStorage.setItem('member_id', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
+                localStorage.setItem('role', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
+                localStorage.setItem('exp', jwt_decode(JSON.parse(localStorage.getItem('token'))).exp );
             }).catch((test) => {
                 console.log(test.response.data.error);
             });

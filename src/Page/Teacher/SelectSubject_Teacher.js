@@ -31,7 +31,7 @@ export default class SelectSubjectTeacher extends Component {
     componentDidMount() {
         PlanAPIServiceTeacher.getPlan().then((resPlan) => {
             this.setState({ plans: resPlan.data });
-            TimetableAPIServiceTeacher.getTimetable().then((resTimetable) => {
+            TimetableAPIServiceTeacher.getTimetableForPlan().then((resTimetable) => {
                 this.setState({ timetables: resTimetable.data })
                 this.tableMapping();
             });
@@ -49,7 +49,7 @@ export default class SelectSubjectTeacher extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if ((Number(plan.years_name) - 543) + plan.semester + plan.course_id + plan.group_id + JSON.parse(localStorage.getItem('user')).principal === timetable.years + timetable.semester + timetable.course_id + timetable.group_id + timetable.member_id) {
+                if ((Number(plan.years_name) - 543) + plan.semester + plan.course_id + plan.group_id + JSON.parse(localStorage.getItem('member_id')) === timetable.years + timetable.semester + timetable.course_id + timetable.group_id + timetable.member_id) {
                     if (timetable.course_type == 0) {
                         plan.selected_lect = true;
                     } else {

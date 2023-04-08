@@ -8,6 +8,10 @@ export default new class TimetableAPIService extends BaseAPIService {
 
 export const TimetableAPIServiceTeacher = new class TimetableAPIServiceTeacher extends BaseAPIService {
 
+    getTimetableForPlan() {
+        return axios.get(this.url + '/timetable/teacher/show/all/ForPlan', { headers: this.headers });
+    }
+
     getTimetable() {
         return axios.get(this.url + '/timetable/teacher/show/all', { headers: this.headers });
     }

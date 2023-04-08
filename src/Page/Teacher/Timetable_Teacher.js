@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from 'react'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography, } from '@mui/material';
 import CardSelect from '../../Component/CardSelect'
-import { TimetableAPIServiceStaff } from '../../Service/TimetableAPIService';
+import { TimetableAPIServiceTeacher , TimetableAPIServiceStaff } from '../../Service/TimetableAPIService';
 import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -22,7 +22,7 @@ import TodayIcon from '@mui/icons-material/Today';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 
-export default class TimetableStaff extends Component {
+export default class TimetableTeacher extends Component {
 
   constructor(props) {
     super(props);
@@ -37,7 +37,7 @@ export default class TimetableStaff extends Component {
   }
 
   updateState = () => {
-    TimetableAPIServiceStaff.getTimetable().then((res) => {
+    TimetableAPIServiceTeacher.getTimetable().then((res) => {
       this.setState({ dataTimetable: res.data });
     })
   }
@@ -117,6 +117,7 @@ function ManagementBox(props) {
   const [timeEndSelected, setTimeEndSelected] = useState(null);
   const [roomSelected, setRoomSelected] = useState(null);
   const [buttonState, setButtonState] = useState(true);
+  
   //function
 
   useEffect(() => {
@@ -543,7 +544,6 @@ function ManagementBox(props) {
                 <Grid item sm={6} xs={6}>
                   <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}>
                     <Stack dir="ltr" direction="row" spacing={2}>
-                      <Button sx={{ width: 150 }} color="inherit" endIcon={<AutoAwesomeIcon />} onClick={autoPilot} variant="contained" >นำร่องอัตโนมัติ</Button>
                       <Button sx={{ width: 150 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={cleanAll} variant="contained" >ล้างทั้งหมด</Button>
                     </Stack >
                   </Box>
