@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Button,
@@ -15,42 +15,44 @@ import {
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Root, Header, Nav, Content, Footer, presets } from "mui-layout";
 import APIService from "../../Service/APIService";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
+
+const API_REST_URL = "http://192.168.91.120:8080";
+// const API_REST_URL = "http://192.168.3.248:8080";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState();
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  // console.log(username,password)
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    setLoading(true);
-    APIService.login(username, password).then(
-      (response) => {
-        localStorage.setItem("user", JSON.stringify(response.data));
-        setIsLoggedIn(true);
-        setShowError(false);
-        setLoading(false);
+    const body = {
+      username: username,
+      password: password,
+    };
+    axios
+      .post(API_REST_URL + "/member/anonymous/login", body)
+      .then((response) => {
+        localStorage.setItem("token", JSON.stringify(response.data.token));
+        localStorage.setItem(
+          "user",
+          JSON.stringify(jwt_decode(JSON.parse(localStorage.getItem("token"))))
+        );
+        <Navigate to="/login" />;
+      })
+      .then((res) => {
+        message.success("ชื่อผู้ใช้ถูกต้อง");
         navigate("/homepages");
-      },
-      (error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-
-        setShowError(true);
-        setErrorMessage(resMessage);
-        setLoading(false);
-      }
-    );
-    e.preventDefault();
+      })
+      .catch((error) => {
+        // message.error("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+      });
   };
 
   return (
@@ -83,7 +85,7 @@ const Login = () => {
               >
                 กรุณาเข้าสู่ระบบ
               </Typography>
-              <form>
+              <form onSubmit={handleSubmit}>
                 <Grid container sx={{ pt: 2 }} spacing={2}>
                   <Grid item xs={12}>
                     <TextField
@@ -108,10 +110,12 @@ const Login = () => {
                     />
                   </Grid>
                   <Grid item xs={12} sx={{ textAlign: "center" }}>
-                    <Button onClick={handleLogin}>เข้าสู่ระบบ</Button>
+                    <Button type="success">เข้าสู่ระบบ</Button>
                   </Grid>
                 </Grid>
               </form>
+              {message && <p>{message}</p>}
+              {error && <p>Error: {error}</p>}
             </div>
           </Container>
         </CardContent>

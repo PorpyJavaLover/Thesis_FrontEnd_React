@@ -8,7 +8,7 @@ import {
   Container,
   Typography,
 } from "@mui/material";
-import CardSelect from "../../Component/CardSelect";
+import CardSelect from "../../Component/Card/CardSelect";
 import { TimetableAPIServiceStaff } from "../../Service/TimetableAPIService";
 import SearchIcon from "@mui/icons-material/Search";
 import Table from "@mui/material/Table";

@@ -11,10 +11,10 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { format } from "date-fns";
-import CardDatePicker from "../../Component/CardDatePicker";
-import CardSelect from "../../Component/CardSelect";
-import CardTextField from "../../Component/CardTextField";
-import FullFeaturedCrudGrid from "../../Component/CardDataGrid";
+import CardDatePicker from "../../Component/Card/CardDatePicker";
+import CardSelect from "../../Component/Card/CardSelect";
+import CardTextField from "../../Component/Card/CardTextField";
+import FullFeaturedCrudGrid from "../../Component/Card/CardDataGrid";
 
 export default class LeaveTeach extends Component {
   constructor(props) {
