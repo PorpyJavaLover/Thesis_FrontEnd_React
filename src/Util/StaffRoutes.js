@@ -9,7 +9,7 @@ const StaffRoutes = () => {
     if (role === 2) {
         return (<Outlet />);
     } else {
-        return (<Navigate to="/Error404" />);
+        return (<Navigate to="/Home" />);
     }
     
 }

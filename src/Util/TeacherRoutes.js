@@ -9,7 +9,7 @@ const TeacherRoutes = () => {
     if (role === 1) {
         return (<Outlet />);
     } else {
-        return (<Navigate to="/Error404" />);
+        return (<Navigate to="/Home" />);
     }
     
 }

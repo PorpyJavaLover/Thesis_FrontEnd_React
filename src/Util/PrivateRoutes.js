@@ -5,7 +5,7 @@ const PrivateRoutes = () => {
     const isExpired = (Date.now() / 1000) > JSON.parse(localStorage.getItem('exp'));
 
     if (isExpired) {
-        return (<Navigate to="/Home" />);
+        return (<Navigate to="/SignIn" />);
     } else {
         return (<Outlet />);
     }

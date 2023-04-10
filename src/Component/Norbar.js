@@ -24,6 +24,27 @@ const pages = [
     { key: 6, name: 'การจัดการรายวิชา(เจ้าหน้าที่)', path: '/Staff/Timetable' },
     { key: 7, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
     { key: 8, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
+    { key: 9, name: 'เข้าสู่ระบบ', path: '/SignIn' },
+    { key: 10, name: 'สมัครสมาชิก', path: '/Singup' },
+];
+
+const pagesTeacher = [
+    { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน', path: '/Teacher/SelectSubject' },
+    { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Teacher/NotTeach' },
+    { key: 3, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
+    { key: 4, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
+    { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
+
+];
+
+const pagesStaff = [
+    { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน(เจ้าหน้าที่)', path: '/Staff/SelectSubject' },
+    { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน(เจ้าหน้าที่)', path: '/Staff/NotTeach' },
+    { key: 3, name: 'การจัดการรายวิชา(เจ้าหน้าที่)', path: '/Staff/Timetable' },
+];
+
+const userMenu = [
+    { key: 1, name: 'ออกจากระบบ', path: '/SignIn' },
 ];
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -47,6 +68,43 @@ function ResponsiveAppBar() {
         setAnchorElUser(null);
     };
 
+    const showByRole = () => {
+
+        const role = JSON.parse(localStorage.getItem('role'));
+
+        if (role === 1) {
+            return pagesTeacher.map((page) => (
+                <Button
+                    key={page.key}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
+                </Button>
+            ))
+        } else if (role === 2) {
+            return pagesStaff.map((page) => (
+                <Button
+                    key={page.key}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
+                </Button>
+            ))
+        } else {
+            return pages.map((page) => (
+                <Button
+                    key={page.key}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
+                </Button>
+            ))
+        }
+
+
+    };
+
+
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
@@ -60,9 +118,9 @@ function ResponsiveAppBar() {
                         color="inherit"
                     >
                         <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon href="/" /></Link>
-                        
+
                     </IconButton>
-                    
+
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -120,14 +178,7 @@ function ResponsiveAppBar() {
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                         {pages.map((page) => (
-                            <Button
-                                key={page.key}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
-                            </Button>
-                        ))}
+                        {showByRole()}
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
@@ -152,10 +203,18 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
-                                </MenuItem>
+                            {userMenu.map((page) => (
+                                <Button key={page.key} sx={{ my: 2, color: 'white', display: 'block' }}>
+                                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >
+                                        {page.name}
+                                        {
+                                            localStorage.removeItem("mytime");
+                                        localStorage.removeItem("mytime");
+                                        localStorage.removeItem("mytime");
+                                        localStorage.removeItem("mytime");
+                                    }
+                                    </Link>
+                                </Button>
                             ))}
                         </Menu>
                     </Box>

@@ -9,7 +9,7 @@ import SelectNotTeachStaff from "./Page/Staff/NotTeach_Staff";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
 import Replace2 from "./Page/Replace2";
-import Singin from "./Page/Singin";
+import SignIn from "./Page/SignIn";
 import Singup from "./Page/Singup";
 import Error404 from "./Page/Error404";
 import TableExampleApprove from "./Page/TableExampleApprove";
@@ -44,7 +44,7 @@ export default function App() {
           <Route path="/T1" element={<TableExampleApprove />} />
         </Route>
         <Route path="/Home" element={<Home />} />
-        <Route path="/Singin" element={<Singin />} />
+        <Route path="/SignIn" element={<SignIn />} />
         <Route path="/Singup" element={<Singup />} />
         <Route path="/Error404" element={<Error404 />} />
       </Routes>
