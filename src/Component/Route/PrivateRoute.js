@@ -1,20 +1,14 @@
-// import { Outlet, Navigate, Route, Routes } from "react-router-dom";
+import { Outlet, Navigate } from 'react-router-dom'
 
-// const PrivateRoute = ({ component: Component, ...rest }) => {
-//   let auth = { token: false };
-//   return (
-  
-//       <Route
-//         {...rest}
-//         render={(props) =>
-//           auth.token === true ? (
-//             <Component {...props} />
-//           ) : (
-//             <Navigate to="/login" />
-//           )
-//         }
-//       />
-   
-//   );
-// };
-// export default PrivateRoute;
+const PrivateRoutes = () => {
+
+    const isExpired = (Date.now() / 1000) > JSON.parse(localStorage.getItem('exp'));
+
+    if (isExpired) {
+        return (<Navigate to="/login" />);
+    } else {
+        return (<Outlet />);
+    }
+}
+
+export default PrivateRoutes

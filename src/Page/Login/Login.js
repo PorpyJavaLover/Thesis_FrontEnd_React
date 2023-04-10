@@ -18,8 +18,8 @@ import APIService from "../../Service/APIService";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
-const API_REST_URL = "http://192.168.91.120:8080";
-// const API_REST_URL = "http://192.168.3.248:8080";
+// const API_REST_URL = "http://192.168.91.120:8080";
+const API_REST_URL = "http://192.168.3.248:8080";
 
 const Login = () => {
   const [username, setUsername] = useState("");
