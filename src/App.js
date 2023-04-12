@@ -210,7 +210,6 @@ import HomeUser from "./Component/Premission/HomeUser";
 import ManageAdmin from "./Component/Premission/ManageAdmin";
 import { currentUser } from "./Component/functions/auth";
 import MyContext from "./Component/Premission/MyContext";
-<<<<<<< HEAD
 
 const App = () => {
   const { basename } = useContext(MyContext);
@@ -219,36 +218,15 @@ const App = () => {
     <div className="App">
       <BrowserRouter basename={basename}>
         <Menu />
-=======
-import PrivateRoute from "./Component/Route/PrivateRoute";
-import { PublicRoute } from "./Component/Route/PublicRoute";
-
-const App = () => {
-  const { basename } = useContext(MyContext);
-  console.log(basename);
-  return (
-    <div className="App">
-      <BrowserRouter basename={basename}>
-        <Navbar />
->>>>>>> da7db6c6787631172f075a755a05d49ef3e6e65f
         <br />
         <br />
         <br />
         <br />
-<<<<<<< HEAD
         <Routes>
           <Route path="/" element={<Homepages />} />
           <Route path="/logup" element={<Logup />} />
           <Route path="/login" element={<Login />} />
           <Route
-=======
-
-        <Routes>
-          <PrivateRoute path="/" element={<Homepages />} />
-          <PrivateRoute path="/logup" element={<Logup />} />
-
-          <PrivateRoute
->>>>>>> da7db6c6787631172f075a755a05d49ef3e6e65f
             path="/admin/index"
             element={
               <AdminRoute>
@@ -256,11 +234,7 @@ const App = () => {
               </AdminRoute>
             }
           />
-<<<<<<< HEAD
           <Route
-=======
-          <PrivateRoute
->>>>>>> da7db6c6787631172f075a755a05d49ef3e6e65f
             path="/admin/manage-admin"
             element={
               <AdminRoute>
@@ -268,11 +242,7 @@ const App = () => {
               </AdminRoute>
             }
           />
-<<<<<<< HEAD
           <Route
-=======
-          <PrivateRoute
->>>>>>> da7db6c6787631172f075a755a05d49ef3e6e65f
             path="/user/index"
             element={
               <UserRoute>
@@ -280,7 +250,6 @@ const App = () => {
               </UserRoute>
             }
           />
-<<<<<<< HEAD
           <Route
             path="/staff/select-subject"
             element={<SelectSubjectStaff />}
@@ -293,27 +262,6 @@ const App = () => {
           <Route path="/teacher/leave-teach" element={<LeaveTeachTeacher />} />
           <Route path="/replace/view" element={<ViewReplace />} />
           <Route path="/replace/input" element={<InputReplace />} />
-=======
-          <PrivateRoute
-            path="/staff/select-subject"
-            element={<SelectSubjectStaff />}
-          />
-          <PrivateRoute
-            path="/staff/timetable"
-            element={<TimetableTeacher />}
-          />
-          <PrivateRoute
-            path="/teacher/select-subject"
-            element={<SelectNotTeachTeacher />}
-          />
-          <PrivateRoute
-            path="/teacher/leave-teach"
-            element={<LeaveTeachTeacher />}
-          />
-          <PrivateRoute path="/replace/view" element={<ViewReplace />} />
-          <PrivateRoute path="/replace/input" element={<InputReplace />} />
-          <PublicRoute path="/login" element={<Login />} />
->>>>>>> da7db6c6787631172f075a755a05d49ef3e6e65f
         </Routes>
       </BrowserRouter>
     </div>
