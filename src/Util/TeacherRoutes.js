@@ -2,11 +2,11 @@ import { Outlet, Navigate } from 'react-router-dom'
 
 const TeacherRoutes = () => {
 
-    const role = JSON.parse(localStorage.getItem('role'));
+    const role = localStorage.getItem('role');
 
     console.log(role);
 
-    if (role === 1) {
+    if (role === "Teacher") {
         return (<Outlet />);
     } else {
         return (<Navigate to="/Home" />);
