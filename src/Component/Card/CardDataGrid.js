@@ -1,25 +1,24 @@
-import React, { Component, useState, useEffect } from 'react'
-import Box from '@mui/material/Box';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { DataGrid } from '@mui/x-data-grid';
-import {
-  GridRowModes,
-  GridActionsCellItem,
-} from '@mui/x-data-grid-pro';
+import React, { Component, useState, useEffect } from "react";
+import Box from "@mui/material/Box";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { DataGrid } from "@mui/x-data-grid";
+import { GridRowModes, GridActionsCellItem } from "@mui/x-data-grid-pro";
 
-export default function FullFeaturedCrudGrid({ columnsPara, rowsPara, callDeleteAPI, callPutAPI }) {
-
-
+export default function FullFeaturedCrudGrid({
+  columnsPara,
+  rowsPara,
+  callDeleteAPI,
+  callPutAPI,
+}) {
   const [rows, setRows] = useState([]);
   const [filters, setFilters] = useState({});
 
   useEffect(() => {
     setRows(rowsPara);
-  }, [rowsPara])
-
+  }, [rowsPara]);
 
   const [rowModesModel, setRowModesModel] = useState({});
 
@@ -64,11 +63,12 @@ export default function FullFeaturedCrudGrid({ columnsPara, rowsPara, callDelete
   };
 
   const columns = [
-    ...columnsPara
-    ,
+    ...columnsPara,
     {
-       field: 'actions', type: 'actions', headerName: 'ตัวเลือก',
-      cellClassName: 'actions',
+      field: "actions",
+      type: "actions",
+      headerName: "ตัวเลือก",
+      cellClassName: "actions",
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
         if (isInEditMode) {
@@ -96,7 +96,7 @@ export default function FullFeaturedCrudGrid({ columnsPara, rowsPara, callDelete
             color="inherit"
           />,
           <GridActionsCellItem
-            icon={<DeleteForeverIcon color="error"/>}
+            icon={<DeleteForeverIcon color="error" />}
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
@@ -109,12 +109,12 @@ export default function FullFeaturedCrudGrid({ columnsPara, rowsPara, callDelete
   return (
     <Box
       sx={{
-        width: '100%',
-        '& .actions': {
-          color: 'text.secondary',
+        width: "100%",
+        "& .actions": {
+          color: "text.secondary",
         },
-        '& .textPrimary': {
-          color: 'text.primary',
+        "& .textPrimary": {
+          color: "text.primary",
         },
       }}
     >
