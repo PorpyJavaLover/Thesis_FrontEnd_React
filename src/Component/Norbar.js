@@ -54,7 +54,6 @@ export default function Norbar() {
         } else {
             return <MenuAnonymous />;
         }
-
     }
 
     return (
@@ -88,6 +87,16 @@ function MenuAnonymous() {
 }
 
 function MenuTeacher() {
+
+    const SignOutEf = () => {
+        localStorage.removeItem("member_id");
+        localStorage.removeItem("name");
+        localStorage.removeItem("role");
+        localStorage.removeItem("exp");
+        localStorage.removeItem("token");
+        window.location.reload(true);
+    };
+
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
@@ -102,6 +111,7 @@ function MenuTeacher() {
                         >
                             <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon href="/" /></Link>
                         </IconButton>
+                        
                         {
                             pagesTeacher.map((page) => (
                                 <Button
@@ -112,6 +122,27 @@ function MenuTeacher() {
                                 </Button>
                             ))
                         }
+                        <Box sx={{ flexGrow: 1, alignItems: 'center' , display: { xs: 'none', md: 'flex' }, flexDirection: "row-reverse" }}>
+                        <Box>
+                            {
+                                userMenu.map((page) => (
+                                    <Button key={page.key} sx={{  color: 'white', display: 'block' }} onClick={SignOutEf}>
+                                        <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >
+                                            {page.name}
+                                        </Link>
+                                    </Button>
+                                ))
+                            }
+                        </Box>
+                        <Box>
+                            {localStorage.getItem('name')}
+                        </Box>
+                        <Tooltip title="Open settings">
+                            <IconButton >
+                                <Avatar alt="Teacher" src="/static/images/avatar/3.jpg" />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
                     </Box>
                 </Toolbar>
             </Container>
@@ -142,7 +173,7 @@ function MenuStaff() {
                             aria-haspopup="true"
                             color="inherit"
                         >
-                            <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon href="/" /></Link>
+                            <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon /></Link>
                         </IconButton>
                         {
                             pagesStaff.map((page) => (
@@ -154,11 +185,11 @@ function MenuStaff() {
                             ))
                         }
                     </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, flexDirection: "row-reverse" }}>
+                    <Box sx={{ flexGrow: 1, alignItems: 'center' , display: { xs: 'none', md: 'flex' }, flexDirection: "row-reverse" }}>
                         <Box>
                             {
                                 userMenu.map((page) => (
-                                    <Button key={page.key} sx={{ my: 2, color: 'white', display: 'block' }} onClick={SignOutEf}>
+                                    <Button key={page.key} sx={{  color: 'white', display: 'block' }} onClick={SignOutEf}>
                                         <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >
                                             {page.name}
                                         </Link>
@@ -167,10 +198,13 @@ function MenuStaff() {
                             }
                         </Box>
                         <Box>
-                            <Typography variant="h8"  sx={{ my: 3, color: 'white', display: 'block' }}>
-                                {localStorage.getItem('name')}
-                            </Typography>
+                            {localStorage.getItem('name')}
                         </Box>
+                        <Tooltip title="Open settings">
+                            <IconButton >
+                                <Avatar alt="Staff" src="/static/images/avatar/3.jpg" />
+                            </IconButton>
+                        </Tooltip>
                     </Box>
                 </Toolbar>
             </Container>
