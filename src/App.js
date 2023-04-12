@@ -190,7 +190,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import React, { useContext } from "react";
 import { BrowserRouter, Routes, Route, Link, Outlet } from "react-router-dom";
->>>>>>> da7db6c6787631172f075a755a05d49ef3e6e65f
 import Navbar from "./Component/Menu/Navbar";
 import Login from "./Page/Login/Login";
 import Logup from "./Page/Logup/Logup";
