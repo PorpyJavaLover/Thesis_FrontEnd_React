@@ -1,7 +1,14 @@
-import React from "react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate } from 'react-router-dom'
 
-export const PrivateRoute = () => {
-  const role = localStorage.getItem("role");
-  return role === " " ? <Outlet /> : <Navigate to="/login" />;
-};
+const PrivateRoutes = () => {
+
+    const isExpired = (Date.now() / 1000) > JSON.parse(localStorage.getItem('exp'));
+
+    if (isExpired) {
+        return (<Navigate to="/login" />);
+    } else {
+        return (<Outlet />);
+    }
+}
+
+export default PrivateRoutes
