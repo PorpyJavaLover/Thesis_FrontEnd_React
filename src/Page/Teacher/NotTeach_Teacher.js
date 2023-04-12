@@ -239,16 +239,16 @@ function CreationBox(props) {
                         <CardSelect labelPara="เลือกเวลาสิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd} valuePara={timeEndSelected} />
                     </Grid>
                     <Grid item xs={12}>
-                        <Box dir="rtl" component="span" sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}>
-                            <Stack dir="ltr" direction="row" spacing={2}>
-                                <Button color="success" disabled={buttonState} endIcon={<SaveIcon />} onClick={handleSubmit} variant="contained"  >บันทึก</Button>
-                                <Button color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
-                            </Stack>
+                        <Box component="span" sx={{ pr: 2 }}>
+                            <Button color="error" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                        </Box>
+                        <Box component="span" sx={{ pr: 2 }} >
+                            <Button color="success" disabled={buttonState} endIcon={<SendIcon />} onClick={handleSubmit} variant="contained"  >บันทึก</Button>
                         </Box>
                     </Grid>
                 </Grid>
             </Card>
-        </Container >
+        </Container>
     )
 }
 

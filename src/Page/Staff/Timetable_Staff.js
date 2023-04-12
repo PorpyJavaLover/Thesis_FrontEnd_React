@@ -1,35 +1,47 @@
-import React, { Component, useState, useEffect } from 'react'
-import { CardHeader, Box, Card, Button, Grid, Container, Typography, } from '@mui/material';
-import CardSelect from '../../Component/CardSelect'
-import { TimetableAPIServiceStaff } from '../../Service/TimetableAPIService';
-import SearchIcon from '@mui/icons-material/Search';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import TextField from '@mui/material/TextField';
-import PropTypes from 'prop-types';
-import { visuallyHidden } from '@mui/utils';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import SaveIcon from '@mui/icons-material/Save';
-import Stack from '@mui/material/Stack';
-import ToggleButton from '@mui/material/ToggleButton';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import TodayIcon from '@mui/icons-material/Today';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+import React, { Component, useState, useEffect } from "react";
+import {
+  CardHeader,
+  Box,
+  Card,
+  Button,
+  Grid,
+  Container,
+  Typography,
+} from "@mui/material";
+import CardSelect from "../../Component/Card/CardSelect";
+import { TimetableAPIServiceStaff } from "../../Service/TimetableAPIService";
+import SearchIcon from "@mui/icons-material/Search";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
+import PropTypes from "prop-types";
+import { visuallyHidden } from "@mui/utils";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import SaveIcon from "@mui/icons-material/Save";
+import Stack from "@mui/material/Stack";
+import ToggleButton from "@mui/material/ToggleButton";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import TodayIcon from "@mui/icons-material/Today";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import TreeView from "@mui/lab/TreeView";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import TreeItem from "@mui/lab/TreeItem";
 
 export default class NotTeachTeacher extends Component {
-
   constructor(props) {
     super(props);
     this.updateState.bind(this);
     this.state = {
-      dataNotTeach: []
-    }
+      dataNotTeach: [],
+    };
   }
 
   componentDidMount() {
@@ -39,71 +51,100 @@ export default class NotTeachTeacher extends Component {
   updateState = () => {
     TimetableAPIServiceStaff.getTimetable().then((res) => {
       this.setState({ dataNotTeach: res.data });
-    })
-  }
+    });
+  };
 
   render() {
     return (
-      <div >
+      <div>
         <HeaderBox title={"การจัดการรายวิชา"} />
-        <ManagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState} dataNotTeach={this.state.dataNotTeach} />
+        <ManagementBox
+          title={"เมนูจัดการรายการ"}
+          updateState={this.updateState}
+          dataNotTeach={this.state.dataNotTeach}
+        />
       </div>
-    )
+    );
   }
 }
 
 function HeaderBox(props) {
   return (
     <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
-      <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
+      <Typography variant="h3" component="h3" fontWeight="bold">
+        {" "}
+        {props.title}{" "}
+      </Typography>
     </Box>
-  )
+  );
 }
 
-function ManagementBox(props) {
+const data = {
+  id: "root",
+  name: "หมายเหตุ",
+  children: [
+    {
+      id: "1",
+      name: "สีแดง - นักศึกษามีเรียน",
+    },
+    {
+      id: "2",
+      name: "สีเหลือง - อาจารย์มีสอน",
+    },
+    {
+      id: "3",
+      name: "สีขาว - อาจารย์ไม่ขอสอน",
+    },
+    {
+      id: "4",
+      name: "สีเหลือง - ห้องเรียนถูกใช้ในชั่วโมงนั้น",
+    },
+  ],
+};
 
+function ManagementBox(props) {
   let dayOfWeekOptions = [
-    { key: '1', value: 1, text: 'วันจันทร์' },
-    { key: '2', value: 2, text: 'วันอังคาร' },
-    { key: '3', value: 3, text: 'วันพุธ' },
-    { key: '4', value: 4, text: 'วันพฤหัสบดี' },
-    { key: '5', value: 5, text: 'วันศุกร์' },
-    { key: '6', value: 6, text: 'วันเสาร์' },
-    { key: '7', value: 7, text: 'วันอาทิตย์' }
+    { key: "1", value: 1, text: "วันจันทร์" },
+    { key: "2", value: 2, text: "วันอังคาร" },
+    { key: "3", value: 3, text: "วันพุธ" },
+    { key: "4", value: 4, text: "วันพฤหสับดี" },
+    { key: "5", value: 5, text: "วันศุกร์" },
+    { key: "6", value: 6, text: "วันเสาร์" },
+    { key: "7", value: 7, text: "วันอาทิตย์" },
   ];
 
   const timeStartOptionTemplate = [
-    { key: '1', value: '08:00:00', text: '08:00:00' },
-    { key: '2', value: '09:00:00', text: '09:00:00' },
-    { key: '3', value: '10:00:00', text: '10:00:00' },
-    { key: '4', value: '11:00:00', text: '11:00:00' },
-    { key: '5', value: '12:00:00', text: '12:00:00' },
-    { key: '6', value: '13:00:00', text: '13:00:00' },
-    { key: '7', value: '14:00:00', text: '14:00:00' },
-    { key: '8', value: '15:00:00', text: '15:00:00' },
-    { key: '9', value: '16:00:00', text: '16:00:00' },
-    { key: '10', value: '17:00:00', text: '17:00:00' },
-    { key: '11', value: '18:00:00', text: '18:00:00' },
-    { key: '12', value: '19:00:00', text: '19:00:00' },
-    { key: '13', value: '20:00:00', text: '20:00:00' },
-    { key: '14', value: '21:00:00', text: '21:00:00' },
+    { key: "1", value: "08:00:00", text: "08:00:00" },
+    { key: "2", value: "09:00:00", text: "09:00:00" },
+    { key: "3", value: "10:00:00", text: "10:00:00" },
+    { key: "4", value: "11:00:00", text: "11:00:00" },
+    { key: "5", value: "12:00:00", text: "12:00:00" },
+    { key: "6", value: "13:00:00", text: "13:00:00" },
+    { key: "7", value: "14:00:00", text: "14:00:00" },
+    { key: "8", value: "15:00:00", text: "15:00:00" },
+    { key: "9", value: "16:00:00", text: "16:00:00" },
+    { key: "10", value: "17:00:00", text: "17:00:00" },
+    { key: "11", value: "18:00:00", text: "18:00:00" },
+    { key: "12", value: "19:00:00", text: "19:00:00" },
+    { key: "13", value: "20:00:00", text: "20:00:00" },
+    { key: "14", value: "21:00:00", text: "21:00:00" },
   ];
 
   const timeEndOptionTemplate = [
-    { key: '1', value: '09:00:00', text: '09:00:00' },
-    { key: '2', value: '10:00:00', text: '10:00:00' },
-    { key: '3', value: '11:00:00', text: '11:00:00' },
-    { key: '4', value: '12:00:00', text: '12:00:00' },
-    { key: '5', value: '13:00:00', text: '13:00:00' },
-    { key: '6', value: '14:00:00', text: '14:00:00' },
-    { key: '7', value: '15:00:00', text: '15:00:00' },
-    { key: '8', value: '16:00:00', text: '16:00:00' },
-    { key: '9', value: '17:00:00', text: '17:00:00' },
-    { key: '10', value: '18:00:00', text: '18:00:00' },
-    { key: '11', value: '19:00:00', text: '19:00:00' },
-    { key: '12', value: '20:00:00', text: '20:00:00' },
-    { key: '13', value: '21:00:00', text: '21:00:00' },
-    { key: '14', value: '22:00:00', text: '22:00:00' }
+    { key: "1", value: "09:00:00", text: "09:00:00" },
+    { key: "2", value: "10:00:00", text: "10:00:00" },
+    { key: "3", value: "11:00:00", text: "11:00:00" },
+    { key: "4", value: "12:00:00", text: "12:00:00" },
+    { key: "5", value: "13:00:00", text: "13:00:00" },
+    { key: "6", value: "14:00:00", text: "14:00:00" },
+    { key: "7", value: "15:00:00", text: "15:00:00" },
+    { key: "8", value: "16:00:00", text: "16:00:00" },
+    { key: "9", value: "17:00:00", text: "17:00:00" },
+    { key: "10", value: "18:00:00", text: "18:00:00" },
+    { key: "11", value: "19:00:00", text: "19:00:00" },
+    { key: "12", value: "20:00:00", text: "20:00:00" },
+    { key: "13", value: "21:00:00", text: "21:00:00" },
+    { key: "14", value: "22:00:00", text: "22:00:00" },
   ];
 
   //state
@@ -123,74 +164,140 @@ function ManagementBox(props) {
     handleConfirmTiggle();
   }, [dayOfWeekSelected, timeStartSelected, timeEndSelected]);
 
-  useEffect(() => {
-    console.log(timeEndSelected);
-  }, [timeEndSelected]);
-
-
-
   const handleChangeDayOfWeek = (data) => (event) => {
     setDayOfWeekSelected(event.target.value);
-    TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
+    TimetableAPIServiceStaff.getStartTime(
+      data.years,
+      data.semester,
+      data.course_id,
+      data.course_type,
+      data.group_id,
+      event.target.value,
+      null
+    ).then((res) => {
       setTimeStartOptions(res.data);
-    })
-    TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
+    });
+    TimetableAPIServiceStaff.getEndTime(
+      data.years,
+      data.semester,
+      data.course_id,
+      data.course_type,
+      data.group_id,
+      event.target.value,
+      null
+    ).then((res) => {
       setTimeEndOptions(res.data);
-    })
-    if (timeStartSelected !== null && timeEndSelected != null) {
-      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, timeStartSelected, timeEndSelected).then((res) => {
-        setRoomOptions(res.data);
-      })
-    }
+    });
+    TimetableAPIServiceStaff.getRoom(
+      data.years,
+      data.semester,
+      data.course_id,
+      data.course_type,
+      data.group_id,
+      event.target.value,
+      timeStartSelected,
+      timeEndSelected
+    ).then((res) => {
+      setRoomOptions(res.data);
+    });
   };
 
   const handleChangeTimeStart = (data) => (event) => {
     setTimeStartSelected(event.target.value);
-    TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
-      setTimeEndSelected(resA.data.value);
-      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value, resA.data.value).then((resB) => {
-        setRoomOptions(resB.data);
-      })
-    })
-    TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
-      setTimeEndOptions(resA.data);
-    })
+    TimetableAPIServiceStaff.getEndTime(
+      data.years,
+      data.semester,
+      data.course_id,
+      data.course_type,
+      data.group_id,
+      dayOfWeekSelected,
+      event.target.value
+    ).then((res) => {
+      setTimeEndOptions(res.data);
+    });
+    TimetableAPIServiceStaff.getRoom(
+      data.years,
+      data.semester,
+      data.course_id,
+      data.course_type,
+      data.group_id,
+      dayOfWeekSelected,
+      event.target.value,
+      timeEndSelected
+    ).then((res) => {
+      setRoomOptions(res.data);
+    });
   };
 
   const handleChangeTimeEnd = (data) => (event) => {
     setTimeEndSelected(event.target.value);
-    TimetableAPIServiceStaff.getStartTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
-      setTimeStartSelected(resA.data.value);
-      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, resA.data.value, event.target.value).then((resB) => {
-        setRoomOptions(resB.data);
-      })
-    })
-    TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
-      setTimeStartOptions(resA.data);
-    })
-
+    TimetableAPIServiceStaff.getStartTime(
+      data.years,
+      data.semester,
+      data.course_id,
+      data.course_type,
+      data.group_id,
+      dayOfWeekSelected,
+      event.target.value
+    ).then((res) => {
+      setTimeStartOptions(res.data);
+    });
+    TimetableAPIServiceStaff.getRoom(
+      data.years,
+      data.semester,
+      data.course_id,
+      data.course_type,
+      data.group_id,
+      dayOfWeekSelected,
+      timeStartSelected,
+      event.target.value
+    ).then((res) => {
+      setRoomOptions(res.data);
+    });
   };
 
   const handleChangeRoom = (data) => (event) => {
     setRoomSelected(event.target.value);
-
   };
 
   const handleConfirmTiggle = () => {
-    if (dayOfWeekSelected !== null && timeStartSelected !== null && timeEndSelected !== null) {
-      if (dayOfWeekSelected === '' || timeStartSelected === '' || timeEndSelected === '') {
-        setButtonState(true)
+    if (
+      dayOfWeekSelected !== null &&
+      timeStartSelected !== null &&
+      timeEndSelected !== null
+    ) {
+      if (
+        dayOfWeekSelected === "" ||
+        timeStartSelected === "" ||
+        timeEndSelected === ""
+      ) {
+        setButtonState(true);
       } else {
-        setButtonState(false)
+        setButtonState(false);
       }
     } else {
-      setButtonState(true)
+      setButtonState(true);
     }
-  }
+  };
 
   const handleConfirm = (dataInside) => () => {
-    console.log(dayOfWeekSelected, timeStartSelected, timeEndSelected, roomSelected);
-    TimetableAPIServiceStaff.update(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dayOfWeekSelected, timeStartSelected, timeEndSelected, roomSelected).then(() => {
+    console.log(
+      dayOfWeekSelected,
+      timeStartSelected,
+      timeEndSelected,
+      roomSelected
+    );
+    TimetableAPIServiceStaff.update(
+      dataInside.years,
+      dataInside.semester,
+      dataInside.course_id,
+      dataInside.course_type,
+      dataInside.group_id,
+      dayOfWeekSelected,
+      timeStartSelected,
+      timeEndSelected,
+      roomSelected
+    ).then(() => {
       setDayOfWeekSelected(null);
       setTimeStartSelected(null);
       setTimeEndSelected(null);
@@ -198,19 +305,19 @@ function ManagementBox(props) {
       setEditTemp(null);
       setTimeStartOptions([]);
       setTimeEndOptions([]);
-      setRoomOptions([])
+      setRoomOptions([]);
       props.updateState();
     });
-  }
+  };
 
   const handleCancel = () => {
     setDayOfWeekSelected(null);
     setTimeStartSelected(null);
     setTimeEndSelected(null);
     setEditTemp(null);
-    setTimeStartOptions([]);
-    setTimeEndOptions([]);
-  }
+    setTimeStartOptions([...timeStartOptionTemplate]);
+    setTimeEndOptions([...timeEndOptionTemplate]);
+  };
 
   const handleEdit = (dataInside) => () => {
     setEditTemp(dataInside.id);
@@ -219,31 +326,56 @@ function ManagementBox(props) {
     setTimeEndSelected(dataInside.end_time);
     setRoomSelected(dataInside.room_id);
     if (dataInside.day_of_week !== null) {
-      TimetableAPIServiceStaff.getEndTimeOption(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
+      TimetableAPIServiceStaff.getEndTime(
+        dataInside.years,
+        dataInside.semester,
+        dataInside.course_id,
+        dataInside.course_type,
+        dataInside.group_id,
+        dataInside.day_of_week,
+        null
+      ).then((res) => {
         setTimeEndOptions(res.data);
-      })
-      TimetableAPIServiceStaff.getStartTimeOption(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
+      });
+      TimetableAPIServiceStaff.getStartTime(
+        dataInside.years,
+        dataInside.semester,
+        dataInside.course_id,
+        dataInside.course_type,
+        dataInside.group_id,
+        dataInside.day_of_week,
+        null
+      ).then((res) => {
         setTimeStartOptions(res.data);
-      })
+      });
     } else {
       setTimeEndOptions([]);
       setTimeStartOptions([]);
     }
     if (dataInside.start_time !== null && dataInside.end_time !== null) {
-      TimetableAPIServiceStaff.getRoom(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time).then((res) => {
+      TimetableAPIServiceStaff.getRoom(
+        dataInside.years,
+        dataInside.semester,
+        dataInside.course_id,
+        dataInside.course_type,
+        dataInside.group_id,
+        dataInside.day_of_week,
+        dataInside.start_time,
+        dataInside.end_time
+      ).then((res) => {
         setRoomOptions(res.data);
-      })
+      });
     } else {
       setRoomOptions([]);
     }
-
-  }
+  };
 
   const handleDelete = (dataInside) => () => {
-    TimetableAPIServiceStaff.deletTimetable(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.member_Id).then(() => {
+    console.log(dataInside.notId);
+    /*APIService.deleteNotTeach(dataInside.notId).then(() => {
       props.updateState();
-    })
-  }
+    })*/
+  };
 
   const dayConvert = (dayOfWeek_Number) => {
     let day;
@@ -271,34 +403,89 @@ function ManagementBox(props) {
         break;
     }
     return day;
-  }
+  };
+
+  const timeConvert = (timeEndOptions_Number) => {
+    let time;
+    switch (timeEndOptions_Number) {
+      case "08:00:00":
+        time = 1;
+        break;
+      case "09:00:00":
+        time = 2;
+        break;
+      case "10:00:00":
+        time = 3;
+        break;
+      case "11:00:00":
+        time = 4;
+        break;
+      case "12:00:00":
+        time = 5;
+        break;
+      case "13:00:00":
+        time = 6;
+        break;
+      case "14:00:00":
+        time = 7;
+        break;
+      case "15:00:00":
+        time = 8;
+        break;
+      case "16:00:00":
+        time = 9;
+        break;
+      case "17:00:00":
+        time = 10;
+        break;
+      case "18:00:00":
+        time = 11;
+        break;
+      case "19:00:00":
+        time = 12;
+        break;
+      case "20:00:00":
+        time = 13;
+        break;
+      case "21:00:00":
+        time = 14;
+        break;
+      case "22:00:00":
+        time = 15;
+        break;
+    }
+    return time;
+  };
 
   //render
 
   const [filteredData, setFilteredData] = useState(props.dataNotTeach);
-  const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState("");
 
   const handleChange = (e) => {
-    setSearchValue(e.target.value)
-  }
+    setSearchValue(e.target.value);
+  };
 
   function escapeRegExp(value) {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   }
 
   useEffect(() => {
     setFilteredData(props.dataNotTeach);
-  }, [props.dataNotTeach])
+  }, [props.dataNotTeach]);
 
   useEffect(() => {
-    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
-    setFilteredData(searchValue === '' ? props.dataNotTeach : props.dataNotTeach.filter((data) => {
-      return Object.keys(data).some((field) => {
-        return searchRegex.test(data[field].toString());
-      });
-
-    }))
-  }, [searchValue])
+    const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
+    setFilteredData(
+      searchValue === ""
+        ? props.dataNotTeach
+        : props.dataNotTeach.filter((data) => {
+            return Object.keys(data).some((field) => {
+              return searchRegex.test(data[field].toString());
+            });
+          })
+    );
+  }, [searchValue]);
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -311,7 +498,7 @@ function ManagementBox(props) {
   }
 
   function getComparator(order, orderBy) {
-    return order === 'desc'
+    return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
       : (a, b) => -descendingComparator(a, b, orderBy);
   }
@@ -330,55 +517,49 @@ function ManagementBox(props) {
 
   const headCells = [
     {
-      id: 'course_type_name',
+      id: "group_name",
       numeric: true,
-      label: 'ประเภทวิชา',
+      label: "กลุ่มเรียน",
     },
     {
-      id: 'course_code',
+      id: "course_name",
       numeric: true,
-      label: 'รหัสวิชา',
+      label: "รายวิชา",
     },
     {
-      id: 'course_name',
+      id: "course_type_name",
       numeric: true,
-      label: 'ชื่อวิชา',
-    },
-
-    {
-      id: 'group_name',
-      numeric: true,
-      label: 'กลุ่มเรียน',
+      label: "ประเภทวิชา",
     },
     {
-      id: 'member_name',
+      id: "member_name",
       numeric: true,
-      label: 'อาจารย์ผู้สอน',
+      label: "อาจารย์ผู้สอน",
     },
     {
-      id: 'day_of_week',
+      id: "day_of_week",
       numeric: true,
-      label: 'วันที่สอน',
+      label: "วันที่สอน",
     },
     {
-      id: 'start_time',
+      id: "start_time",
       numeric: true,
-      label: 'เริ่มสอน',
+      label: "เริ่มสอน",
     },
     {
-      id: 'end_time',
+      id: "end_time",
       numeric: true,
-      label: 'สิ้นสุด',
+      label: "สิ้นสุด",
     },
     {
-      id: 'room_id',
+      id: "room_id",
       numeric: true,
-      label: 'ห้อง',
+      label: "ห้อง",
     },
     {
-      id: 'option',
+      id: "option",
       numeric: true,
-      label: 'ตัวเลือก',
+      label: "ตัวเลือก",
     },
   ];
 
@@ -393,18 +574,20 @@ function ManagementBox(props) {
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
-              align={headCell.numeric ? 'left' : 'center'}
+              align={headCell.numeric ? "left" : "center"}
               sortDirection={orderBy === headCell.id ? order : false}
             >
               <TableSortLabel
                 active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
+                direction={orderBy === headCell.id ? order : "asc"}
                 onClick={createSortHandler(headCell.id)}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
                   </Box>
                 ) : null}
               </TableSortLabel>
@@ -417,82 +600,149 @@ function ManagementBox(props) {
 
   EnhancedTableHead.propTypes = {
     onRequestSort: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+    order: PropTypes.oneOf(["asc", "desc"]).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
   };
 
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('');
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("");
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
-
   const updateTimeLock = (row) => () => {
-    TimetableAPIServiceStaff.updateLocker(row.years, row.semester, row.course_id, row.course_type, row.group_id, row.time_locker == false ? true : false, row.room_locker).then((res) => {
+    TimetableAPIServiceStaff.updateLocker(
+      row.years,
+      row.semester,
+      row.course_id,
+      row.course_type,
+      row.group_id,
+      row.time_locker == false ? true : false,
+      row.room_locker
+    ).then((res) => {
       props.updateState();
     });
   };
 
   const updateRoomLock = (row) => () => {
-    TimetableAPIServiceStaff.updateLocker(row.years, row.semester, row.course_id, row.course_type, row.group_id, row.time_locker, row.room_locker == false ? true : false).then((res) => {
+    TimetableAPIServiceStaff.updateLocker(
+      row.years,
+      row.semester,
+      row.course_id,
+      row.course_type,
+      row.group_id,
+      row.time_locker,
+      row.room_locker == false ? true : false
+    ).then((res) => {
       props.updateState();
     });
   };
 
   const TableCellTime = (row) => {
     if (row.time_locker === true) {
-      return <>
-        <TableCell width="8%" align="left">{dayConvert(row.day_of_week)}  🔒</TableCell>
-        <TableCell width="8%" align="left">{row.start_time}  🔒</TableCell>
-        <TableCell width="8%" align="left">{row.end_time}  🔒</TableCell>
-      </>
+      return (
+        <>
+          <TableCell width="10%" align="left">
+            {dayConvert(row.day_of_week)} 🔒
+          </TableCell>
+          <TableCell width="10%" align="left">
+            {row.start_time} 🔒
+          </TableCell>
+          <TableCell width="10%" align="left">
+            {row.end_time}
+          </TableCell>
+        </>
+      );
     } else {
-      return <>
-        <TableCell width="8%" align="left">{dayConvert(row.day_of_week)}</TableCell>
-        <TableCell width="8%" align="left">{row.start_time}</TableCell>
-        <TableCell width="8%" align="left">{row.end_time}</TableCell>
-      </>
+      return (
+        <>
+          <TableCell width="10%" align="left">
+            {dayConvert(row.day_of_week)}
+          </TableCell>
+          <TableCell width="10%" align="left">
+            {row.start_time}
+          </TableCell>
+          <TableCell width="10%" align="left">
+            {row.end_time}
+          </TableCell>
+        </>
+      );
     }
   };
 
   const CardSelectTime = (row) => {
     if (row.time_locker === true) {
-      return <><TableCell align="left">  🔒<CardSelect labelPara="วันที่สอน" menuItemPara={dayOfWeekOptions} onChangePara={handleChangeDayOfWeek(row)} valuePara={dayOfWeekSelected} /></TableCell>
-        <TableCell align="left">  🔒<CardSelect labelPara="เริ่มสอน" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart(row)} valuePara={timeStartSelected} /></TableCell>
-        <TableCell align="left">   🔒<CardSelect labelPara="สิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd(row)} valuePara={timeEndSelected} /></TableCell></>
+      return (
+        <>
+          <TableCell align="left">{dayConvert(row.day_of_week)} 🔒</TableCell>
+          <TableCell align="left">{row.start_time} 🔒</TableCell>
+          <TableCell align="left">{row.end_time}</TableCell>
+        </>
+      );
     } else {
-      return <>
-        <TableCell >
-          <CardSelect labelPara="วันที่สอน" menuItemPara={dayOfWeekOptions} onChangePara={handleChangeDayOfWeek(row)} valuePara={dayOfWeekSelected} />
-        </TableCell>
-        <TableCell align="left">
-          <CardSelect labelPara="เริ่มสอน" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart(row)} valuePara={timeStartSelected} />
-        </TableCell>
-        <TableCell align="left">
-          <CardSelect labelPara="สิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd(row)} valuePara={timeEndSelected} />
-        </TableCell>
-      </>
+      return (
+        <>
+          <TableCell>
+            <CardSelect
+              labelPara="วันที่สอน"
+              menuItemPara={dayOfWeekOptions}
+              onChangePara={handleChangeDayOfWeek(row)}
+              valuePara={dayOfWeekSelected}
+            />
+          </TableCell>
+          <TableCell align="left">
+            <CardSelect
+              labelPara="เริ่มสอน"
+              menuItemPara={timeStartOptions}
+              onChangePara={handleChangeTimeStart(row)}
+              valuePara={timeStartSelected}
+            />
+          </TableCell>
+          <TableCell align="left">{row.end_time}</TableCell>
+        </>
+      );
     }
   };
 
   const TableCellRoom = (row) => {
     if (row.room_locker === true) {
-      return <TableCell width="8%" align="left">{row.room_name} 🔒</TableCell>
+      return (
+        <TableCell width="10%" align="left">
+          {row.room_name} 🔒
+        </TableCell>
+      );
     } else {
-      return <TableCell width="8%" align="left">{row.room_name}</TableCell>
+      return (
+        <TableCell width="10%" align="left">
+          {row.room_name}
+        </TableCell>
+      );
     }
   };
 
   const CardSelectRoom = (row) => {
     if (row.room_locker === true) {
-      return <TableCell width="8%" align="left">  🔒<CardSelect disabledPara={buttonState} labelPara="ห้อง" menuItemPara={roomOptions} onChangePara={handleChangeRoom(row)} valuePara={roomSelected} /></TableCell>
+      return (
+        <TableCell width="10%" align="left">
+          {row.room_name} 🔒
+        </TableCell>
+      );
     } else {
-      return <TableCell align="left"><CardSelect disabledPara={buttonState} labelPara="ห้อง" menuItemPara={roomOptions} onChangePara={handleChangeRoom(row)} valuePara={roomSelected} /></TableCell>
+      return (
+        <TableCell align="left">
+          <CardSelect
+            disabledPara={buttonState}
+            labelPara="ห้อง"
+            menuItemPara={roomOptions}
+            onChangePara={handleChangeRoom(row)}
+            valuePara={roomSelected}
+          />
+        </TableCell>
+      );
     }
   };
 
@@ -502,54 +752,108 @@ function ManagementBox(props) {
     });
   };
 
-  const clean = (dataInside) => () => {
-    TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time, dataInside.room_id, dataInside.time_locker, dataInside.room_locker).then((res) => {
-      props.updateState();
-    });
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
   };
 
-  const cleanAll = () => {
-    TimetableAPIServiceStaff.cleanAll().then((res) => {
-      props.updateState();
-    });
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
   };
+
+  const renderTree = (nodes) => (
+    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+      {Array.isArray(nodes.children)
+        ? nodes.children.map((node) => renderTree(node))
+        : null}
+    </TreeItem>
+  );
 
   return (
-    
-    <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
-        
-      <Card sx={{ boxShadow: 5, }}>
-        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
-        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
-
+    <Container maxWidth="false" sx={{ pt: 2, pb: 2 }}>
+      <Card sx={{ boxShadow: 5 }}>
+        <CardHeader
+          title={props.title}
+          titleTypographyProps={{ fontWeight: "bold", variant: "h5" }}
+          sx={{
+            backgroundColor: "primary.main",
+            color: "primary.contrastText",
+            p: 1,
+          }}
+        />
+        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }}>
           <Grid item sm={12} xs={12}>
-            <TableContainer >
-              <Grid container spacing={2} sx={{ pt: 0, pb: 3, pl: 3, pr: 3 }} >
-                <Grid item sm={6} xs={12}>
-                  <Box dir="ltr" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>
+            <TableContainer>
+              <Grid container spacing={2} sx={{ pt: 0, pb: 3, pl: 3, pr: 3 }}>
+                <Grid item sm={6} xs={6}>
+                  <Box
+                    dir="ltr"
+                    sx={{ pt: 2, display: "flex", alignItems: "flex-start" }}
+                  >
+                    <Button
+                      sx={{ width: 150 }}
+                      color="inherit"
+                      endIcon={<AutoAwesomeIcon />}
+                      onClick={autoPilot}
+                      variant="contained"
+                    >
+                      นำร่องอัตโนมัติ
+                    </Button>
+                    <Stack spacing={2} sx={{ width: "50%", marginLeft: 5 }}>
+                      <TreeView
+                        aria-label="rich object"
+                        defaultCollapseIcon={<ExpandMoreIcon />}
+                        defaultExpanded={["root"]}
+                        defaultExpandIcon={<ChevronRightIcon />}
+                        sx={{
+                          height: 110,
+                          flexGrow: 1,
+                          maxWidth: 400,
+                        }}
+                      >
+                        {renderTree(data)}
+                      </TreeView>
+                    </Stack>
+                  </Box>
+                </Grid>
+                {/* <Grid item sm={8} xs={8}>
+                  <Box
+                    dir="rtl"
+                    sx={{
+                      pb: 2,
+                      display: "flex",
+                      alignItems: "flex-end",
+                      float: "left",
+                    }}
+                  >
+                    
+                  </Box>
+                </Grid> */}
+                <Grid item sm={6} xs={6}>
+                  <Box
+                    dir="rtl"
+                    sx={{ pb: 2, display: "flex", alignItems: "flex-end" }}
+                  >
                     <TextField
                       dir="ltr"
-                      sx={{ width: 300, }}
+                      sx={{ width: 300 }}
                       fullWidth
                       id="filled-flexible"
                       label="ค้นหา"
-                      value={searchValue || ''}
+                      value={searchValue || ""}
                       onChange={handleChange}
                       variant="standard"
                     />
                     <SearchIcon />
                   </Box>
                 </Grid>
-                <Grid item sm={6} xs={6}>
-                  <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}>
-                    <Stack dir="ltr" direction="row" spacing={2}>
-                      <Button sx={{ width: 150 }} color="inherit" endIcon={<AutoAwesomeIcon />} onClick={autoPilot} variant="contained" >นำร่องอัตโนมัติ</Button>
-                      <Button sx={{ width: 150 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={cleanAll} variant="contained" >ล้างทั้งหมด</Button>
-                    </Stack >
-                  </Box>
-                </Grid>
               </Grid>
-              <Table sx={{ minWidth: 650, }} aria-label="simple table">
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <EnhancedTableHead
                   order={order}
                   orderBy={orderBy}
@@ -557,61 +861,123 @@ function ManagementBox(props) {
                   rowCount={filteredData.length}
                 />
                 <TableBody>
-                  {stableSort(filteredData, getComparator(order, orderBy))
-                    .map((row, index) => {
+                  {stableSort(filteredData, getComparator(order, orderBy)).map(
+                    (row, index) => {
                       const labelId = index;
                       if (editTemp !== row.id) {
                         return (
-                          <TableRow key={row.id} >
-                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.course_type_name}</TableCell>
-                            <TableCell width="10%" align="left">{row.course_code}</TableCell>
-                            <TableCell width="25%" align="left">{row.course_name}</TableCell>
-                            <TableCell width="8%" align="left">{row.group_name}</TableCell>
-                            <TableCell width="15%" align="left">{row.member.map((inMember) => {
-                              return  <TableRow key={inMember.member_id}> {inMember.member_name} </TableRow>;
-                            })}</TableCell>
+                          <TableRow key={row.id}>
+                            <TableCell
+                              width="20%"
+                              id={labelId}
+                              scope="row"
+                              align="left"
+                            >
+                              {row.group_name}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {row.course_name}
+                            </TableCell>
+                            <TableCell width="10%" align="left">
+                              {row.course_type_name}
+                            </TableCell>
+                            <TableCell width="10%" align="left">
+                              {row.member_name}
+                            </TableCell>
                             {TableCellTime(row)}
                             {TableCellRoom(row)}
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <ToggleButton sx={{ width: 40, height: 40 }} value='time' onClick={updateTimeLock(row)} selected={row.time_locker}  ><TodayIcon /></ToggleButton>
-                                <ToggleButton sx={{ width: 40, height: 40 }} value='room' onClick={updateRoomLock(row)} selected={row.room_locker}   ><MeetingRoomIcon /></ToggleButton>
-                                <Button sx={{ width: 50, height: 40 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                <Button sx={{ width: 50, height: 40 }} color="inherit" endIcon={<CleaningServicesIcon />} onClick={clean(row)} variant="contained"  >ล้าง</Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="inherit"
+                                  onClick={handleEdit(row)}
+                                  variant="contained"
+                                >
+                                  แก้ไข
+                                </Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="error"
+                                  endIcon={<DeleteForeverIcon />}
+                                  onClick={handleDelete(row)}
+                                  variant="contained"
+                                >
+                                  ลบ
+                                </Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
                         );
                       } else {
                         return (
-                          <TableRow key={row.id} >
-                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
-                            <TableCell width="10%" align="left">{row.course_code}</TableCell>
-                            <TableCell width="25%" align="left">{row.course_name}</TableCell>
-                            <TableCell width="8%" align="left">{row.course_type_name}</TableCell>
-                            <TableCell width="15%" align="left">{row.member.map((inMember) => {
-                              return  <TableRow key={inMember.member_id} > {inMember.member_name} </TableRow>;
-                            })}</TableCell>
+                          <TableRow key={row.id}>
+                            <TableCell
+                              width="20%"
+                              id={labelId}
+                              scope="row"
+                              align="left"
+                            >
+                              {row.group_name}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {row.course_name}
+                            </TableCell>
+                            <TableCell width="10%" align="left">
+                              {row.course_type_name}
+                            </TableCell>
+                            <TableCell width="10%" align="left">
+                              {row.member_name}
+                            </TableCell>
                             {CardSelectTime(row)}
                             {CardSelectRoom(row)}
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 95, height: 40 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >บันทึก</Button>
-                                <Button sx={{ width: 50, height: 40 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
-                                <Button sx={{ width: 50, height: 40 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="success"
+                                  endIcon={<SaveIcon />}
+                                  disabled={buttonState}
+                                  onClick={handleConfirm(row)}
+                                  variant="contained"
+                                >
+                                  ยืนยัน
+                                </Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="inherit"
+                                  onClick={handleCancel}
+                                  variant="contained"
+                                >
+                                  ยกเลิก
+                                </Button>
+                                <ToggleButton
+                                  value="time"
+                                  onClick={updateTimeLock(row)}
+                                  selected={row.time_locker}
+                                >
+                                  <TodayIcon />
+                                </ToggleButton>
+                                <ToggleButton
+                                  value="room"
+                                  onClick={updateRoomLock(row)}
+                                  selected={row.room_locker}
+                                >
+                                  <MeetingRoomIcon />
+                                </ToggleButton>
                               </Stack>
                             </TableCell>
                           </TableRow>
-                        )
+                        );
                       }
-                    })
-                  }
+                    }
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
           </Grid>
         </Grid>
       </Card>
-    </Container >
-  )
+    </Container>
+  );
 }
