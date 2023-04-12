@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+import React, { Component, Fragment, useContext } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+=======
 // import React, { Component, Fragment, useContext } from "react";
 // import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // import Navbar from "./Component/Menu/Navbar";
@@ -186,6 +190,7 @@
 
 import React, { useContext } from "react";
 import { BrowserRouter, Routes, Route, Link, Outlet } from "react-router-dom";
+>>>>>>> da7db6c6787631172f075a755a05d49ef3e6e65f
 import Navbar from "./Component/Menu/Navbar";
 import Login from "./Page/Login/Login";
 import Logup from "./Page/Logup/Logup";
@@ -205,26 +210,23 @@ import HomeUser from "./Component/Premission/HomeUser";
 import ManageAdmin from "./Component/Premission/ManageAdmin";
 import { currentUser } from "./Component/functions/auth";
 import MyContext from "./Component/Premission/MyContext";
-import PrivateRoute from "./Component/Route/PrivateRoute";
-import { PublicRoute } from "./Component/Route/PublicRoute";
 
 const App = () => {
   const { basename } = useContext(MyContext);
-  console.log(basename);
+  // console.log(basename);
   return (
     <div className="App">
       <BrowserRouter basename={basename}>
-        <Navbar />
+        <Menu />
         <br />
         <br />
         <br />
         <br />
-
         <Routes>
-          <PrivateRoute path="/" element={<Homepages />} />
-          <PrivateRoute path="/logup" element={<Logup />} />
-
-          <PrivateRoute
+          <Route path="/" element={<Homepages />} />
+          <Route path="/logup" element={<Logup />} />
+          <Route path="/login" element={<Login />} />
+          <Route
             path="/admin/index"
             element={
               <AdminRoute>
@@ -232,7 +234,7 @@ const App = () => {
               </AdminRoute>
             }
           />
-          <PrivateRoute
+          <Route
             path="/admin/manage-admin"
             element={
               <AdminRoute>
@@ -240,7 +242,7 @@ const App = () => {
               </AdminRoute>
             }
           />
-          <PrivateRoute
+          <Route
             path="/user/index"
             element={
               <UserRoute>
@@ -248,25 +250,18 @@ const App = () => {
               </UserRoute>
             }
           />
-          <PrivateRoute
+          <Route
             path="/staff/select-subject"
             element={<SelectSubjectStaff />}
           />
-          <PrivateRoute
-            path="/staff/timetable"
-            element={<TimetableTeacher />}
-          />
-          <PrivateRoute
+          <Route path="/staff/timetable" element={<TimetableTeacher />} />
+          <Route
             path="/teacher/select-subject"
             element={<SelectNotTeachTeacher />}
           />
-          <PrivateRoute
-            path="/teacher/leave-teach"
-            element={<LeaveTeachTeacher />}
-          />
-          <PrivateRoute path="/replace/view" element={<ViewReplace />} />
-          <PrivateRoute path="/replace/input" element={<InputReplace />} />
-          <PublicRoute path="/login" element={<Login />} />
+          <Route path="/teacher/leave-teach" element={<LeaveTeachTeacher />} />
+          <Route path="/replace/view" element={<ViewReplace />} />
+          <Route path="/replace/input" element={<InputReplace />} />
         </Routes>
       </BrowserRouter>
     </div>
