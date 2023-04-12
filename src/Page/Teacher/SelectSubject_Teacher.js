@@ -31,7 +31,7 @@ export default class SelectSubjectTeacher extends Component {
     componentDidMount() {
         PlanAPIServiceTeacher.getPlan().then((resPlan) => {
             this.setState({ plans: resPlan.data });
-            TimetableAPIServiceTeacher.getTimetable().then((resTimetable) => {
+            TimetableAPIServiceTeacher.getTimetableForPlan().then((resTimetable) => {
                 this.setState({ timetables: resTimetable.data })
                 this.tableMapping();
             });
@@ -49,10 +49,10 @@ export default class SelectSubjectTeacher extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if (plan.years + plan.semester + plan.course_id + plan.group_id + JSON.parse(localStorage.getItem('user')).principal === timetable.years + timetable.semester + timetable.course_id + timetable.group_id + timetable.member_id) {
-                    if(timetable.course_type == 0){
+                if ((Number(plan.years_name) - 543) + plan.semester + plan.course_id + plan.group_id + JSON.parse(localStorage.getItem('member_id')) === timetable.years + timetable.semester + timetable.course_id + timetable.group_id + timetable.member_id) {
+                    if (timetable.course_type == 0) {
                         plan.selected_lect = true;
-                    }else{
+                    } else {
                         plan.selected_perf = true;
                     }
                 }
@@ -144,7 +144,7 @@ function MenagementBox(props) {
 
     const headCells = [
         {
-            id: 'years',
+            id: 'years_name',
             numeric: false,
             label: 'ปีการศึกษา',
         },
@@ -221,29 +221,30 @@ function MenagementBox(props) {
         setOrderBy(property);
     };
 
+
     const handleSwitchLect = (value) => () => {
         const courseType = 0;
         if (value.selected_lect === false) {
-            TimetableAPIServiceTeacher.createTimetable(value.years, value.semester, value.course_id , courseType, value.group_id).then(() => {
+            TimetableAPIServiceTeacher.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_lect = true;
                 props.updatePlanState();
             });
         } else if (value.selected_lect === true) {
-            TimetableAPIServiceTeacher.deletTimetable(value.years, value.semester, value.course_id , courseType , value.group_id).then(() => {
+            TimetableAPIServiceTeacher.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_lect = false;
                 props.updatePlanState();
             });
         }
     };
-    const   handleSwitchPerf = (value) => () => {
+    const handleSwitchPerf = (value) => () => {
         const courseType = 1;
         if (value.selected_perf === false) {
-            TimetableAPIServiceTeacher.createTimetable(value.years, value.semester, value.course_id , courseType, value.group_id).then(() => {
+            TimetableAPIServiceTeacher.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_perf = true;
                 props.updatePlanState();
             });
         } else if (value.selected_perf === true) {
-            TimetableAPIServiceTeacher.deletTimetable(value.years, value.semester, value.course_id , courseType , value.group_id).then(() => {
+            TimetableAPIServiceTeacher.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_perf = false;
                 props.updatePlanState();
             });
@@ -282,15 +283,15 @@ function MenagementBox(props) {
                                         .map((row, index) => {
                                             const labelId = index;
                                             return (
-                                                <TableRow key={row.years + row.semester + row.course_id + row.group_id} >
-                                                    <TableCell id={labelId} scope="row" align="center" >{row.years}</TableCell>
+                                                <TableRow key={row.years_name + row.semester + row.course_id + row.group_id} >
+                                                    <TableCell id={labelId} scope="row" align="center" >{row.years_name}</TableCell>
                                                     <TableCell align="center">{row.semester}</TableCell>
                                                     <TableCell align="left">{row.group_name}</TableCell>
                                                     <TableCell align="left">{row.course_code}</TableCell>
                                                     <TableCell align="left">{row.course_title}</TableCell>
                                                     <TableCell align="left">
-                                                        <FormControlLabel control={<Switch checked={row.selected_lect } onClick={handleSwitchLect(row)} />} label="ทฤษฎี" labelPlacement="start" />
-                                                        <FormControlLabel control={<Switch checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />
+                                                        <FormControlLabel control={<Switch disabled={row.disable_lect} checked={row.selected_lect} onClick={handleSwitchLect(row)} />} label="ทฤษฎี" labelPlacement="start" />
+                                                        <FormControlLabel control={<Switch disabled={row.disable_perf}checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />
                                                     </TableCell>
                                                 </TableRow>
                                             );

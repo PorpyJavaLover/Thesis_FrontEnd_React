@@ -7,7 +7,6 @@ import CardDatePicker from '../../Component/CardDatePicker';
 import CardSelect from '../../Component/CardSelect'
 import CardTextField from '../../Component/CardTextField'
 import FullFeaturedCrudGrid from '../../Component/CardDataGrid';
-import Moment from 'react-moment';
 import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -23,53 +22,52 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 
-export default class LeaveTeach extends Component {
+export default class ReplaceTeach extends Component {
+
   constructor(props) {
     super(props);
     this.updateState = this.updateState.bind(this);
     this.state = {
-      dataLeaveTeach: [],
-    };
+      dataLeaveTeach: []
+    }
   }
 
   componentDidMount() {
-    this.updateState();
+    this.updateState()
   }
 
   updateState = () => {
     APIService.showAllTeacherLeaveTeach().then((res) => {
-      this.setState({ dataLeaveTeach: res.data });
-    });
-  };
+     
+    })
+  }
 
   render() {
     return (
       <div>
-        <HeaderBox title={"การจัดการการลา"} />
-        <CreationBox title={"เมนูสร้างรายการ"} updateState={this.updateState.bind(this)} />
+        <HeaderBox title={"การจัดการสอนแทน"} />
+        <CreationBox  title={"เมนูสร้างรายการ"} updateState={this.updateState.bind(this)} />
         <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataLeaveTeach={this.state.dataLeaveTeach} />
       </div>
-    );
+    )
   }
 }
 
 function HeaderBox(props) {
   return (
     <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
-      <Typography variant="h3" component="h3" fontWeight="bold">
-        {" "}
-        {props.title}{" "}
-      </Typography>
+      <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
     </Box>
-  );
+  )
 }
 
 function CreationBox(props) {
+
   const semester = [
-    { key: "1", value: "1", text: "ภาคการศึกษาที่ 1" },
-    { key: "2", value: "2", text: "ภาคการศึกษาที่ 2" },
-    { key: "3", value: "3", text: "ภาคการศึกษาที่ฤดูร้อน" },
-  ];
+    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
+    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
+    { key: '3', value: '3', text: 'ภาคการศึกษาที่ฤดูร้อน' }
+  ]
 
   //state
   const [submitButtonState, setSubmitButtonState] = useState(true);
@@ -77,7 +75,8 @@ function CreationBox(props) {
   const [dateEndSelected, setDateEndSelected] = useState(null);
   const [semesterSelected, setSemesterSelected] = useState(null);
   const [reasonNote, setReasonNote] = useState(null);
-  const [yearSelected, setYearSelected] = useState(new Date(), "YYYY");
+  const [yearSelected, setYearSelected] = useState(new Date, 'YYYY');
+
 
   //function
   useEffect(() => {
@@ -85,11 +84,11 @@ function CreationBox(props) {
   }, [dateStartSelected, dateEndSelected, semesterSelected, reasonNote]);
 
   const handleChangDateStart = (value) => {
-    setDateStartSelected(format(new Date(value), "yyyy-MM-dd").toString());
+    setDateStartSelected(format(new Date(value), 'yyyy-MM-dd').toString());
   };
 
   const handleChangDateEnd = (value) => {
-    setDateEndSelected(format(new Date(value), "yyyy-MM-dd").toString());
+    setDateEndSelected(format(new Date(value), 'yyyy-MM-dd').toString());
   };
 
   const handleChangSemester = (event) => {
@@ -108,7 +107,7 @@ function CreationBox(props) {
   };
 
   const handleSubmit = () => {
-    APIService.createLeaveTeach(semesterSelected, yearSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
+    APIService.createLeaveTeach(semesterSelected, yearSelected.getFullYear() + 543, dateStartSelected, dateEndSelected, reasonNote).then(() => {
       props.updateState();
       setDateStartSelected(null);
       setDateEndSelected(null);
@@ -118,95 +117,49 @@ function CreationBox(props) {
   };
 
   const confirmTiggleUseEffect = () => {
-    if (
-      dateStartSelected !== null &&
-      dateEndSelected !== null &&
-      semesterSelected !== null &&
-      reasonNote !== null
-    ) {
-      if (
-        dateStartSelected === null ||
-        dateEndSelected === null ||
-        semesterSelected === "" ||
-        reasonNote === ""
-      ) {
-        setSubmitButtonState(true);
+    if (dateStartSelected !== null && dateEndSelected !== null && semesterSelected !== null && reasonNote !== null) {
+      if (dateStartSelected === null || dateEndSelected === null || semesterSelected === '' || reasonNote === '') {
+        setSubmitButtonState(true)
       } else {
-        setSubmitButtonState(false);
+        setSubmitButtonState(false)
       }
     } else {
-      setSubmitButtonState(true);
+      setSubmitButtonState(true)
     }
-  };
+  }
 
   return (
-    <Container maxWidth="false" sx={{ pt: 2 }}>
-      <Card sx={{ boxShadow: 5 }}>
-        <CardHeader
-          title={props.title}
-          titleTypographyProps={{ fontWeight: "bold", variant: "h5" }}
-          sx={{
-            backgroundColor: "primary.main",
-            color: "primary.contrastText",
-            p: 1,
-          }}
-        />
-        <Grid container spacing={2} sx={{ p: 2 }}>
+    <Container maxWidth='false' sx={{ pt: 2, }} >
+      <Card sx={{ boxShadow: 5, }}>
+        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+        <Grid container spacing={2} sx={{ p: 2 }} >
           <Grid item sm={6} xs={12}>
-            <CardSelect
-              labelPara="ภาคการศึกษา"
-              menuItemPara={semester}
-              onChangePara={handleChangSemester}
-              valuePara={semesterSelected}
-            />
+            <CardSelect labelPara="ภาคการศึกษา" menuItemPara={semester} onChangePara={handleChangSemester} valuePara={semesterSelected} />
+          </Grid>
+          <Grid item xs={12} sm={6} >
+            <CardTextField labelPara="ปีการศึกษา" valuePara={yearSelected.getFullYear()} readOnlyPara={true} required />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <CardTextField
-              labelPara="ปีการศึกษา"
-              valuePara={yearSelected.getFullYear()}
-              readOnlyPara={true}
-              required
-            />
+            <CardDatePicker labelPara="วันที่งดสอน" onChangePara={handleChangDateStart} valuePara={dateStartSelected} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <CardDatePicker
-              labelPara="วันที่งดสอน"
-              onChangePara={handleChangDateStart}
-              valuePara={dateStartSelected}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <CardDatePicker
-              labelPara="ถึงวันที่"
-              onChangePara={handleChangDateEnd}
-              valuePara={dateEndSelected}
-            />
+            <CardDatePicker labelPara="ถึงวันที่" onChangePara={handleChangDateEnd} valuePara={dateEndSelected} />
           </Grid>
           <Grid item xs={12}>
-            <CardTextField labelPara="เหตุผลที่งดสอน" onChangePara={handleChangNote} required valuePara={reasonNote} />
+            <CardTextField labelPara="เหตุผลที่ไม่ได้สอน" onChangePara={handleChangNote} required valuePara={reasonNote} />
           </Grid>
           <Grid item xs={12}>
             <Box component="span" sx={{ pr: 2 }}>
-              <Button color="error" onClick={handleCancel} variant="contained">
-                ยกเลิก
-              </Button>
+              <Button color="error" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
             </Box>
-            <Box component="span" sx={{ pr: 2 }}>
-              <Button
-                color="success"
-                disabled={submitButtonState}
-                endIcon={<SendIcon />}
-                onClick={handleSubmit}
-                variant="contained"
-              >
-                บันทึก
-              </Button>
+            <Box component="span" sx={{ pr: 2 }} >
+              <Button color="success" disabled={submitButtonState} endIcon={<SendIcon />} onClick={handleSubmit} variant="contained"  >บันทึก</Button>
             </Box>
           </Grid>
         </Grid>
       </Card>
-    </Container>
-  );
+    </Container >
+  )
 }
 
 function MenagementBox(props) {
@@ -341,10 +294,6 @@ function MenagementBox(props) {
   const [filteredData, setFilteredData] = useState(props.dataLeaveTeach);
   const [searchValue, setSearchValue] = useState('')
 
-  const handleChange = (e) => {
-    setSearchValue(e.target.value)
-  }
-
   function EnhancedTableHead(props) {
     const { order, orderBy, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
@@ -376,6 +325,10 @@ function MenagementBox(props) {
         </TableRow>
       </TableHead>
     );
+  }
+
+  const handleChange = (e) => {
+    setSearchValue(e.target.value)
   }
 
   function escapeRegExp(value) {
@@ -529,3 +482,4 @@ function MenagementBox(props) {
     </Container>
   )
 }
+
