@@ -15,20 +15,10 @@ export default new (class APIService {
     return axios.get(API_REST_URL + "/plan/teacher/show/all", { headers });
   }
 
-  //
-  getAllPlan() {
-    return axios.get(API_REST_URL + "/plan/show/staff/all", { headers });
-  }
-
-  //
-  getTimetable() {
-    return axios.get(API_REST_URL + "/timetable/teacher/show/all", { headers });
-  }
-
-  //
-  getTimetableStaff() {
-    return axios.get(API_REST_URL + "/timetable/staff/show/all", { headers });
-  }
+    //
+    getPlan() {
+        return axios.get(API_REST_URL + '/plan/teacher/show/all', { headers });
+    }
 
   //
   getMemberTime(mId) {
@@ -210,23 +200,67 @@ export default new (class APIService {
     );
   }
 
-  //
-  login(username, password) {
-    const body = {
-      username: username,
-      password: password,
-    };
-    axios
-      .post(API_REST_URL + "/member/anonymous/login", body)
-      .then((response) => {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-        localStorage.setItem(
-          "user",
-          JSON.stringify(jwt_decode(JSON.parse(localStorage.getItem("token"))))
-        );
-      })
-      .catch((test) => {
-        console.log(test.response.data.error);
-      });
-  }
-})();
+        const body = {
+            'dayOfWeek': dayOfWeek,
+            'timeStart': timeStart,
+            'timeEnd': timeEnd
+        };
+        return axios.put(API_REST_URL + '/notteach/teacher/update' + '/' + notId, body, { headers });
+    }
+
+    //
+    deleteNotTeach(notId) {
+        return axios.delete(API_REST_URL + '/notteach/teacher/delete' + '/' + notId, { headers });
+    }
+
+    //
+    createTimetable(yId, sId, cId, gId) {
+        const body = {
+            'years': yId,
+            'semester': sId,
+            'courseId': cId,
+            'groupId': gId
+        };
+        return axios.post(API_REST_URL + '/timetable/teacher/create ', body, { headers });
+    }
+
+    //
+    deletTimetable(yId, sId, cId, gId) {
+        return axios.delete(API_REST_URL + '/timetable/teacher/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/' + gId, { headers });
+    }
+
+    //
+    createTimetableStaff(yId, sId, cId, gId, mId) {
+        const body = {
+            'years': yId,
+            'semester': sId,
+            'courseId': cId,
+            'groupId': gId,
+            'memberId': mId
+        };
+        return axios.post(API_REST_URL + '/timetable/create/staff ', body, { headers });
+    }
+
+    //
+    deletTimetableStaff(yId, sId, cId, gId, mId) {
+        axios.delete(API_REST_URL + '/timetable/delete/teaching/staff' + '/' + yId + '/' + sId + '/' + cId + '/' + gId + '/' + mId, { headers });
+    }
+
+    //
+    login(username, password) {
+        const body = {
+            'username': username,
+            'password': password
+        };
+        axios.post(API_REST_URL + '/member/anonymous/login', body)
+            .then(response => {
+                localStorage.setItem('token', JSON.stringify(response.data.token));
+                localStorage.setItem('member_id', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
+                localStorage.setItem('role', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
+                localStorage.setItem('exp', jwt_decode(JSON.parse(localStorage.getItem('token'))).exp );
+            }).catch((test) => {
+                console.log(test.response.data.error);
+            });
+    }
+
+}

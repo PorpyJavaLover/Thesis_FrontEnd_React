@@ -35,13 +35,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeItem from "@mui/lab/TreeItem";
 
-export default class NotTeachTeacher extends Component {
+export default class TimetableStaff extends Component {
+
   constructor(props) {
     super(props);
     this.updateState.bind(this);
     this.state = {
-      dataNotTeach: [],
-    };
+      dataTimetable: []
+    }
   }
 
   componentDidMount() {
@@ -50,19 +51,15 @@ export default class NotTeachTeacher extends Component {
 
   updateState = () => {
     TimetableAPIServiceStaff.getTimetable().then((res) => {
-      this.setState({ dataNotTeach: res.data });
-    });
-  };
+      this.setState({ dataTimetable: res.data });
+    })
+  }
 
   render() {
     return (
       <div>
         <HeaderBox title={"การจัดการรายวิชา"} />
-        <ManagementBox
-          title={"เมนูจัดการรายการ"}
-          updateState={this.updateState}
-          dataNotTeach={this.state.dataNotTeach}
-        />
+        <ManagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
       </div>
     );
   }
@@ -459,8 +456,8 @@ function ManagementBox(props) {
 
   //render
 
-  const [filteredData, setFilteredData] = useState(props.dataNotTeach);
-  const [searchValue, setSearchValue] = useState("");
+  const [filteredData, setFilteredData] = useState(props.dataTimetable);
+  const [searchValue, setSearchValue] = useState('')
 
   const handleChange = (e) => {
     setSearchValue(e.target.value);
@@ -471,21 +468,18 @@ function ManagementBox(props) {
   }
 
   useEffect(() => {
-    setFilteredData(props.dataNotTeach);
-  }, [props.dataNotTeach]);
+    setFilteredData(props.dataTimetable);
+  }, [props.dataTimetable])
 
   useEffect(() => {
-    const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
-    setFilteredData(
-      searchValue === ""
-        ? props.dataNotTeach
-        : props.dataNotTeach.filter((data) => {
-            return Object.keys(data).some((field) => {
-              return searchRegex.test(data[field].toString());
-            });
-          })
-    );
-  }, [searchValue]);
+    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
+    setFilteredData(searchValue === '' ? props.dataTimetable : props.dataTimetable.filter((data) => {
+      return Object.keys(data).some((field) => {
+        return searchRegex.test(data[field].toString());
+      });
+
+    }))
+  }, [searchValue])
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
