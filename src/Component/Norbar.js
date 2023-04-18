@@ -2,41 +2,36 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
-
-const pagesAnonymous = [
-    { key: 1, name: 'เข้าสู่ระบบ', path: '/SignIn' },
-    { key: 2, name: 'สมัครสมาชิก', path: '/Singup' },
-];
+import logo from '../logo.png';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import Stack from '@mui/material/Stack';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const pagesTeacher = [
     { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน', path: '/Teacher/SelectSubject' },
     { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Teacher/NotTeach' },
     { key: 3, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
-    { key: 4, name: 'การจัดการวันลา', path: '/Teacher/LeaveTeach' },
+    { key: 4, name: 'การจัดการวันงดสอน', path: '/Teacher/LeaveTeach' },
     { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
 
 ];
 
 const pagesStaff = [
-    { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน(เจ้าหน้าที่)', path: '/Staff/SelectSubject' },
-    { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน(เจ้าหน้าที่)', path: '/Staff/NotTeach' },
-    { key: 3, name: 'การจัดการรายวิชา(เจ้าหน้าที่)', path: '/Staff/Timetable' },
-];
-
-const userMenu = [
-    { key: 1, name: 'ออกจากระบบ', path: '/SignIn' },
+    { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน', path: '/Staff/SelectSubject' },
+    { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Staff/NotTeach' },
+    { key: 3, name: 'การจัดการรายวิชา', path: '/Staff/Timetable' },
 ];
 
 export default function Norbar() {
@@ -65,84 +60,104 @@ export default function Norbar() {
 
 function MenuAnonymous() {
     return (
-        <AppBar position="static">
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {
-                            pagesAnonymous.map((page) => (
-                                <Button
-                                    key={page.key}
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
-                                >
-                                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
-                                </Button>
-                            ))
-                        }
-                    </Box>
-                </Toolbar>
-            </Container>
-        </AppBar>
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static">
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Box sx={{ p: 1 }}>
+                                <img src={logo} alt="Logo" width="51" height="51" />
+                            </Box>
+                            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} >
+                                <Typography variant="h4" textAlign="center"> การจัดตารางสอนและจัดการสอนแทน </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }} >
+                                <Typography variant="h6" textAlign="center"> การจัดตารางสอนและจัดการสอนแทน </Typography>
+                            </Box>
+                        </Stack>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+        </Box>
     );
 }
 
 function MenuTeacher() {
 
-    const SignOutEf = () => {
-        localStorage.removeItem("member_id");
-        localStorage.removeItem("name");
-        localStorage.removeItem("role");
-        localStorage.removeItem("exp");
-        localStorage.removeItem("token");
-        window.location.reload(true);
+    const [state, setState] = React.useState({
+        left: false,
+    });
+
+    const toggleDrawer = (side, open) => event => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        setState({ ...state, [side]: open });
     };
+
+    const sideList = side => (
+
+        <Box
+            sx={{ width: 250 }}
+            role="presentation"
+            onClick={toggleDrawer(side, false)}
+            onKeyDown={toggleDrawer(side, false)}
+        >
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton >
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <Link style={{ textDecoration: "none", }} to={'/'} >
+                            <ListItemText primary={"หน้าหลัก"} sx={{ color: "#4D4D4D" }} />
+                        </Link>
+                    </ListItemButton>
+                </ListItem>
+                {
+                    pagesTeacher.map((page) => (
+                        <ListItem key={page.key} disablePadding>
+                            <ListItemButton >
+                                <Link style={{ textDecoration: "none", }} to={page.path} >
+                                    <ListItemText primary={page.name} sx={{ color: "#4D4D4D" }} />
+                                </Link>
+                            </ListItemButton>
+                        </ListItem>
+
+                    ))
+                }
+            </List>
+        </Box>
+    );
 
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            color="inherit"
-                        >
-                            <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon href="/" /></Link>
-                        </IconButton>
-                        
-                        {
-                            pagesTeacher.map((page) => (
-                                <Button
-                                    key={page.key}
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
-                                >
-                                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
-                                </Button>
-                            ))
-                        }
-                        <Box sx={{ flexGrow: 1, alignItems: 'center' , display: { xs: 'none', md: 'flex' }, flexDirection: "row-reverse" }}>
-                        <Box>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block', height: '50px', }} >
+                                <Link style={{ textDecoration: "none", color: "white" }} to='/' > <HomeIcon /></Link>
+                            </Button>
                             {
-                                userMenu.map((page) => (
-                                    <Button key={page.key} sx={{  color: 'white', display: 'block' }} onClick={SignOutEf}>
-                                        <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >
-                                            {page.name}
-                                        </Link>
+                                pagesTeacher.map((page) => (
+                                    <Button color="inherit" key={page.key} sx={{ my: 2, color: 'white', display: 'block', height: '50px', }} >
+                                        <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
                                     </Button>
                                 ))
                             }
-                        </Box>
-                        <Box>
-                            {localStorage.getItem('name')}
-                        </Box>
-                        <Tooltip title="Open settings">
-                            <IconButton >
-                                <Avatar alt="Teacher" src="/static/images/avatar/3.jpg" />
-                            </IconButton>
-                        </Tooltip>
+                        </Stack>
                     </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Button color="inherit" sx={{ color: "white", alignItems: 'center', }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
+                        </Stack >
+                        <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}>
+                            {sideList('left')}
+                        </Drawer>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, alignItems: 'center', display: 'flex', flexDirection: "row-reverse" }}>
+                        <UserMenu />
                     </Box>
                 </Toolbar>
             </Container>
@@ -152,59 +167,79 @@ function MenuTeacher() {
 
 function MenuStaff() {
 
-    const SignOutEf = () => {
-        localStorage.removeItem("member_id");
-        localStorage.removeItem("name");
-        localStorage.removeItem("role");
-        localStorage.removeItem("exp");
-        localStorage.removeItem("token");
-        window.location.reload(true);
+    const [state, setState] = React.useState({
+        left: false,
+    });
+
+    const toggleDrawer = (side, open) => event => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        setState({ ...state, [side]: open });
     };
+
+    const sideList = side => (
+
+        <Box
+            sx={{ width: 250 }}
+            role="presentation"
+            onClick={toggleDrawer(side, false)}
+            onKeyDown={toggleDrawer(side, false)}
+        >
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton >
+                        <Link style={{ textDecoration: "none",  }} to={'/'} >
+                            <ListItemText primary={"หน้าหลัก"} sx={{ color: "#4D4D4D" }} />
+                        </Link>
+                    </ListItemButton>
+                </ListItem>
+                {
+                    pagesStaff.map((page) => (
+                        <ListItem key={page.key} disablePadding>
+                            <ListItemButton >
+                                <Link style={{ textDecoration: "none", }} to={page.path} >
+                                    <ListItemText primary={page.name} sx={{ color: "#4D4D4D" }} />
+                                </Link>
+                            </ListItemButton>
+                        </ListItem>
+
+                    ))
+                }
+            </List>
+        </Box>
+    );
 
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            color="inherit"
-                        >
-                            <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon /></Link>
-                        </IconButton>
-                        {
-                            pagesStaff.map((page) => (
-                                <Button key={page.key} sx={{ my: 2, color: 'white', display: 'block' }}>
-                                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >
-                                        {page.name}
-                                    </Link>
-                                </Button>
-                            ))
-                        }
-                    </Box>
-                    <Box sx={{ flexGrow: 1, alignItems: 'center' , display: { xs: 'none', md: 'flex' }, flexDirection: "row-reverse" }}>
-                        <Box>
+                    <Box sx={{ flexGrow: 1, alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block' , height: '50px', }} >
+                                <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon /></Link>
+                            </Button>
                             {
-                                userMenu.map((page) => (
-                                    <Button key={page.key} sx={{  color: 'white', display: 'block' }} onClick={SignOutEf}>
+                                pagesStaff.map((page) => (
+                                    <Button color="inherit" key={page.key} sx={{ my: 2, color: 'white', display: 'block', height: '50px', }}>
                                         <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >
                                             {page.name}
                                         </Link>
                                     </Button>
                                 ))
                             }
-                        </Box>
-                        <Box>
-                            {localStorage.getItem('name')}
-                        </Box>
-                        <Tooltip title="Open settings">
-                            <IconButton >
-                                <Avatar alt="Staff" src="/static/images/avatar/3.jpg" />
-                            </IconButton>
-                        </Tooltip>
+                        </Stack>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Button color="inherit" sx={{ color: "white", alignItems: 'center',  }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
+                        </Stack >
+                        <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}>
+                            {sideList('left')}
+                        </Drawer>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, alignItems: 'center', display: 'flex', flexDirection: "row-reverse" }}>
+                        <UserMenu />
                     </Box>
                 </Toolbar>
             </Container>
@@ -212,186 +247,76 @@ function MenuStaff() {
     );
 }
 
-
-function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
+function UserMenu() {
 
     const SignOutEf = () => {
         localStorage.removeItem("member_id");
+        localStorage.removeItem("name");
         localStorage.removeItem("role");
         localStorage.removeItem("exp");
         localStorage.removeItem("token");
-        window.location.reload(true);
+        window.location.href = '/SignIn';
     };
 
+    const [state, setState] = React.useState({
+        right: false,
+    });
 
-    const showByRole = () => {
+    const toggleDrawer = (side, open) => event => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        setState({ ...state, [side]: open });
+    };
 
-        const role = JSON.parse(localStorage.getItem('role'));
-
-        const isExpired = (Date.now() / 1000) > JSON.parse(localStorage.getItem('exp'));
-
-        if (!isExpired) {
-            if (role === 1) {
-                return pagesTeacher.map((page) => (
-                    <Button
-                        key={page.key}
-                        sx={{ my: 2, color: 'white', display: 'block' }}
-                    >
-                        <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
-                    </Button>
-                ))
-            } else if (role === 2) {
-                return pagesStaff.map((page) => (
-                    <Button
-                        key={page.key}
-                        sx={{ my: 2, color: 'white', display: 'block' }}
-                    >
-                        <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
-                    </Button>
-                ))
-            }
+    const role = () => {
+        if (localStorage.getItem('role') === "Teacher") {
+            return "(อาจารย์)";
+        } else if (localStorage.getItem('role') === "Staff") {
+            return "(เจ้าหน้าที่)";
         } else {
-            return pagesAnonymous.map((page) => (
-                <Button
-                    key={page.key}
-                    sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                    <Link style={{ textDecoration: "none", color: "white" }} to={page.path} >{page.name}</Link>
-                </Button>
-            ))
+            return " ";
         }
 
-
     };
 
+    const sideList = side => (
+
+        <Box
+            sx={{ width: 250 }}
+            role="presentation"
+            onClick={toggleDrawer(side, false)}
+            onKeyDown={toggleDrawer(side, false)}
+        >
+            <List>
+                <ListItem key={1} disablePadding>
+                    <ListItemButton onClick={SignOutEf}>
+                        <ListItemIcon>
+                            <ExitToAppIcon />
+                        </ListItemIcon>
+                        <Link style={{ textDecoration: "none", }} to={'/SignIn'} >
+                            <ListItemText primary={"ออกจากระบบ"} sx={{ color: "#4D4D4D" }} />
+                        </Link>
+                    </ListItemButton>
+                </ListItem>
+            </List>
+        </Box>
+    );
 
     return (
-        <AppBar position="static">
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <IconButton
-                        size="large"
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        color="inherit"
-                    >
-                        <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon href="/" /></Link>
-                    </IconButton>
-
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: 'block', md: 'none' },
-                            }}
-                        >
-                            {/*pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
-                                </MenuItem>
-                            ))*/}
-                        </Menu>
-                    </Box>
-                    <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component="a"
-                        href=""
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        LOGO
-                    </Typography>
-
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {showByRole()}
-                    </Box>
-
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {
-                                userMenu.map((page) => (
-                                    <Button key={page.key} sx={{ my: 2, color: 'black', display: 'block' }} onClick={SignOutEf}>
-                                        <Link style={{ textDecoration: "none", color: "black" }} to={page.path} >
-                                            {page.name}
-                                        </Link>
-                                    </Button>
-                                ))
-                            }
-                        </Menu>
-                    </Box>
-                </Toolbar>
-            </Container>
-        </AppBar>
+        <Box  >
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                <Typography>
+                    {localStorage.getItem('name')}
+                </Typography>
+                <Typography>
+                    {role()}
+                </Typography>
+                <Button color="inherit" sx={{ color: "white", alignItems: 'center', height: '50px', }} onClick={toggleDrawer('right', true)}> <SettingsIcon /> </Button>
+            </Stack >
+            <Drawer anchor="right" open={state.right} onClose={toggleDrawer('right', false)}>
+                {sideList('right')}
+            </Drawer>
+        </Box>
     );
 }
-

@@ -1,6 +1,7 @@
 import React, { Component, useState, useEffect } from 'react'
 import APIService from '../../Service/FernAPIService'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
+import { LeaveTeachAPIServiceTeacher, LeaveTeachAPIServiceStaff } from '../../Service/LeaveTeachAPIService';
 import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 import CardDatePicker from '../../Component/CardDatePicker';
@@ -38,7 +39,7 @@ export default class LeaveTeach extends Component {
   }
 
   updateState = () => {
-    APIService.showAllTeacherLeaveTeach().then((res) => {
+    LeaveTeachAPIServiceTeacher.getAllTeacherLeaveTeach().then((res) => {
       this.setState({ dataLeaveTeach: res.data });
     })
   }
@@ -46,7 +47,7 @@ export default class LeaveTeach extends Component {
   render() {
     return (
       <div>
-        <HeaderBox title={"การจัดการการลา"} />
+        <HeaderBox title={"การจัดการวันงดสอน"} />
         <CreationBox title={"เมนูสร้างรายการ"} updateState={this.updateState.bind(this)} />
         <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataLeaveTeach={this.state.dataLeaveTeach} />
       </div>
@@ -80,7 +81,7 @@ function CreationBox(props) {
   ]
 
   //state
-  const [submitButtonState, setSubmitButtonState] = useState(true);
+  const [confirmButtonState, setConfirmButtonState] = useState(true);
   const [dateStartSelected, setDateStartSelected] = useState(null);
   const [dateEndSelected, setDateEndSelected] = useState(null);
   const [semesterSelected, setSemesterSelected] = useState(null);
@@ -116,6 +117,7 @@ function CreationBox(props) {
   };
 
   const handleCancel = () => {
+    setYearSelected(null);
     setDateStartSelected(null);
     setDateEndSelected(null);
     setSemesterSelected(null);
@@ -123,8 +125,9 @@ function CreationBox(props) {
   };
 
   const handleSubmit = () => {
-    APIService.createLeaveTeach(semesterSelected, yearSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
+    LeaveTeachAPIServiceTeacher.createLeaveTeach(semesterSelected, yearSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
       props.updateState();
+      setYearSelected(null);
       setDateStartSelected(null);
       setDateEndSelected(null);
       setSemesterSelected(null);
@@ -135,12 +138,12 @@ function CreationBox(props) {
   const confirmTiggleUseEffect = () => {
     if (dateStartSelected !== null && dateEndSelected !== null && semesterSelected !== null && reasonNote !== null) {
       if (dateStartSelected === null || dateEndSelected === null || semesterSelected === '' || reasonNote === '') {
-        setSubmitButtonState(true)
+        setConfirmButtonState(true)
       } else {
-        setSubmitButtonState(false)
+        setConfirmButtonState(false)
       }
     } else {
-      setSubmitButtonState(true)
+      setConfirmButtonState(true)
     }
   }
 
@@ -169,7 +172,7 @@ function CreationBox(props) {
               <Button color="error" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
             </Box>
             <Box component="span" sx={{ pr: 2 }} >
-              <Button color="success" disabled={submitButtonState} endIcon={<SendIcon />} onClick={handleSubmit} variant="contained"  >บันทึก</Button>
+              <Button color="success" disabled={confirmButtonState} endIcon={<SendIcon />} onClick={handleSubmit} variant="contained"  >บันทึก</Button>
             </Box>
           </Grid>
         </Grid>
@@ -227,6 +230,7 @@ function MenagementBox(props) {
   };
 
   const handleChangDateEnd = (value) => {
+    console.log(value);
     setDateEndSelected(format(new Date(value), 'yyyy-MM-dd').toString());
   };
 
@@ -236,28 +240,44 @@ function MenagementBox(props) {
 
   const handleCancel = () => {
     setYearSelected(null);
+    setSemesterSelected(null);
     setDateStartSelected(null);
     setDateEndSelected(null);
-    setSemesterSelected(null);
     setReasonNote(null);
     setEditTemp(null);
   };
 
+  const convertDate = (dateStr) => {
+    const dateArr = dateStr.split('-');
+    const yearNum = parseInt(dateArr[0]);
+    const year = yearNum - 543;
+    return year + "-" + dateArr[1] + "-" + dateArr[2];
+  }
+
   const handleEdit = (dataInside) => () => {
-    setEditTemp(dataInside.id); 
-    setYearSelected(dataInside.years); // แก้การแสดงผลปี
-    setDateStartSelected(dataInside.semester);
-    setDateEndSelected(dataInside.dateStart);
-    setSemesterSelected(dataInside.dateEnd);
+
+    setEditTemp(dataInside.id);
+    setYearSelected(parseInt(dataInside.years) - 543);
+    setSemesterSelected(dataInside.semester);
+    setDateStartSelected(format(new Date(convertDate(dataInside.dateStart)), 'yyyy-MM-dd').toString());
+    setDateEndSelected(format(new Date(convertDate(dataInside.dateEnd)), 'yyyy-MM-dd').toString());
     setReasonNote(dataInside.note);
+
+    console.log(convertDate(dataInside.dateStart));
+
   }
 
   const handleDelete = (dataInside) => () => {
-
+    LeaveTeachAPIServiceTeacher.deleteTeacherLeaveTeach(dataInside.id).then(() => {
+      props.updateState();
+    });
   }
 
   const handleConfirm = (dataInside) => () => {
-
+    //@todo แก้บัคการ update date
+    LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, dataInside.years, dataInside.semester, dataInside.dateStart, dataInside.dateEnd, dataInside.note).then(() => {
+      props.updateState();
+    });
   }
 
   const confirmTiggleUseEffect = () => {
@@ -275,6 +295,11 @@ function MenagementBox(props) {
   //sort and search
 
   const headCells = [
+    {
+      id: 'id',
+      numeric: true,
+      label: 'รหัส รายการงดสอน',
+    },
     {
       id: 'years',
       numeric: true,
@@ -447,11 +472,12 @@ function MenagementBox(props) {
                       if (editTemp !== row.id) {
                         return (
                           <TableRow key={row.id} >
-                            <TableCell width="20%" id={labelId} scope="row" align="left" >{row.years}</TableCell>
-                            <TableCell width="20%" align="left">{row.semester}</TableCell>
+                            <TableCell width="15%" id={labelId} scope="row" align="left" >{row.id}</TableCell>
+                            <TableCell width="15%" id={labelId} scope="row" align="left" >{row.years}</TableCell>
+                            <TableCell width="15%" align="left">{row.semester}</TableCell>
                             <TableCell width="20%" align="left">{row.dateStart}</TableCell>
                             <TableCell width="20%" align="left">{row.dateEnd}</TableCell>
-                            <TableCell width="20%" align="left">{row.note}</TableCell>
+                            <TableCell width="15%" align="left">{row.note}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
                                 <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
@@ -480,7 +506,7 @@ function MenagementBox(props) {
                             </TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
+                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={submitButtonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
                                 <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
                               </Stack>
                             </TableCell>

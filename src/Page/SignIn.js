@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import { CardHeader, Box, TextField, Card, Button, Grid, Container, Typography , Stack } from '@mui/material';
+import { CardHeader, Box, TextField, Card, Button, Grid, Container, Typography, Stack } from '@mui/material';
 import CardTextField from '../Component/CardTextField'
 import MemberAPIService from '../Service/MemberAPIService';
 
@@ -19,7 +19,7 @@ function UserSignIn(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        MemberAPIService.login(username, password)
+        MemberAPIService.login(username, password);
     };
 
     const [username, setUsername] = useState("");
@@ -28,7 +28,7 @@ function UserSignIn(props) {
     return (
         <Container sx={{ p: 2 }} maxWidth="sm">
             <Card sx={{ boxShadow: 5, }}>
-                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h6' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ p: 2 }} >
 
                     <Grid item xs={12}>
@@ -40,11 +40,13 @@ function UserSignIn(props) {
                     <Grid item xs={12}>
                         <Stack direction="row" spacing={2}>
                             <Button sx={{ width: 125 }} color="primary" onClick={handleSubmit} variant="contained" >
-                                <Link style={{ textDecoration: "none", color: "white" }} to={"/Home"} >
                                     เข้าสู่ระบบ
+                            </Button>
+                            <Button sx={{ width: 125 }} color="inherit" variant="contained" >
+                                <Link style={{ textDecoration: "none", color: "black" }} to={"/Home"} >
+                                    สมัครสมาชิก
                                 </Link>
                             </Button>
-                            <Button sx={{ width: 125 }} color="inherit" variant="contained" >สมัครสมาชิก</Button>
                         </Stack>
                     </Grid>
                 </Grid>
