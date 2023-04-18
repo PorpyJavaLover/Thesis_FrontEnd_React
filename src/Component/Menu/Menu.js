@@ -83,9 +83,9 @@ export default function Norbar() {
 
   const roleSelecction = () => {
     if (!isExpired) {
-      if (role === "Teacher") {
+      if (role === "ROLE_TEACHER") {
         return <MenuTeacher />;
-      } else if (role === "Staff") {
+      } else if (role === "ROLE_STAFT") {
         return <MenuStaff />;
       }
     } else {
@@ -176,6 +176,7 @@ function MenuTeacher() {
     }
     setState({ ...state, [side]: open });
   };
+
   const sideList = (side) => (
     <Box
       sx={{ width: 250 }}
@@ -206,26 +207,11 @@ function MenuTeacher() {
       </List>
     </Box>
   );
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <StyledToolbar>
-          <Avatar
-            src={car}
-            style={{ width: "90px", height: "90px" }}
-            sx={{ mr: 4, marginTop: 1 }}
-          />
-
-          <Typography
-            variant="h7"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, marginTop: 1 }}
-          >
-            <p>ระบบจัดตารางสอนและสอนแทน</p>
-            <p>Scheduling Teach And Replacement Teacher System</p>
-          </Typography>
-
+    <AppBar position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <Button
@@ -287,9 +273,9 @@ function MenuTeacher() {
           >
             <UserMenu />
           </Box>
-        </StyledToolbar>
-      </AppBar>
-    </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
 
