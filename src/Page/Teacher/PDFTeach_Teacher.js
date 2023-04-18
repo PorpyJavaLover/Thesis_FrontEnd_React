@@ -26,96 +26,140 @@ import Stack from '@mui/material/Stack';
 
 export default class ReplaceTeach extends Component {
 
-  constructor(props) {
-    super(props);
-    this.updateState = this.updateState.bind(this);
-    this.state = {
-      dataReplaceTeach: []
+    constructor(props) {
+        super(props);
+        this.updateState = this.updateState.bind(this);
+        this.state = {
+            dataReplaceTeach: []
+        }
     }
-  }
 
-  componentDidMount() {
-    this.updateState()
-  }
+    componentDidMount() {
+        this.updateState()
+    }
 
-  updateState = () => {
-    ReplaceTeachAPIServiceTeacher.getAll().then((res) => {
-      this.setState({ dataReplaceTeach: res.data });
-      console.log(res.data);
-    })
-  }
+    updateState = () => {
+        ReplaceTeachAPIServiceTeacher.getAll().then((res) => {
+            this.setState({ dataReplaceTeach: res.data });
+            console.log(res.data);
+        })
+    }
 
-  render() {
-    return (
-      <div>
-        <HeaderBox title={"การจัดการPDF"} />
-        <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataReplaceTeach={this.state.dataReplaceTeach} />
-      </div>
-    )
-  }
+    render() {
+        return (
+            <div>
+                <HeaderBox title={"การจัดการPDF"} />
+                <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataReplaceTeach={this.state.dataReplaceTeach} />
+            </div>
+        )
+    }
 }
 
 function HeaderBox(props) {
-  return (
-    <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
-      <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
-    </Box>
-  )
+    return (
+        <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
+            <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
+        </Box>
+    )
 }
 
 function MenagementBox(props) {
 
-  const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getFullYear();
 
-  const semester = [
-    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
-    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
-    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
-  ]
+    const semester = [
+        { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
+        { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
+        { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
+    ]
 
-  //state
 
-  const [submitButtonState, setSubmitButtonState] = useState(true);
-  const [memberReplaceSelected, setMemberReplace] = useState(null);
-  const [editTemp, setEditTemp] = useState(null);
+    const dataTestA = [
+        {
+           
+            "nameTeachingShort": "ดร.",
+            "nameTeachingFirst": "เกตุกญจน์",
+            "nameTeachingLast": "ไชยขันธุ์",
+            "oganize": "วิศวกรรมคอมพิวเตอร์",
+            "dateStart": "21",
+            "monthStart": "ธันวาคม",
+            "yearsStart": "2565",
+            "dateEnd": "28",
+            "monthEnd": "ธันวาคม",
+            "yearsEnd": "2565",
+            "note": "ไปราชการ",
+            "nameReplaceShort": "นาย",
+            "nameReplaceFirst": "สนั่น",
+            "nameReplaceLast": "จันทร์พรม",
+        }
+    ]
 
-  //function
+    const dataTestB = [
+        {
+            "course_code": "00-000-021-001",
+            "course_title": "ทักษะการรู้สารสนเทศ",
+            "group_name": "CPE.63231",
+            "date": "พฤ 22  ธ.ค. 65 ",
+            "courseLect": "1",
+            "coursePerf": "3",
+            "courseSum": "4",
+            "time": "1-4",
+        },
+        {
+            "course_code": "00-000-021-001",
+            "course_title": "ทักษะการรู้สารสนเทศ",
+            "group_name": "CPE.63231",
+            "date": "พฤ 22  ธ.ค. 65 ",
+            "courseLect": "0",
+            "coursePerf": "3",
+            "courseSum": "3",
+            "time": "6-8",
+        },
+    ]
 
-  useEffect(() => {
-    confirmTiggleUseEffect();
-  }, [memberReplaceSelected]);
+    //state
 
-  const handleChangMemberReplace = (event) => {
+    const [submitButtonState, setSubmitButtonState] = useState(true);
+    const [memberReplaceSelected, setMemberReplace] = useState(null);
+    const [editTemp, setEditTemp] = useState(null);
 
-  };
+    //function
 
-  const handleCancel = () => {
+    useEffect(() => {
+        confirmTiggleUseEffect();
+    }, [memberReplaceSelected]);
 
-  };
-  const handleEdit = (dataInside) => () => {
+    const handleChangMemberReplace = (event) => {
 
-  }
+    };
 
-  const handleDelete = (dataInside) => () => {
-   
-  }
+    const handleCancel = () => {
 
-  const handleConfirm = (dataInside) => () => {
-  
-  }
+    };
+    const handleEdit = (dataInside) => () => {
 
-  const confirmTiggleUseEffect = () => {
-    
-  }
+    }
 
-  //render
+    const handleDelete = (dataInside) => () => {
 
-  return (
-    <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
-      <Card sx={{ boxShadow: 5, }}>
-        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
-         Hello World
-      </Card>
-    </Container>
-  )
+    }
+
+    const handleConfirm = (dataInside) => () => {
+
+    }
+
+    const confirmTiggleUseEffect = () => {
+
+    }
+
+    //render
+
+    return (
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+            <Card sx={{ boxShadow: 5, }}>
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                Hello World
+            </Card>
+        </Container>
+    )
 }
