@@ -14,14 +14,14 @@ import {
   TableBody,
   Paper,
 } from "@mui/material";
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  PDFViewer,
-} from "@react-pdf/renderer";
+// import {
+//   Document,
+//   Page,
+//   Text,
+//   View,
+//   StyleSheet,
+//   PDFViewer,
+// } from "@react-pdf/renderer";
 import { border, style } from "@mui/system";
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };

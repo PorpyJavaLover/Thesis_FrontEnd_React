@@ -1,59 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { Component, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
+  CardHeader,
+  Box,
+  TextField,
   Card,
   Button,
-  TextField,
   Grid,
-  Typography,
   Container,
-  Snackbar,
+  Typography,
+  Stack,
   CardContent,
-  Divider,
-  Form,
-  Label,
 } from "@mui/material";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Root, Header, Nav, Content, Footer, presets } from "mui-layout";
-import APIService from "../../Service/APIService";
-import axios from "axios";
-import jwt_decode from "jwt-decode";
+import CardTextField from "../../Component/Card/CardTextField";
+import MemberAPIService from "../../Service/MemberAPIService";
 
-const API_REST_URL = "http://192.168.91.120:8080";
-// const API_REST_URL = "http://192.168.3.248:8080";
+export default class Login extends Component {
+  render() {
+    return (
+      <div>
+        <UserSignIn title={"เข้าสู่ระบบ"} />
+      </div>
+    );
+  }
+}
 
-const Login = () => {
+function UserSignIn(props) {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    MemberAPIService.login(username, password);
+  };
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState();
-  const navigate = useNavigate();
-
-  // console.log(username,password)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const body = {
-      username: username,
-      password: password,
-    };
-    axios
-      .post(API_REST_URL + "/member/anonymous/login", body)
-      .then((response) => {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-        localStorage.setItem(
-          "user",
-          JSON.stringify(jwt_decode(JSON.parse(localStorage.getItem("token"))))
-        );
-        <Navigate to="/login" />;
-      })
-      .then((res) => {
-        message.success("ชื่อผู้ใช้ถูกต้อง");
-        navigate("/homepages");
-      })
-      .catch((error) => {
-        // message.error("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
-      });
-  };
 
   return (
     <div>
@@ -77,6 +56,15 @@ const Login = () => {
       >
         <CardContent>
           <Container sx={{ p: 2 }} maxWidth="sm">
+            {/* <CardHeader
+              title={props.title}
+              titleTypographyProps={{ fontWeight: "bold", variant: "h5" }}
+              sx={{
+                backgroundColor: "primary.main",
+                color: "primary.contrastText",
+                p: 1,
+              }}
+            /> */}
             <div>
               <Typography
                 component="h1"
@@ -85,43 +73,46 @@ const Login = () => {
               >
                 กรุณาเข้าสู่ระบบ
               </Typography>
-              <form onSubmit={handleSubmit}>
-                <Grid container sx={{ pt: 2 }} spacing={2}>
-                  <Grid item xs={12}>
-                    <TextField
-                      type="text"
-                      placeholder="Username"
-                      name="username"
-                      variant="outlined"
-                      required
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      type="password"
-                      placeholder="Password"
-                      name="password"
-                      variant="outlined"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sx={{ textAlign: "center" }}>
-                    <Button type="success">เข้าสู่ระบบ</Button>
-                  </Grid>
+              <Grid container spacing={2} sx={{ p: 2 }}>
+                <Grid item xs={12}>
+                  <CardTextField
+                    labelPara="ชื่อสมาชิก"
+                    onChangePara={(e) => setUsername(e.target.value)}
+                    required
+                    valuePara={username}
+                  />
                 </Grid>
-              </form>
-              {message && <p>{message}</p>}
-              {error && <p>Error: {error}</p>}
+                <Grid item xs={12}>
+                  <CardTextField
+                    labelPara="รหัสสมาชิก"
+                    typePara="password"
+                    onChangePara={(e) => setPassword(e.target.value)}
+                    required
+                    valuePara={password}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack direction="row" spacing={2}>
+                    <Button
+                      sx={{ textAlign: "center", float: "right" }}
+                      color="primary"
+                      onClick={handleSubmit}
+                      variant="contained"
+                    >
+                      <Link
+                        style={{ textDecoration: "none", color: "white" }}
+                        to={"/Home"}
+                      >
+                        เข้าสู่ระบบ
+                      </Link>
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Grid>
             </div>
           </Container>
         </CardContent>
       </Card>
     </div>
   );
-};
-
-export default Login;
+}

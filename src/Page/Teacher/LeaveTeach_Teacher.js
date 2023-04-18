@@ -1,27 +1,35 @@
-import React, { Component, useState, useEffect } from 'react'
-import APIService from '../../Service/FernAPIService'
-import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import { format } from 'date-fns';
-import CardDatePicker from '../../Component/CardDatePicker';
-import CardSelect from '../../Component/CardSelect'
-import CardTextField from '../../Component/CardTextField'
-import FullFeaturedCrudGrid from '../../Component/CardDataGrid';
-import Moment from 'react-moment';
-import SearchIcon from '@mui/icons-material/Search';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import TextField from '@mui/material/TextField';
-import PropTypes from 'prop-types';
-import { visuallyHidden } from '@mui/utils';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import SaveIcon from '@mui/icons-material/Save';
-import Stack from '@mui/material/Stack';
+import React, { Component, useState, useEffect } from "react";
+import APIService from "../../Service/FernAPIService";
+import {
+  CardHeader,
+  Box,
+  Card,
+  Button,
+  Grid,
+  Container,
+  Typography,
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import { format } from "date-fns";
+import CardDatePicker from "../../Component/Card/CardDatePicker";
+import CardSelect from "../../Component/Card/CardSelect";
+import CardTextField from "../../Component/Card/CardTextField";
+import FullFeaturedCrudGrid from "../../Component/Card/CardDataGrid";
+import Moment from "react-moment";
+import SearchIcon from "@mui/icons-material/Search";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
+import PropTypes from "prop-types";
+import { visuallyHidden } from "@mui/utils";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import SaveIcon from "@mui/icons-material/Save";
+import Stack from "@mui/material/Stack";
 
 export default class LeaveTeach extends Component {
   constructor(props) {
@@ -46,8 +54,15 @@ export default class LeaveTeach extends Component {
     return (
       <div>
         <HeaderBox title={"การจัดการการลา"} />
-        <CreationBox title={"เมนูสร้างรายการ"} updateState={this.updateState.bind(this)} />
-        <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataLeaveTeach={this.state.dataLeaveTeach} />
+        <CreationBox
+          title={"เมนูสร้างรายการ"}
+          updateState={this.updateState.bind(this)}
+        />
+        <MenagementBox
+          title={"เมนูจัดการรายการ"}
+          updateState={this.updateState.bind(this)}
+          dataLeaveTeach={this.state.dataLeaveTeach}
+        />
       </div>
     );
   }
@@ -108,7 +123,13 @@ function CreationBox(props) {
   };
 
   const handleSubmit = () => {
-    APIService.createLeaveTeach(semesterSelected, yearSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
+    APIService.createLeaveTeach(
+      semesterSelected,
+      yearSelected,
+      dateStartSelected,
+      dateEndSelected,
+      reasonNote
+    ).then(() => {
       props.updateState();
       setDateStartSelected(null);
       setDateEndSelected(null);
@@ -183,7 +204,12 @@ function CreationBox(props) {
             />
           </Grid>
           <Grid item xs={12}>
-            <CardTextField labelPara="เหตุผลที่งดสอน" onChangePara={handleChangNote} required valuePara={reasonNote} />
+            <CardTextField
+              labelPara="เหตุผลที่งดสอน"
+              onChangePara={handleChangNote}
+              required
+              valuePara={reasonNote}
+            />
           </Grid>
           <Grid item xs={12}>
             <Box component="span" sx={{ pr: 2 }}>
@@ -210,21 +236,20 @@ function CreationBox(props) {
 }
 
 function MenagementBox(props) {
-
   const currentYear = new Date().getFullYear();
 
   const yearOptions = [
-    { key: '1', value: currentYear, text: currentYear + 543 },
-    { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
-    { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
-    { key: '3', value: currentYear - 3, text: currentYear + 543 - 3 }
+    { key: "1", value: currentYear, text: currentYear + 543 },
+    { key: "2", value: currentYear - 1, text: currentYear + 543 - 1 },
+    { key: "3", value: currentYear - 2, text: currentYear + 543 - 2 },
+    { key: "3", value: currentYear - 3, text: currentYear + 543 - 3 },
   ];
 
   const semester = [
-    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
-    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
-    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
-  ]
+    { key: "1", value: "1", text: "ภาคการศึกษาที่ 1" },
+    { key: "2", value: "2", text: "ภาคการศึกษาที่ 2" },
+    { key: "3", value: "3", text: "ภาคการศึกษาฤดูร้อน" },
+  ];
 
   //state
 
@@ -243,7 +268,6 @@ function MenagementBox(props) {
     confirmTiggleUseEffect();
   }, [dateStartSelected, dateEndSelected, semesterSelected, reasonNote]);
 
-
   const handleChangYear = (event) => {
     setYearSelected(event.target.value);
   };
@@ -253,12 +277,11 @@ function MenagementBox(props) {
   };
 
   const handleChangDateStart = (value) => {
-    setDateStartSelected(format(new Date(value), 'yyyy-MM-dd').toString());
-
+    setDateStartSelected(format(new Date(value), "yyyy-MM-dd").toString());
   };
 
   const handleChangDateEnd = (value) => {
-    setDateEndSelected(format(new Date(value), 'yyyy-MM-dd').toString());
+    setDateEndSelected(format(new Date(value), "yyyy-MM-dd").toString());
   };
 
   const handleChangNote = (event) => {
@@ -275,75 +298,81 @@ function MenagementBox(props) {
   };
 
   const handleEdit = (dataInside) => () => {
-    setEditTemp(dataInside.id); 
+    setEditTemp(dataInside.id);
     setYearSelected(dataInside.years); // แก้การแสดงผลปี
     setDateStartSelected(dataInside.semester);
     setDateEndSelected(dataInside.dateStart);
     setSemesterSelected(dataInside.dateEnd);
     setReasonNote(dataInside.note);
-  }
+  };
 
-  const handleDelete = (dataInside) => () => {
+  const handleDelete = (dataInside) => () => {};
 
-  }
-
-  const handleConfirm = (dataInside) => () => {
-
-  }
+  const handleConfirm = (dataInside) => () => {};
 
   const confirmTiggleUseEffect = () => {
-    if (dateStartSelected !== null && dateEndSelected !== null && semesterSelected !== null && reasonNote !== null) {
-      if (dateStartSelected === null || dateEndSelected === null || semesterSelected === '' || reasonNote === '') {
-        setSubmitButtonState(true)
+    if (
+      dateStartSelected !== null &&
+      dateEndSelected !== null &&
+      semesterSelected !== null &&
+      reasonNote !== null
+    ) {
+      if (
+        dateStartSelected === null ||
+        dateEndSelected === null ||
+        semesterSelected === "" ||
+        reasonNote === ""
+      ) {
+        setSubmitButtonState(true);
       } else {
-        setSubmitButtonState(false)
+        setSubmitButtonState(false);
       }
     } else {
-      setSubmitButtonState(true)
+      setSubmitButtonState(true);
     }
-  }
+  };
 
   //sort and search
 
   const headCells = [
     {
-      id: 'years',
+      id: "years",
       numeric: true,
-      label: 'ปีการศึกษา',
+      label: "ปีการศึกษา",
     },
     {
-      id: 'semester',
+      id: "semester",
       numeric: true,
-      label: 'ภาคการศึกษา',
+      label: "ภาคการศึกษา",
     },
     {
-      id: 'dateStart',
+      id: "dateStart",
       numeric: true,
-      label: 'วันที่งดสอน',
+      label: "วันที่งดสอน",
     },
     {
-      id: 'dateEnd',
+      id: "dateEnd",
       numeric: true,
-      label: 'ถีงวันที่',
+      label: "ถีงวันที่",
     },
     {
-      id: 'note',
+      id: "note",
       numeric: true,
-      label: 'เหตุผลที่งดสอน',
+      label: "เหตุผลที่งดสอน",
     },
     {
-      id: 'option',
+      id: "option",
       numeric: true,
-      label: 'ตัวเลือก',
+      label: "ตัวเลือก",
     },
   ];
 
   const [filteredData, setFilteredData] = useState(props.dataLeaveTeach);
-  const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState("");
 
   const handleChange = (e) => {
-    setSearchValue(e.target.value)
-  }
+    setSearchValue(e.target.value);
+  };
 
   function EnhancedTableHead(props) {
     const { order, orderBy, onRequestSort } = props;
@@ -356,18 +385,20 @@ function MenagementBox(props) {
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
-              align={headCell.numeric ? 'left' : 'center'}
+              align={headCell.numeric ? "left" : "center"}
               sortDirection={orderBy === headCell.id ? order : false}
             >
               <TableSortLabel
                 active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
+                direction={orderBy === headCell.id ? order : "asc"}
                 onClick={createSortHandler(headCell.id)}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
                   </Box>
                 ) : null}
               </TableSortLabel>
@@ -379,22 +410,25 @@ function MenagementBox(props) {
   }
 
   function escapeRegExp(value) {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   }
 
   useEffect(() => {
     setFilteredData(props.dataLeaveTeach);
-  }, [props.dataLeaveTeach])
+  }, [props.dataLeaveTeach]);
 
   useEffect(() => {
-    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
-    setFilteredData(searchValue === '' ? props.dataLeaveTeach : props.dataLeaveTeach.filter((data) => {
-      return Object.keys(data).some((field) => {
-        return searchRegex.test(data[field].toString());
-      });
-
-    }))
-  }, [searchValue])
+    const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
+    setFilteredData(
+      searchValue === ""
+        ? props.dataLeaveTeach
+        : props.dataLeaveTeach.filter((data) => {
+            return Object.keys(data).some((field) => {
+              return searchRegex.test(data[field].toString());
+            });
+          })
+    );
+  }, [searchValue]);
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -407,7 +441,7 @@ function MenagementBox(props) {
   }
 
   function getComparator(order, orderBy) {
-    return order === 'desc'
+    return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
       : (a, b) => -descendingComparator(a, b, orderBy);
   }
@@ -424,47 +458,56 @@ function MenagementBox(props) {
     return stabilizedThis.map((el) => el[0]);
   }
 
-
-
   EnhancedTableHead.propTypes = {
     onRequestSort: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+    order: PropTypes.oneOf(["asc", "desc"]).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
   };
 
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('');
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("");
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
   //render
 
   return (
-    <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
-      <Card sx={{ boxShadow: 5, }}>
-        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
-        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+    <Container maxWidth="false" sx={{ pt: 2, pb: 2 }}>
+      <Card sx={{ boxShadow: 5 }}>
+        <CardHeader
+          title={props.title}
+          titleTypographyProps={{ fontWeight: "bold", variant: "h5" }}
+          sx={{
+            backgroundColor: "primary.main",
+            color: "primary.contrastText",
+            p: 1,
+          }}
+        />
+        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }}>
           <Grid item sm={12} xs={12}>
-            <TableContainer >
-              <Box dir="rtl" sx={{ pb: 3, display: 'flex', alignItems: 'flex-end', }}>
+            <TableContainer>
+              <Box
+                dir="rtl"
+                sx={{ pb: 3, display: "flex", alignItems: "flex-end" }}
+              >
                 <TextField
                   dir="ltr"
-                  sx={{ width: 300, }}
+                  sx={{ width: 300 }}
                   fullWidth
                   id="filled-flexible"
                   label="ค้นหา"
-                  value={searchValue || ''}
+                  value={searchValue || ""}
                   onChange={handleChange}
                   variant="standard"
                 />
                 <SearchIcon />
               </Box>
-              <Table sx={{ minWidth: 650, }} aria-label="simple table">
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <EnhancedTableHead
                   order={order}
                   orderBy={orderBy}
@@ -472,54 +515,123 @@ function MenagementBox(props) {
                   rowCount={filteredData.length}
                 />
                 <TableBody>
-                  {stableSort(filteredData, getComparator(order, orderBy))
-                    .map((row, index) => {
+                  {stableSort(filteredData, getComparator(order, orderBy)).map(
+                    (row, index) => {
                       const labelId = index;
                       if (editTemp !== row.id) {
                         return (
-                          <TableRow key={row.id} >
-                            <TableCell width="20%" id={labelId} scope="row" align="left" >{row.years}</TableCell>
-                            <TableCell width="20%" align="left">{row.semester}</TableCell>
-                            <TableCell width="20%" align="left">{row.dateStart}</TableCell>
-                            <TableCell width="20%" align="left">{row.dateEnd}</TableCell>
-                            <TableCell width="20%" align="left">{row.note}</TableCell>
+                          <TableRow key={row.id}>
+                            <TableCell
+                              width="20%"
+                              id={labelId}
+                              scope="row"
+                              align="left"
+                            >
+                              {row.years}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {row.semester}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {row.dateStart}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {row.dateEnd}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {row.note}
+                            </TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="inherit"
+                                  onClick={handleEdit(row)}
+                                  variant="contained"
+                                >
+                                  แก้ไข
+                                </Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="error"
+                                  endIcon={<DeleteForeverIcon />}
+                                  onClick={handleDelete(row)}
+                                  variant="contained"
+                                >
+                                  ลบ
+                                </Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
                         );
                       } else {
                         return (
-                          <TableRow key={row.id} >
+                          <TableRow key={row.id}>
                             <TableCell id={labelId} scope="row" align="left">
-                              <CardSelect labelPara="ปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangYear} valuePara={yearSelected} />
+                              <CardSelect
+                                labelPara="ปีการศึกษา"
+                                menuItemPara={yearOptions}
+                                onChangePara={handleChangYear}
+                                valuePara={yearSelected}
+                              />
                             </TableCell>
                             <TableCell align="left">
-                              <CardSelect labelPara="ภาคการศึกษา" menuItemPara={semester} onChangePara={handleChangSemester} valuePara={semesterSelected} />
+                              <CardSelect
+                                labelPara="ภาคการศึกษา"
+                                menuItemPara={semester}
+                                onChangePara={handleChangSemester}
+                                valuePara={semesterSelected}
+                              />
                             </TableCell>
                             <TableCell align="left">
-                              <CardDatePicker labelPara="วันที่งดสอน" onChangePara={handleChangDateStart} valuePara={dateStartSelected} />
+                              <CardDatePicker
+                                labelPara="วันที่งดสอน"
+                                onChangePara={handleChangDateStart}
+                                valuePara={dateStartSelected}
+                              />
                             </TableCell>
                             <TableCell align="left">
-                              <CardDatePicker labelPara="ถึงวันที่" onChangePara={handleChangDateEnd} valuePara={dateEndSelected} />
+                              <CardDatePicker
+                                labelPara="ถึงวันที่"
+                                onChangePara={handleChangDateEnd}
+                                valuePara={dateEndSelected}
+                              />
                             </TableCell>
                             <TableCell align="left">
-                              <CardTextField labelPara="เหตุผลที่งดสอน" onChangePara={handleChangNote} required valuePara={reasonNote} />
+                              <CardTextField
+                                labelPara="เหตุผลที่งดสอน"
+                                onChangePara={handleChangNote}
+                                required
+                                valuePara={reasonNote}
+                              />
                             </TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
-                                <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="success"
+                                  endIcon={<SaveIcon />}
+                                  disabled={buttonState}
+                                  onClick={handleConfirm(row)}
+                                  variant="contained"
+                                >
+                                  ยืนยัน
+                                </Button>
+                                <Button
+                                  sx={{ width: 75 }}
+                                  color="inherit"
+                                  onClick={handleCancel}
+                                  variant="contained"
+                                >
+                                  ยกเลิก
+                                </Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
-                        )
+                        );
                       }
-                    })
-                  }
+                    }
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -527,5 +639,5 @@ function MenagementBox(props) {
         </Grid>
       </Card>
     </Container>
-  )
+  );
 }

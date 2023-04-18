@@ -23,7 +23,7 @@ import { Link } from "react-router-dom";
 //import Link from "@material-ui/core";
 // import { PDF } from "./Document/PDF";
 import { PDFExport, savePDF } from "@progress/kendo-react-pdf";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
+// import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { useNavigate } from "react-router-dom";
 
 import { useReactToPrint } from "react-to-print";
@@ -126,7 +126,7 @@ export default function TableExampleApprove() {
       <div>
         <div style={{ display: "none" }}>
           <ComponentToPrint ref={componentRefPdf} />
-          <ReactHTMLTableToExcel ref={componentRefExcel} />
+          {/* <ReactHTMLTableToExcel ref={componentRefExcel} /> */}
         </div>
         <div>
           <Button

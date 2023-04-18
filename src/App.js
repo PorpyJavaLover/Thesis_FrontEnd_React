@@ -1,41 +1,69 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./Page/Home";
+import "./App.css";
+import Home from "./Page/Homepages/index";
 import SelectSubjectTeacher from "./Page/Teacher/SelectSubject_Teacher";
-import TimetableTeacher from "./Page/Staff/Timetable_Staff";
+import TimetableTeacher from "./Page/Teacher/Timetable_Teacher";
+import TimetableStaff from "./Page/Staff/Timetable_Staff";
 import SelectSubjectStaff from "./Page/Staff/SelectSubject_Staff";
 import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
+import SelectNotTeachStaff from "./Page/Staff/NotTeach_Staff";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
-import Replace2 from "./Page/Replace2";
-import Singin from "./Page/Singin";
-import Singup from "./Page/Singup";
-import TableExampleApprove from "./Page/TableExampleApprove";
-import "./App.css";
-import Navbor from "./Component/Navbor";
-import Norbar from "./Component/Norbar";
-import Navbar from "./Component/Navbar";
+import SignIn from "./Page/SignIn";
+import Error404 from "./Page/Error404";
+import PrivateRoutes from "./Util/PrivateRoutes";
+import TeacherRoutes from "./Util/TeacherRoutes";
+import StaffRoutes from "./Util/StaffRoutes";
+import Navbar from "./Component/Menu/Menu";
+import ViewReplace from "./Page/Replace/ViewReplce";
+import InputReplace from "./Page/Replace/InputReplace";
+import EditReplace from "./Page/Replace/EditReplace";
+import Login from "./Page/Login/Login";
 
-const App = () => {
-  const { basename } = useContext(MyContext);
-  // console.log(basename);
+export default function App() {
   return (
     <BrowserRouter>
-      <Norbar />
+      <Navbar />
+      <br />
+      <br />
+      <br />
+      <br />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<PrivateRoutes />}>
+          <Route element={<TeacherRoutes />}>
+            <Route
+              path="/Teacher/SelectSubject"
+              element={<SelectSubjectTeacher />}
+            />
+            <Route path="/Teacher/Timetable" element={<TimetableTeacher />} />
+            <Route
+              path="/Teacher/NotTeach"
+              element={<SelectNotTeachTeacher />}
+            />
+            <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
+            <Route
+              path="/Teacher/ReplaceTeach"
+              element={<ReplaceTeachTeacher />}
+            />
+            <Route path="/Teacher/view-replace" element={<ViewReplace />} />
+          </Route>
+          <Route element={<StaffRoutes />}>
+            <Route
+              path="/Staff/SelectSubject"
+              element={<SelectSubjectStaff />}
+            />
+            <Route path="/Staff/Timetable" element={<TimetableStaff />} />
+            <Route path="/Staff/NotTeach" element={<SelectNotTeachStaff />} />
+          </Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/view-replace" element={<ViewReplace />} />
+          {/* <Route path="/T1" element={<TableExampleApprove />} /> */}
+        </Route>
         <Route path="/Home" element={<Home />} />
-        <Route path="/Teacher/SelectSubject" element={<SelectSubjectStaff />} />
-        <Route path="/Teacher/Timetable" element={<TimetableTeacher />} />
-        <Route path="/Teacher/NotTeach" element={<SelectNotTeachTeacher />} />
-        <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
-        <Route path="/Teacher/ReplaceTeach" element={<ReplaceTeachTeacher />} />
-        <Route path="/R2" element={<Replace2 />} />
-        <Route path="/T1" element={<TableExampleApprove />} />
-        <Route path="/Singin" element={<Singin />} />
-        <Route path="/Singup" element={<Singup />} />
+        <Route path="/Login" element={<Login />} />
+        {/* <Route path="/Singup" element={<Singup />} /> */}
+        <Route path="/Error404" element={<Error404 />} />
       </Routes>
     </BrowserRouter>
   );
-};
-
-export default App;
+}
