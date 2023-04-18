@@ -76,7 +76,6 @@ function MenagementBox(props) {
 
     const dataTestA = [
         {
-           
             "nameTeachingShort": "ดร.",
             "nameTeachingFirst": "เกตุกญจน์",
             "nameTeachingLast": "ไชยขันธุ์",

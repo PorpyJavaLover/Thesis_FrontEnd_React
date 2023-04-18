@@ -67,23 +67,11 @@ function MenagementBox(props) {
 
   const currentYear = new Date().getFullYear();
 
-  const yearOptions = [
-    { key: '1', value: currentYear, text: currentYear + 543 },
-    { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
-    { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
-    { key: '3', value: currentYear - 3, text: currentYear + 543 - 3 }
-  ];
-
-  const semester = [
-    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
-    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
-    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
-  ]
-
   //state
 
   const [submitButtonState, setSubmitButtonState] = useState(true);
-  const [memberReplaceSelected, setMemberReplace] = useState(null);
+  const [memberReplaceOptions, setMemberReplaceOptions] = useState([]);
+  const [memberReplaceSelected, setMemberReplaceSelected] = useState(null);
   const [editTemp, setEditTemp] = useState(null);
 
   //function
@@ -93,33 +81,40 @@ function MenagementBox(props) {
   }, [memberReplaceSelected]);
 
   const handleChangMemberReplace = (event) => {
-    setMemberReplace(event.target.value);
+    setMemberReplaceSelected(event.target.value);
   };
 
   const handleCancel = () => {
-    setMemberReplace(null);
+    setMemberReplaceSelected(null);
     setEditTemp(null);
   };
   const handleEdit = (dataInside) => () => {
     setEditTemp(dataInside.replaceTeachId);
-    setMemberReplace(dataInside.note);
+    setMemberReplaceSelected(dataInside.memberReplaceId);
+    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId).then((res)=>{
+      setMemberReplaceOptions(res.data);
+    });
   }
 
-  const handleDelete = (dataInside) => () => {
-    /* LeaveTeachAPIServiceTeacher.deleteTeacherLeaveTeach(dataInside.id).then(() => {
+  /*const handleDelete = (dataInside) => () => {
+    ReplaceTeachAPIServiceTeacher.delete(dataInside.replaceTeachId).then(() => {
       props.updateState();
-    });*/
-  }
+    });
+  }*/
 
   const handleConfirm = (dataInside) => () => {
-    /*LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, dataInside.years, dataInside.semester, dataInside.dateStart, dataInside.dateEnd, dataInside.note).then(() => {
+    ReplaceTeachAPIServiceTeacher.update(dataInside.replaceTeachId,memberReplaceSelected).then(() => {
+      setMemberReplaceOptions([]);
+      setMemberReplaceSelected(null);
+      setEditTemp(null);
       props.updateState();
-    });*/
+    });
+
   }
 
   const confirmTiggleUseEffect = () => {
     if (memberReplaceSelected !== null) {
-      setSubmitButtonState(true)
+      setSubmitButtonState(false)
     } else {
       setSubmitButtonState(true)
     }
@@ -130,7 +125,7 @@ function MenagementBox(props) {
     {
       id: 'leaveTeachId',
       numeric: true,
-      label: 'รหัส อ้างอิง รายการงดสอน',
+      label: 'รหัสอ้างอิงรายการงดสอน',
     },
     {
       id: 'course_code',
@@ -148,6 +143,16 @@ function MenagementBox(props) {
       label: 'กลุ่มเรียน',
     },
     {
+      id: 'start_time',
+      numeric: true,
+      label: 'เริ่มสอน',
+    },
+    {
+      id: 'end_time',
+      numeric: true,
+      label: 'สิ้นสุด',
+    },
+    {
       id: 'date',
       numeric: true,
       label: 'วันที่งดสอน',
@@ -155,7 +160,7 @@ function MenagementBox(props) {
     {
       id: 'memberTechingName',
       numeric: true,
-      label: 'ชื่ออาจารย์ประจำวิชา',
+      label: 'ชื่ออาจารย์งดสอน',
     },
     {
       id: 'memberReplaceName',
@@ -168,6 +173,9 @@ function MenagementBox(props) {
       label: 'ตัวเลือก',
     },
   ];
+
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('date');
 
   const [filteredData, setFilteredData] = useState(props.dataReplaceTeach);
   const [searchValue, setSearchValue] = useState('')
@@ -195,7 +203,7 @@ function MenagementBox(props) {
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={createSortHandler(headCell.id)}
               >
-                {headCell.label}
+                  {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -264,8 +272,7 @@ function MenagementBox(props) {
     rowCount: PropTypes.number.isRequired,
   };
 
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('');
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -311,15 +318,16 @@ function MenagementBox(props) {
                           <TableRow key={row.replaceTeachId} >
                             <TableCell id={labelId} scope="row" width="8%" align="left" >{row.leaveTeachId}</TableCell>
                             <TableCell width="10%" align="left">{row.course_code}</TableCell>
-                            <TableCell width="10%" align="left">{row.course_title}</TableCell>
-                            <TableCell width="8%" align="left">{row.group_name}</TableCell>
-                            <TableCell width="8%" align="left">{row.date}</TableCell>
-                            <TableCell width="20%" align="left">{row.memberTechingName}</TableCell>
-                            <TableCell width="20%" align="left">{row.memberReplaceName}</TableCell>
+                            <TableCell width="15%" align="left">{row.course_title}</TableCell>
+                            <TableCell width="10%" align="left">{row.group_name}</TableCell>
+                            <TableCell width="8%" align="left">{row.start_time}</TableCell>
+                            <TableCell width="8%" align="left">{row.end_time}</TableCell>
+                            <TableCell width="15%" align="left">{row.date}</TableCell>
+                            <TableCell width="15%" align="left">{row.memberTechingName}</TableCell>
+                            <TableCell width="15%" align="left">{row.memberReplaceName}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
                                 <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
@@ -340,18 +348,24 @@ function MenagementBox(props) {
                               {row.group_name}
                             </TableCell>
                             <TableCell align="left">
+                              {row.start_time}
+                            </TableCell>
+                            <TableCell align="left">
+                              {row.end_time}
+                            </TableCell>
+                            <TableCell align="left">
                               {row.date}
                             </TableCell>
                             <TableCell align="left">
                               {row.memberTechingName}
                             </TableCell>
                             <TableCell align="left">
-                              <CardSelect labelPara="เลือกอาจารย์สอนแทน" menuItemPara={semester} onChangePara={handleChangMemberReplace} valuePara={memberReplaceSelected} />
+                              <CardSelect labelPara="เลือกอาจารย์สอนแทน" menuItemPara={memberReplaceOptions} onChangePara={handleChangMemberReplace} valuePara={memberReplaceSelected} />
                             </TableCell>
                             <TableCell align="left">
-                              <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={submitButtonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
-                                <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                              <Stack key={row.replaceTeachId} direction="row" spacing={2}>
+                                <Button key={row.replaceTeachId + 1} sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={submitButtonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
+                                <Button key={row.replaceTeachId + 2} sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
