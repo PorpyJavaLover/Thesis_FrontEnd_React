@@ -11,7 +11,7 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
-import CardTextField from "../Component/Card/CardTextField";
+import CardTextField from "../Component/CardTextField";
 import MemberAPIService from "../Service/MemberAPIService";
 
 export default class SignIn extends Component {
@@ -38,7 +38,7 @@ function UserSignIn(props) {
       <Card sx={{ boxShadow: 5 }}>
         <CardHeader
           title={props.title}
-          titleTypographyProps={{ fontWeight: "bold", variant: "h5" }}
+          titleTypographyProps={{ fontWeight: "bold", variant: "h6" }}
           sx={{
             backgroundColor: "primary.main",
             color: "primary.contrastText",
@@ -71,15 +71,15 @@ function UserSignIn(props) {
                 onClick={handleSubmit}
                 variant="contained"
               >
-                <Link
-                  style={{ textDecoration: "none", color: "white" }}
-                  to={"/Home"}
-                >
-                  เข้าสู่ระบบ
-                </Link>
+                เข้าสู่ระบบ
               </Button>
               <Button sx={{ width: 125 }} color="inherit" variant="contained">
-                สมัครสมาชิก
+                <Link
+                  style={{ textDecoration: "none", color: "black" }}
+                  to={"/Home"}
+                >
+                  สมัครสมาชิก
+                </Link>
               </Button>
             </Stack>
           </Grid>
