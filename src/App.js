@@ -8,6 +8,7 @@ import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
 import SelectNotTeachStaff from "./Page/Staff/NotTeach_Staff";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
+import PDFTeach from "./Page/Teacher/PDFTeach_Teacher";
 import Replace2 from "./Page/Replace2";
 import SignIn from "./Page/SignIn";
 import Singup from "./Page/Singup";
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/Teacher/NotTeach" element={<SelectNotTeachTeacher />} />
             <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
             <Route path="/Teacher/ReplaceTeach" element={<ReplaceTeachTeacher />} />
+            <Route path="/Teacher/PDFTeach" element={<PDFTeach />} />
           </Route>
           <Route element={<StaffRoutes />}>
             <Route path="/Staff/SelectSubject" element={<SelectSubjectStaff />} />

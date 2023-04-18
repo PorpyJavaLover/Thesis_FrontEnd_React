@@ -12,6 +12,10 @@ export const ReplaceTeachAPIServiceTeacher = new class ReplaceTeachAPIServiceTea
         return axios.get(this.url + '/replaceteach/teacher/show/all ', { headers: this.headers });
     }
 
+    getMemberReplaceOption() {
+        return axios.get(this.url + '/replaceteach/teacher/member/replace/option' , { headers: this.headers });
+    }
+
 }
 
 export const ReplaceTeachAPIServiceStaff = new class ReplaceTeachAPIServiceStaff extends BaseAPIService {

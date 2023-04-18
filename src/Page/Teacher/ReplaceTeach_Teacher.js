@@ -83,35 +83,26 @@ function MenagementBox(props) {
   //state
 
   const [submitButtonState, setSubmitButtonState] = useState(true);
-  const [memberReplace, setMemberReplace] = useState(null);
+  const [memberReplaceSelected, setMemberReplace] = useState(null);
   const [editTemp, setEditTemp] = useState(null);
 
   //function
 
   useEffect(() => {
     confirmTiggleUseEffect();
-  }, [ memberReplace]);
+  }, [memberReplaceSelected]);
 
-  const handleChangNote = (event) => {
+  const handleChangMemberReplace = (event) => {
     setMemberReplace(event.target.value);
   };
 
   const handleCancel = () => {
-    setYearSelected(null);
-    setSemesterSelected(null);
-    setDateStartSelected(null);
-    setDateEndSelected(null);
     setMemberReplace(null);
     setEditTemp(null);
   };
-
-  
-
   const handleEdit = (dataInside) => () => {
-
+    setEditTemp(dataInside.replaceTeachId);
     setMemberReplace(dataInside.note);
-    console.log(convertDate(dataInside.dateStart));
-
   }
 
   const handleDelete = (dataInside) => () => {
@@ -127,12 +118,8 @@ function MenagementBox(props) {
   }
 
   const confirmTiggleUseEffect = () => {
-    if (dateStartSelected !== null && dateEndSelected !== null && semesterSelected !== null && memberReplace !== null) {
-      if (dateStartSelected === null || dateEndSelected === null || semesterSelected === '' || memberReplace === '') {
-        setSubmitButtonState(true)
-      } else {
-        setSubmitButtonState(false)
-      }
+    if (memberReplaceSelected !== null) {
+      setSubmitButtonState(true)
     } else {
       setSubmitButtonState(true)
     }
@@ -319,9 +306,9 @@ function MenagementBox(props) {
                   {stableSort(filteredData, getComparator(order, orderBy))
                     .map((row, index) => {
                       const labelId = index;
-                      if (editTemp !== row.id) {
+                      if (editTemp !== row.replaceTeachId) {
                         return (
-                          <TableRow key={row.id} >
+                          <TableRow key={row.replaceTeachId} >
                             <TableCell id={labelId} scope="row" width="8%" align="left" >{row.leaveTeachId}</TableCell>
                             <TableCell width="10%" align="left">{row.course_code}</TableCell>
                             <TableCell width="10%" align="left">{row.course_title}</TableCell>
@@ -339,7 +326,7 @@ function MenagementBox(props) {
                         );
                       } else {
                         return (
-                          <TableRow key={row.id} >
+                          <TableRow key={row.replaceTeachId} >
                             <TableCell id={labelId} scope="row" align="left">
                               {row.leaveTeachId}
                             </TableCell>
@@ -359,7 +346,7 @@ function MenagementBox(props) {
                               {row.memberTechingName}
                             </TableCell>
                             <TableCell align="left">
-                              <CardTextField labelPara="เลือกอาจารย์สอนแทน" onChangePara={handleChangNote} required valuePara={memberReplace} />
+                              <CardSelect labelPara="เลือกอาจารย์สอนแทน" menuItemPara={semester} onChangePara={handleChangMemberReplace} valuePara={memberReplaceSelected} />
                             </TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
