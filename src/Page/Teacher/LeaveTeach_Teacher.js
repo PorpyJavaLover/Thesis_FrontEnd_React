@@ -15,10 +15,10 @@ import {
 } from "../../Service/LeaveTeachAPIService";
 import SendIcon from "@mui/icons-material/Send";
 import { format } from "date-fns";
-import CardDatePicker from "../../Component/CardDatePicker";
-import CardSelect from "../../Component/CardSelect";
-import CardTextField from "../../Component/CardTextField";
-import FullFeaturedCrudGrid from "../../Component/CardDataGrid";
+import CardDatePicker from "../../Component/Card/CardDatePicker";
+import CardSelect from "../../Component/Card/CardSelect";
+import CardTextField from "../../Component/Card/CardTextField";
+import FullFeaturedCrudGrid from "../../Component/Card/CardDataGrid";
 import Moment from "react-moment";
 import SearchIcon from "@mui/icons-material/Search";
 import Table from "@mui/material/Table";

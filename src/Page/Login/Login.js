@@ -99,12 +99,7 @@ function UserSignIn(props) {
                       onClick={handleSubmit}
                       variant="contained"
                     >
-                      <Link
-                        style={{ textDecoration: "none", color: "white" }}
-                        to={"/Home"}
-                      >
-                        เข้าสู่ระบบ
-                      </Link>
+                      เข้าสู่ระบบ
                     </Button>
                   </Stack>
                 </Grid>

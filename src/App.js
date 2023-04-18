@@ -30,7 +30,7 @@ export default function App() {
       <br />
       <Routes>
         <Route element={<PrivateRoutes />}>
-          <Route element={<TeacherRoutes />}>
+          <Route path="/Teacher" element={<TeacherRoutes />}>
             <Route
               path="/Teacher/SelectSubject"
               element={<SelectSubjectTeacher />}
@@ -41,10 +41,10 @@ export default function App() {
               element={<SelectNotTeachTeacher />}
             />
             <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
-            <Route
+            {/* <Route
               path="/Teacher/ReplaceTeach"
               element={<ReplaceTeachTeacher />}
-            />
+            /> */}
             <Route path="/Teacher/view-replace" element={<ViewReplace />} />
           </Route>
           <Route element={<StaffRoutes />}>
@@ -55,12 +55,12 @@ export default function App() {
             <Route path="/Staff/Timetable" element={<TimetableStaff />} />
             <Route path="/Staff/NotTeach" element={<SelectNotTeachStaff />} />
           </Route>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navbar />} />
           <Route path="/view-replace" element={<ViewReplace />} />
           {/* <Route path="/T1" element={<TableExampleApprove />} /> */}
         </Route>
         <Route path="/Home" element={<Home />} />
-        <Route path="/Login" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         {/* <Route path="/Singup" element={<Singup />} /> */}
         <Route path="/Error404" element={<Error404 />} />
       </Routes>
