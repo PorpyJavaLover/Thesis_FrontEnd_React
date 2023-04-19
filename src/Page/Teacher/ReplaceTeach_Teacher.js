@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { Component, useState, useEffect, useRef } from 'react'
 import APIService from '../../Service/FernAPIService'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
 import { ReplaceTeachAPIServiceTeacher, ReplaceTeachAPIServiceStaff } from '../../Service/ReplaceTeachAPIService';
@@ -23,6 +23,9 @@ import { visuallyHidden } from '@mui/utils';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
+import { useReactToPrint } from "react-to-print";
+import { ComponentToPrint } from "./PDFTeach_Teacher";
+import { savePDF } from "@progress/kendo-react-pdf";
 
 export default class ReplaceTeach extends Component {
 
@@ -119,6 +122,43 @@ function MenagementBox(props) {
       setSubmitButtonState(true)
     }
   }
+
+  const pdfExportComponent = React.useRef(null);
+  const excelExportComponent = React.useRef(null);
+  const container = React.useRef(null);
+
+  const ExportHere = () => {
+    
+
+    const componentRefPdf = useRef();
+
+    const handlePrint = useReactToPrint({
+      content: () => componentRefPdf.current,
+    });
+
+    return (
+      <div>
+        <div style={{ display: "none" }}>
+          <ComponentToPrint ref={componentRefPdf} data={"hi"} />
+        </div>
+        <div>
+          <Button
+            type="ghost"
+            onClick={handlePrint}
+            variant="contained"
+            ref={pdfExportComponent}
+            papersize="auto"
+            margin={40}
+            filename={`Report for ${new Date().getFullYear()}`}
+            author="KendoReact Team"
+          >
+            PDF
+          </Button>
+        </div>
+      </div>
+    );
+  };
+  
 
   //sort and search
   const headCells = [
@@ -328,6 +368,7 @@ function MenagementBox(props) {
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
                                 <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                <ExportHere />
                               </Stack>
                             </TableCell>
                           </TableRow>
@@ -366,6 +407,7 @@ function MenagementBox(props) {
                               <Stack key={row.replaceTeachId} direction="row" spacing={2}>
                                 <Button key={row.replaceTeachId + 1} sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={submitButtonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
                                 <Button key={row.replaceTeachId + 2} sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+
                               </Stack>
                             </TableCell>
                           </TableRow>
