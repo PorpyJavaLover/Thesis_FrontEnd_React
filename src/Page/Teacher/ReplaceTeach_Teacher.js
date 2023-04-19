@@ -48,7 +48,7 @@ export default class ReplaceTeach extends Component {
   render() {
     return (
       <div>
-        <HeaderBox title={"การจัดการวันงดสอน"} />
+        <HeaderBox title={"การจัดการสอนแทน"} />
         <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataReplaceTeach={this.state.dataReplaceTeach} />
       </div>
     )

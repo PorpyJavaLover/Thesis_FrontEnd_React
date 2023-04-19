@@ -66,10 +66,13 @@ function MenuAnonymous() {
                     <Toolbar disableGutters>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="51" height="51" />
+                                <img src={logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} >
-                                <Typography variant="h4" textAlign="center"> การจัดตารางสอนและจัดการสอนแทน </Typography>
+                                <Stack spacing={1} sx={{ alignItems: 'flex-start' }} >
+                                    <Typography variant="h5" textAlign="center"> การจัดตารางสอนและจัดการสอนแทน </Typography>
+                                    <Typography variant="h6" textAlign="center"> Scheduling Teach And Replacement Teacher System </Typography>
+                                </Stack>
                             </Box>
                             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }} >
                                 <Typography variant="h6" textAlign="center"> การจัดตารางสอนและจัดการสอนแทน </Typography>
@@ -136,6 +139,9 @@ function MenuTeacher() {
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Box sx={{ p: 1 }}>
+                                <img src={logo} alt="Logo" width="60" height="60" />
+                            </Box>
                             <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block', height: '50px', }} >
                                 <Link style={{ textDecoration: "none", color: "white" }} to='/' > <HomeIcon /></Link>
                             </Button>
@@ -150,6 +156,9 @@ function MenuTeacher() {
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Box sx={{ p: 1 }}>
+                                <img src={logo} alt="Logo" width="60" height="60" />
+                            </Box>
                             <Button color="inherit" sx={{ color: "white", alignItems: 'center', }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
                         </Stack >
                         <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}>
@@ -189,7 +198,7 @@ function MenuStaff() {
             <List>
                 <ListItem disablePadding>
                     <ListItemButton >
-                        <Link style={{ textDecoration: "none",  }} to={'/'} >
+                        <Link style={{ textDecoration: "none", }} to={'/'} >
                             <ListItemText primary={"หน้าหลัก"} sx={{ color: "#4D4D4D" }} />
                         </Link>
                     </ListItemButton>
@@ -216,7 +225,10 @@ function MenuStaff() {
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
-                            <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block' , height: '50px', }} >
+                            <Box sx={{ p: 1 }}>
+                                <img src={logo} alt="Logo" width="60" height="60" />
+                            </Box>
+                            <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block', height: '50px', }} >
                                 <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon /></Link>
                             </Button>
                             {
@@ -232,7 +244,10 @@ function MenuStaff() {
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
-                            <Button color="inherit" sx={{ color: "white", alignItems: 'center',  }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
+                            <Box sx={{ p: 1 }}>
+                                <img src={logo} alt="Logo" width="60" height="60" />
+                            </Box>
+                            <Button color="inherit" sx={{ color: "white", alignItems: 'center', }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
                         </Stack >
                         <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}>
                             {sideList('left')}
