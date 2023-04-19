@@ -60,8 +60,8 @@ const pagesTeacher = [
   },
   { key: 2, name: "การจัดการวันเวลาที่ไม่ขอสอน", path: "/Teacher/NotTeach" },
   { key: 3, name: "การจัดการรายวิชา", path: "/Teacher/Timetable" },
-  { key: 4, name: "การจัดการวันลา", path: "/Teacher/LeaveTeach" },
-  { key: 5, name: "การจัดการสอนแทน", path: "/Teacher/ReplaceTeach" },
+  { key: 4, name: "การจัดการวันงดสอน", path: "/Teacher/LeaveTeach" },
+  { key: 5, name: "การจัดการสอนแทน", path: "/Teacher/view-replace" },
   // { key: 6, name: "การจัดการสอนแทน", path: "/Teacher/view-replace" },
 ];
 
@@ -83,9 +83,9 @@ export default function Norbar() {
 
   const roleSelecction = () => {
     if (!isExpired) {
-      if (role === "ROLE_TEACHER") {
+      if (role === "Teacher") {
         return <MenuTeacher />;
-      } else if (role === "ROLE_STAFT") {
+      } else if (role === "Staff") {
         return <MenuStaff />;
       }
     } else {
@@ -116,7 +116,13 @@ function MenuAnonymous() {
             <p>ระบบจัดตารางสอนและสอนแทน</p>
             <p>Scheduling Teach And Replacement Teacher System</p>
           </Typography>
-          <Typography disableGutters>
+          <Typography
+            disableGutters
+            variant="h5"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1, marginTop: 1 }}
+          >
             <Box
               sx={{
                 float: "right",
@@ -143,20 +149,6 @@ function MenuAnonymous() {
               ))}
             </Box>
           </Typography>
-          {/* <Typography disableGutters>
-            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-              <Typography variant="h4" textAlign="center">
-                {" "}
-                การจัดตารางสอนและจัดการสอนแทน{" "}
-              </Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-              <Typography variant="h6" textAlign="center">
-                {" "}
-                การจัดตารางสอนและจัดการสอนแทน{" "}
-              </Typography>
-            </Box>
-          </Typography> */}
         </StyledToolbar>
       </AppBar>
     </Box>
@@ -207,12 +199,75 @@ function MenuTeacher() {
       </List>
     </Box>
   );
+  const SignOutEf = () => {
+    localStorage.removeItem("member_id");
+    localStorage.removeItem("name");
+    localStorage.removeItem("role");
+    localStorage.removeItem("exp");
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
+  const role = () => {
+    if (localStorage.getItem("role") === "Teacher") {
+      return "(อาจารย์)";
+    } else if (localStorage.getItem("role") === "Staff") {
+      return "(เจ้าหน้าที่)";
+    } else {
+      return " ";
+    }
+  };
+
+  const sideList2 = (side) => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(side, false)}
+      onKeyDown={toggleDrawer(side, false)}
+    >
+      <List>
+        <ListItem key={1} disablePadding>
+          <ListItemButton onClick={SignOutEf}>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <Link style={{ textDecoration: "none" }} to={"/SignIn"}>
+              <ListItemText primary={"ออกจากระบบ"} sx={{ color: "#4D4D4D" }} />
+            </Link>
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="sx">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Avatar
+            src={car}
+            style={{ width: "90px", height: "90px" }}
+            sx={{ mr: 3, marginTop: 1 }}
+          />
+          <Typography
+            variant="h7"
+            // noWrap
+            component="div"
+            sx={{ flexGrow: 1, marginTop: 2 }}
+          >
+            <p>ระบบจัดตารางสอนและสอนแทน</p>
+            <p>Scheduling Teach And Replacement Teacher System</p>
+          </Typography>
+          <Box
+            sx={{
+              float: "right",
+              marginTop: 1,
+              marginRight: 3,
+              textDecoration: "none",
+              color: "white",
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+            }}
+          >
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <Button
                 color="inherit"
@@ -271,7 +326,28 @@ function MenuTeacher() {
               flexDirection: "row-reverse",
             }}
           >
-            <UserMenu />
+            {/* <UserMenu /> */}
+          </Box>
+          <Box>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <Typography>{localStorage.getItem("name")}</Typography>
+              <Typography>{role()}</Typography>
+              <Button
+                color="inherit"
+                sx={{ color: "white", alignItems: "center", height: "50px" }}
+                onClick={toggleDrawer("right", true)}
+              >
+                {" "}
+                <SettingsIcon />{" "}
+              </Button>
+            </Stack>
+            <Drawer
+              anchor="right"
+              open={state.right}
+              onClose={toggleDrawer("right", false)}
+            >
+              {sideList2("right")}
+            </Drawer>
           </Box>
         </Toolbar>
       </Container>
@@ -321,29 +397,72 @@ function MenuStaff() {
       </List>
     </Box>
   );
+  const SignOutEf = () => {
+    localStorage.removeItem("member_id");
+    localStorage.removeItem("name");
+    localStorage.removeItem("role");
+    localStorage.removeItem("exp");
+    localStorage.removeItem("token");
+    window.location.href = "/SignIn";
+  };
 
+  const role = () => {
+    if (localStorage.getItem("role") === "Teacher") {
+      return "(อาจารย์)";
+    } else if (localStorage.getItem("role") === "Staff") {
+      return "(เจ้าหน้าที่)";
+    } else {
+      return " ";
+    }
+  };
+
+  const sideList2 = (side) => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(side, false)}
+      onKeyDown={toggleDrawer(side, false)}
+    >
+      <List>
+        <ListItem key={1} disablePadding>
+          <ListItemButton onClick={SignOutEf}>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <Link style={{ textDecoration: "none" }} to={"/SignIn"}>
+              <ListItemText primary={"ออกจากระบบ"} sx={{ color: "#4D4D4D" }} />
+            </Link>
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <StyledToolbar>
+    <AppBar position="static">
+      <Container maxWidth="sx">
+        <Toolbar disableGutters>
           <Avatar
             src={car}
             style={{ width: "90px", height: "90px" }}
-            sx={{ mr: 4, marginTop: 1 }}
+            sx={{ mr: 3, marginTop: 1 }}
           />
           <Typography
             variant="h7"
-            noWrap
+            // noWrap
             component="div"
-            sx={{ flexGrow: 1, marginTop: 1 }}
+            sx={{ flexGrow: 1, marginTop: 2 }}
           >
             <p>ระบบจัดตารางสอนและสอนแทน</p>
             <p>Scheduling Teach And Replacement Teacher System</p>
           </Typography>
           <Box
             sx={{
+              float: "right",
+              marginTop: 1,
+              marginRight: 3,
+              textDecoration: "none",
+              color: "white",
               flexGrow: 1,
-              alignItems: "center",
               display: { xs: "none", md: "flex" },
             }}
           >
@@ -404,11 +523,32 @@ function MenuStaff() {
               flexDirection: "row-reverse",
             }}
           >
-            <UserMenu />
+            {/* <UserMenu /> */}
           </Box>
-        </StyledToolbar>
-      </AppBar>
-    </Box>
+          <Box>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <Typography>{localStorage.getItem("name")}</Typography>
+              <Typography>{role()}</Typography>
+              <Button
+                color="inherit"
+                sx={{ color: "white", alignItems: "center", height: "50px" }}
+                onClick={toggleDrawer("right", true)}
+              >
+                {" "}
+                <SettingsIcon />{" "}
+              </Button>
+            </Stack>
+            <Drawer
+              anchor="right"
+              open={state.right}
+              onClose={toggleDrawer("right", false)}
+            >
+              {sideList2("right")}
+            </Drawer>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
 
@@ -419,7 +559,7 @@ function UserMenu() {
     localStorage.removeItem("role");
     localStorage.removeItem("exp");
     localStorage.removeItem("token");
-    window.location.href = "/SignIn";
+    window.location.href = "/login";
   };
 
   const [state, setState] = React.useState({
@@ -471,43 +611,7 @@ function UserMenu() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <StyledToolbar>
-          <Avatar
-            src={car}
-            style={{ width: "90px", height: "90px" }}
-            sx={{ mr: 4, marginTop: 1 }}
-          />
-          <Typography
-            variant="h7"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, marginTop: 1 }}
-          >
-            <p>ระบบจัดตารางสอนและสอนแทน</p>
-            <p>Scheduling Teach And Replacement Teacher System</p>
-          </Typography>
-          <Box>
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <Typography>{localStorage.getItem("name")}</Typography>
-              <Typography>{role()}</Typography>
-              <Button
-                color="inherit"
-                sx={{ color: "white", alignItems: "center", height: "50px" }}
-                onClick={toggleDrawer("right", true)}
-              >
-                {" "}
-                <SettingsIcon />{" "}
-              </Button>
-            </Stack>
-            <Drawer
-              anchor="right"
-              open={state.right}
-              onClose={toggleDrawer("right", false)}
-            >
-              {sideList("right")}
-            </Drawer>
-          </Box>
-        </StyledToolbar>
+        <StyledToolbar></StyledToolbar>
       </AppBar>
     </Box>
   );

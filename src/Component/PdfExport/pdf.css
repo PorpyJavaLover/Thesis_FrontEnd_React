@@ -3,8 +3,8 @@
   src: url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap');
 }  */
 body{
-    font-size: 16px;
-    font-family: 'THSarabunNew', sans-serif;
+    font-size: 0.9167rem;
+    font-family: 'THSarabunNew', THSarabunNew;
     color: black;
     
   }
@@ -14,12 +14,12 @@ body{
   @media print {
     @page {
       size: A4;
-      margin: 1.27cm 1.27cm 1.27cm 1.27cm;
+      margin: 2.54cm 2cm 2.54cm 3cm;
 
     }
     body {
-      font-size: 16px;
-      font-family: 'THSarabunNew', sans-serif;
+      font-size: 0.9167rem;
+      font-family: 'THSarabunNew', THSarabunNew;
       color: black;
     }
     .header {
@@ -31,8 +31,28 @@ body{
   
 }
 .font {
-  font-size: 16px;
+  font-size: 0.9167rem;
+ 
 }
+
+.tt-table table{
+  border: none; 
+
+}
+ 
+table {
+    border-collapse: collapse;
+}
+
+/* table, td, th {
+    border: 1px solid black;
+} */
+
+
+/* .p{
+  text-align: justify;
+  margin-bottom: 1em;
+} */
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap');
 
 

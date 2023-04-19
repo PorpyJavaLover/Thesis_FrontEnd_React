@@ -9,8 +9,8 @@ import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
 import SelectNotTeachStaff from "./Page/Staff/NotTeach_Staff";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
-import PDFTeach from "./Page/Teacher/PDFTeach_Teacher";
-import Replace2 from "./Page/Replace2";
+import PDFTeach from "./Component/PdfExport/PDF";
+// import Replace2 from "./Page/Replace2";
 import SignIn from "./Page/SignIn";
 import Error404 from "./Page/Error404";
 import PrivateRoutes from "./Util/PrivateRoutes";
@@ -43,11 +43,15 @@ export default function App() {
               element={<SelectNotTeachTeacher />}
             />
             <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
+            <Route path="/Teacher/view-replace" element={<ViewReplace />} />
+            <Route path="/Teacher/input-replace" element={<InputReplace />} />
+            <Route path="/Teacher/edit-replace" element={<EditReplace />} />
+            <Route path="/Teacher/PDFTeach" element={<PDFTeach />} />
+
             <Route
               path="/Teacher/ReplaceTeach"
               element={<ReplaceTeachTeacher />}
             />
-            <Route path="/Teacher/PDFTeach" element={<PDFTeach />} />
           </Route>
           <Route element={<StaffRoutes />}>
             <Route
@@ -58,7 +62,7 @@ export default function App() {
             <Route path="/Staff/NotTeach" element={<SelectNotTeachStaff />} />
           </Route>
           <Route path="/" element={<Navbar />} />
-          <Route path="/view-replace" element={<ViewReplace />} />
+
           {/* <Route path="/T1" element={<TableExampleApprove />} /> */}
         </Route>
         <Route path="/Home" element={<Home />} />
