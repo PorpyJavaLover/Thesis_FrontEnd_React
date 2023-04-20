@@ -49,7 +49,7 @@ export default class SelectSubjectTeacher extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if ((Number(plan.years_name) - 543) + plan.semester + plan.course_id + plan.group_id + JSON.parse(localStorage.getItem('member_id')) === timetable.years + timetable.semester + timetable.course_id + timetable.group_id + timetable.member_id) {
+                if (plan.years_value + plan.semester + plan.course_id + plan.group_id + JSON.parse(localStorage.getItem('member_id')) === timetable.years + timetable.semester + timetable.course_id + timetable.group_id + timetable.member_id) {
                     if (timetable.course_type == 0) {
                         plan.selected_lect = true;
                     } else {
@@ -88,6 +88,7 @@ function HeaderBox(props) {
 
 
 function MenagementBox(props) {
+
 
     const [filteredData, setFilteredData] = useState(props.plans);
     const [searchValue, setSearchValue] = useState('')
@@ -212,8 +213,8 @@ function MenagementBox(props) {
         rowCount: PropTypes.number.isRequired,
     };
 
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('');
+    const [order, setOrder] = React.useState('desc');
+    const [orderBy, setOrderBy] = React.useState('years_name'); //set sort
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -225,12 +226,12 @@ function MenagementBox(props) {
     const handleSwitchLect = (value) => () => {
         const courseType = 0;
         if (value.selected_lect === false) {
-            TimetableAPIServiceTeacher.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
+            TimetableAPIServiceTeacher.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_lect = true;
                 props.updatePlanState();
             });
         } else if (value.selected_lect === true) {
-            TimetableAPIServiceTeacher.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
+            TimetableAPIServiceTeacher.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_lect = false;
                 props.updatePlanState();
             });
@@ -239,12 +240,12 @@ function MenagementBox(props) {
     const handleSwitchPerf = (value) => () => {
         const courseType = 1;
         if (value.selected_perf === false) {
-            TimetableAPIServiceTeacher.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
+            TimetableAPIServiceTeacher.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_perf = true;
                 props.updatePlanState();
             });
         } else if (value.selected_perf === true) {
-            TimetableAPIServiceTeacher.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id).then(() => {
+            TimetableAPIServiceTeacher.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {
                 value.selected_perf = false;
                 props.updatePlanState();
             });

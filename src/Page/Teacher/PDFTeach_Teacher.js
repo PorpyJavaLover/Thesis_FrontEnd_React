@@ -68,14 +68,12 @@ const dataTestB = [
 
 export class ComponentToPrint extends React.Component {
 
-
-
   render() {
     return (
       <div
         className="font"
       // style={{ lineHeight: "", fontSize: "1rm", color: "red" }}
-      style={{  fontSize: "16px", }}
+      style={{  fontSize: "16px", fontFamily:"THSarabunNew" }}
       >
         <div>
           <p>

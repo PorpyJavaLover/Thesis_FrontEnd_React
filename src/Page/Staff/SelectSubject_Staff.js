@@ -70,7 +70,7 @@ export default class SelectSubjectStaff extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if ((Number(plan.years_name) - 543) + plan.semester + plan.course_id + plan.group_id === timetable.years + timetable.semester + timetable.course_id + timetable.group_id) {
+                if (plan.years_value + plan.semester + plan.course_id + plan.group_id === timetable.years + timetable.semester + timetable.course_id + timetable.group_id) {
                     if (timetable.course_type == 0) {
                         plan.selected_lect = true;
                     } else {
@@ -149,12 +149,12 @@ function ManagementBox(props) {
     const handleSwitchLect = (value) => () => {
         const courseType = 0;
         if (value.selected_lect === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_lect = true;
                 props.updatePlanState();
             });
         } else if (value.selected_lect === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_lect = false;
                 props.updatePlanState();
             });
@@ -163,12 +163,12 @@ function ManagementBox(props) {
     const handleSwitchPerf = (value) => () => {
         const courseType = 1;
         if (value.selected_perf === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_perf = true;
                 props.updatePlanState();
             });
         } else if (value.selected_perf === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_name, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
                 value.selected_perf = false;
                 props.updatePlanState();
             });
@@ -298,8 +298,8 @@ function ManagementBox(props) {
         rowCount: PropTypes.number.isRequired,
     };
 
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('');
+    const [order, setOrder] = React.useState('desc');
+    const [orderBy, setOrderBy] = React.useState('years_name');
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';

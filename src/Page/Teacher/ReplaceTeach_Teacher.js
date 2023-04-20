@@ -127,10 +127,15 @@ function MenagementBox(props) {
   const excelExportComponent = React.useRef(null);
   const container = React.useRef(null);
 
-  const ExportHere = () => {
+  const ExportHere = (data) => {
     
 
     const componentRefPdf = useRef();
+
+    const test = () => {
+      console.log(data);
+      //handlePrint();
+    }
 
     const handlePrint = useReactToPrint({
       content: () => componentRefPdf.current,
@@ -144,7 +149,7 @@ function MenagementBox(props) {
         <div>
           <Button
             type="ghost"
-            onClick={handlePrint}
+            onClick={test}
             variant="contained"
             ref={pdfExportComponent}
             papersize="auto"
@@ -358,17 +363,17 @@ function MenagementBox(props) {
                           <TableRow key={row.replaceTeachId} >
                             <TableCell id={labelId} scope="row" width="8%" align="left" >{row.leaveTeachId}</TableCell>
                             <TableCell width="10%" align="left">{row.course_code}</TableCell>
-                            <TableCell width="15%" align="left">{row.course_title}</TableCell>
+                            <TableCell width="20%" align="left">{row.course_title}</TableCell>
                             <TableCell width="10%" align="left">{row.group_name}</TableCell>
                             <TableCell width="8%" align="left">{row.start_time}</TableCell>
                             <TableCell width="8%" align="left">{row.end_time}</TableCell>
-                            <TableCell width="15%" align="left">{row.date}</TableCell>
+                            <TableCell width="8%" align="left">{row.date}</TableCell>
                             <TableCell width="15%" align="left">{row.memberTechingName}</TableCell>
                             <TableCell width="15%" align="left">{row.memberReplaceName}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                <ExportHere />
+                                <Button sx={{ width: 50 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                <ExportHere data={row} />
                               </Stack>
                             </TableCell>
                           </TableRow>
@@ -376,31 +381,31 @@ function MenagementBox(props) {
                       } else {
                         return (
                           <TableRow key={row.replaceTeachId} >
-                            <TableCell id={labelId} scope="row" align="left">
+                            <TableCell width="8%" id={labelId} scope="row" align="left">
                               {row.leaveTeachId}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="10%"  align="left">
                               {row.course_code}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="15%" align="left">
                               {row.course_title}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="10%" align="left">
                               {row.group_name}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="8%" align="left">
                               {row.start_time}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="8%" align="left">
                               {row.end_time}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="8%" align="left">
                               {row.date}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="10%" align="left">
                               {row.memberTechingName}
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="20%" align="left">
                               <CardSelect labelPara="เลือกอาจารย์สอนแทน" menuItemPara={memberReplaceOptions} onChangePara={handleChangMemberReplace} valuePara={memberReplaceSelected} />
                             </TableCell>
                             <TableCell align="left">

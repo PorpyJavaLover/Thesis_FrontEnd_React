@@ -250,17 +250,17 @@ function MenagementBox(props) {
   const convertDate = (dateStr) => {
     const dateArr = dateStr.split('-');
     const yearNum = parseInt(dateArr[0]);
-    const year = yearNum - 543;
+    const year = yearNum;
     return year + "-" + dateArr[1] + "-" + dateArr[2];
   }
 
   const handleEdit = (dataInside) => () => {
 
     setEditTemp(dataInside.id);
-    setYearSelected(parseInt(dataInside.years) - 543);
+    setYearSelected(dataInside.years_value);
     setSemesterSelected(dataInside.semester);
-    setDateStartSelected(format(new Date(convertDate(dataInside.dateStart)), 'yyyy-MM-dd').toString());
-    setDateEndSelected(format(new Date(convertDate(dataInside.dateEnd)), 'yyyy-MM-dd').toString());
+    setDateStartSelected(format(new Date(convertDate(dataInside.dateStart_value)), 'yyyy-MM-dd').toString());
+    setDateEndSelected(format(new Date(convertDate(dataInside.dateEnd_value)), 'yyyy-MM-dd').toString());
     setReasonNote(dataInside.note);
 
     console.log(convertDate(dataInside.dateStart));
@@ -274,9 +274,15 @@ function MenagementBox(props) {
   }
 
   const handleConfirm = (dataInside) => () => {
-    //@todo แก้บัคการ update date บัคบวกปีเพิ่มเรื่อยๆ
-    LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, dataInside.years, dataInside.semester, dataInside.dateStart, dataInside.dateEnd, dataInside.note).then(() => {
-      props.updateState();
+    //@todo แก้บัคการ update date
+    LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, yearSelected, semesterSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
+    setEditTemp(null);
+    setYearSelected(null);
+    setSemesterSelected(null);
+    setDateStartSelected(null);
+    setDateEndSelected(null);
+    setReasonNote(null);
+    props.updateState();
     });
   }
 
@@ -301,7 +307,7 @@ function MenagementBox(props) {
       label: 'รหัส รายการงดสอน',
     },
     {
-      id: 'years',
+      id: 'years_name',
       numeric: true,
       label: 'ปีการศึกษา',
     },
@@ -473,7 +479,7 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id} >
                             <TableCell width="15%" id={labelId} scope="row" align="left" >{row.id}</TableCell>
-                            <TableCell width="15%" id={labelId} scope="row" align="left" >{row.years}</TableCell>
+                            <TableCell width="15%" id={labelId} scope="row" align="left" >{row.years_name}</TableCell>
                             <TableCell width="15%" align="left">{row.semester}</TableCell>
                             <TableCell width="20%" align="left">{row.dateStart}</TableCell>
                             <TableCell width="20%" align="left">{row.dateEnd}</TableCell>
