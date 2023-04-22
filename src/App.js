@@ -9,7 +9,7 @@ import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
 import SelectNotTeachStaff from "./Page/Staff/NotTeach_Staff";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
-import PDFTeach from "./Component/PdfExport/PDF";
+import PDFTeach from "./Component/PdfExport/PDFReplace";
 // import Replace2 from "./Page/Replace2";
 import SignIn from "./Page/SignIn";
 import Error404 from "./Page/Error404";
@@ -21,6 +21,7 @@ import ViewReplace from "./Page/Replace/ViewReplce";
 import InputReplace from "./Page/Replace/InputReplace";
 import EditReplace from "./Page/Replace/EditReplace";
 import Login from "./Page/Login/Login";
+import PDFSubject from "./Component/PdfExport/PDFSubject";
 
 export default function App() {
   return (
@@ -46,7 +47,7 @@ export default function App() {
             <Route path="/Teacher/view-replace" element={<ViewReplace />} />
             <Route path="/Teacher/input-replace" element={<InputReplace />} />
             <Route path="/Teacher/edit-replace" element={<EditReplace />} />
-            <Route path="/Teacher/PDFTeach" element={<PDFTeach />} />
+            <Route path="/Teacher/PDFTeach" element={<PDFSubject />} />
 
             <Route
               path="/Teacher/ReplaceTeach"

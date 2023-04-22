@@ -1,0 +1,62 @@
+
+body{
+    font-size: 0.9167rem;
+    font-family: 'THSarabunNew', THSarabunNew;
+    color: black;
+    
+  }
+  .header {
+    display: block;
+  }
+  @media print {
+    @page {
+      size: A4;
+      margin: 2.54cm 2cm 2.54cm 3cm;
+
+    }
+    body {
+      font-size: 0.9167rem;
+      font-family: 'THSarabunNew', THSarabunNew;
+      color: black;
+    }
+    .header {
+      display: none;
+    } 
+    /* @font-face {
+    font-family: 'THSarabunNew';
+    src: url('./THSarabunNew/THSarabunNew.ttf'); */
+  
+}
+.font {
+  font-size: 0.9167rem;
+ 
+}
+
+
+ 
+table {
+    border-collapse: collapse;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap');
+
+
+.pdf-container {
+    width: 595px; /* A4 landscape width */
+    height: 842px; /* A4 landscape height */
+    transform: rotate(90deg); /* rotate container to landscape mode */
+    transform-origin: top left; /* set origin point for rotation */
+    overflow: hidden; /* hide overflow */
+  }
+  
+  .pdf-iframe {
+    width: 842px; /* set width to A4 landscape height */
+    height: 595px; /* set height to A4 landscape width */
+    border: none; /* remove iframe border */
+    transform: rotate(-90deg); /* rotate iframe to portrait mode */
+    transform-origin: top left; /* set origin point for rotation */
+  }
+   
+
+ 

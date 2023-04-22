@@ -80,6 +80,10 @@ function UserSignIn(props) {
                     onChangePara={(e) => setUsername(e.target.value)}
                     required
                     valuePara={username}
+                    type="text"
+                    placeholder="Username"
+                    variant="outlined"
+                    value={username}
                   />
                 </Grid>
                 <Grid item xs={12}>

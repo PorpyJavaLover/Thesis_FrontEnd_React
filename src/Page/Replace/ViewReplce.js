@@ -27,7 +27,7 @@ import { PDFExport, savePDF } from "@progress/kendo-react-pdf";
 import { useNavigate } from "react-router-dom";
 
 import { useReactToPrint } from "react-to-print";
-import { ComponentToPrint } from "../../Component/PdfExport/PDF";
+import { ComponentToPrint } from "../../Component/PdfExport/PDFReplace";
 // import ReactHTMLTableToExcel from "../Component/ExcelExport/Excel";
 // import { ReactHTMLTableToExcel } from "../Component/ExcelExport/Excel";
 // import PDF from "../Document/PDF.js";

@@ -61,7 +61,7 @@ const pagesTeacher = [
   { key: 2, name: "การจัดการวันเวลาที่ไม่ขอสอน", path: "/Teacher/NotTeach" },
   { key: 3, name: "การจัดการรายวิชา", path: "/Teacher/Timetable" },
   { key: 4, name: "การจัดการวันงดสอน", path: "/Teacher/LeaveTeach" },
-  { key: 5, name: "การจัดการสอนแทน", path: "/Teacher/view-replace" },
+  { key: 5, name: "การจัดการสอนแทน", path: "/Teacher/ReplaceTeach" },
   // { key: 6, name: "การจัดการสอนแทน", path: "/Teacher/view-replace" },
 ];
 

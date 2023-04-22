@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, useRef } from "react";
 import APIService from "../../Service/FernAPIService";
 import {
   CardHeader,
@@ -34,6 +34,9 @@ import { visuallyHidden } from "@mui/utils";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SaveIcon from "@mui/icons-material/Save";
 import Stack from "@mui/material/Stack";
+import { useReactToPrint } from "react-to-print";
+import { ComponentToPrint } from "../../Component/PdfExport/PDFReplace";
+import { savePDF } from "@progress/kendo-react-pdf";
 
 export default class ReplaceTeach extends Component {
   constructor(props) {
@@ -58,7 +61,7 @@ export default class ReplaceTeach extends Component {
   render() {
     return (
       <div>
-        <HeaderBox title={"การจัดการวันงดสอน"} />
+        <HeaderBox title={"การจัดการสอนแทน"} />
         <MenagementBox
           title={"เมนูจัดการรายการ"}
           updateState={this.updateState.bind(this)}
@@ -83,23 +86,11 @@ function HeaderBox(props) {
 function MenagementBox(props) {
   const currentYear = new Date().getFullYear();
 
-  const yearOptions = [
-    { key: "1", value: currentYear, text: currentYear + 543 },
-    { key: "2", value: currentYear - 1, text: currentYear + 543 - 1 },
-    { key: "3", value: currentYear - 2, text: currentYear + 543 - 2 },
-    { key: "3", value: currentYear - 3, text: currentYear + 543 - 3 },
-  ];
-
-  const semester = [
-    { key: "1", value: "1", text: "ภาคการศึกษาที่ 1" },
-    { key: "2", value: "2", text: "ภาคการศึกษาที่ 2" },
-    { key: "3", value: "3", text: "ภาคการศึกษาฤดูร้อน" },
-  ];
-
   //state
 
   const [submitButtonState, setSubmitButtonState] = useState(true);
-  const [memberReplaceSelected, setMemberReplace] = useState(null);
+  const [memberReplaceOptions, setMemberReplaceOptions] = useState([]);
+  const [memberReplaceSelected, setMemberReplaceSelected] = useState(null);
   const [editTemp, setEditTemp] = useState(null);
 
   //function
@@ -109,36 +100,81 @@ function MenagementBox(props) {
   }, [memberReplaceSelected]);
 
   const handleChangMemberReplace = (event) => {
-    setMemberReplace(event.target.value);
+    setMemberReplaceSelected(event.target.value);
   };
 
   const handleCancel = () => {
-    setMemberReplace(null);
+    setMemberReplaceSelected(null);
     setEditTemp(null);
   };
   const handleEdit = (dataInside) => () => {
     setEditTemp(dataInside.replaceTeachId);
-    setMemberReplace(dataInside.note);
+    setMemberReplaceSelected(dataInside.memberReplaceId);
+    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(
+      dataInside.replaceTeachId
+    ).then((res) => {
+      setMemberReplaceOptions(res.data);
+    });
   };
 
-  const handleDelete = (dataInside) => () => {
-    /* LeaveTeachAPIServiceTeacher.deleteTeacherLeaveTeach(dataInside.id).then(() => {
+  /*const handleDelete = (dataInside) => () => {
+    ReplaceTeachAPIServiceTeacher.delete(dataInside.replaceTeachId).then(() => {
       props.updateState();
-    });*/
-  };
+    });
+  }*/
 
   const handleConfirm = (dataInside) => () => {
-    /*LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, dataInside.years, dataInside.semester, dataInside.dateStart, dataInside.dateEnd, dataInside.note).then(() => {
+    ReplaceTeachAPIServiceTeacher.update(
+      dataInside.replaceTeachId,
+      memberReplaceSelected
+    ).then(() => {
+      setMemberReplaceOptions([]);
+      setMemberReplaceSelected(null);
+      setEditTemp(null);
       props.updateState();
-    });*/
+    });
   };
 
   const confirmTiggleUseEffect = () => {
     if (memberReplaceSelected !== null) {
-      setSubmitButtonState(true);
+      setSubmitButtonState(false);
     } else {
       setSubmitButtonState(true);
     }
+  };
+
+  const pdfExportComponent = React.useRef(null);
+  const excelExportComponent = React.useRef(null);
+  const container = React.useRef(null);
+
+  const ExportHere = () => {
+    const componentRefPdf = useRef();
+
+    const handlePrint = useReactToPrint({
+      content: () => componentRefPdf.current,
+    });
+
+    return (
+      <div>
+        <div style={{ display: "none" }}>
+          <ComponentToPrint ref={componentRefPdf} data={"hi"} />
+        </div>
+        <div>
+          <Button
+            type="ghost"
+            onClick={handlePrint}
+            variant="contained"
+            ref={pdfExportComponent}
+            papersize="auto"
+            margin={40}
+            filename={`Report for ${new Date().getFullYear()}`}
+            author="KendoReact Team"
+          >
+            PDF
+          </Button>
+        </div>
+      </div>
+    );
   };
 
   //sort and search
@@ -146,7 +182,7 @@ function MenagementBox(props) {
     {
       id: "leaveTeachId",
       numeric: true,
-      label: "รหัส อ้างอิง รายการงดสอน",
+      label: "รหัสอ้างอิงรายการงดสอน",
     },
     {
       id: "course_code",
@@ -164,6 +200,16 @@ function MenagementBox(props) {
       label: "กลุ่มเรียน",
     },
     {
+      id: "start_time",
+      numeric: true,
+      label: "เริ่มสอน",
+    },
+    {
+      id: "end_time",
+      numeric: true,
+      label: "สิ้นสุด",
+    },
+    {
       id: "date",
       numeric: true,
       label: "วันที่งดสอน",
@@ -171,7 +217,7 @@ function MenagementBox(props) {
     {
       id: "memberTechingName",
       numeric: true,
-      label: "ชื่ออาจารย์ประจำวิชา",
+      label: "ชื่ออาจารย์งดสอน",
     },
     {
       id: "memberReplaceName",
@@ -184,6 +230,9 @@ function MenagementBox(props) {
       label: "ตัวเลือก",
     },
   ];
+
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("date");
 
   const [filteredData, setFilteredData] = useState(props.dataReplaceTeach);
   const [searchValue, setSearchValue] = useState("");
@@ -283,9 +332,6 @@ function MenagementBox(props) {
     rowCount: PropTypes.number.isRequired,
   };
 
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("");
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -350,19 +396,25 @@ function MenagementBox(props) {
                             <TableCell width="10%" align="left">
                               {row.course_code}
                             </TableCell>
-                            <TableCell width="10%" align="left">
+                            <TableCell width="15%" align="left">
                               {row.course_title}
                             </TableCell>
-                            <TableCell width="8%" align="left">
+                            <TableCell width="10%" align="left">
                               {row.group_name}
                             </TableCell>
                             <TableCell width="8%" align="left">
+                              {row.start_time}
+                            </TableCell>
+                            <TableCell width="8%" align="left">
+                              {row.end_time}
+                            </TableCell>
+                            <TableCell width="15%" align="left">
                               {row.date}
                             </TableCell>
-                            <TableCell width="20%" align="left">
+                            <TableCell width="15%" align="left">
                               {row.memberTechingName}
                             </TableCell>
-                            <TableCell width="20%" align="left">
+                            <TableCell width="15%" align="left">
                               {row.memberReplaceName}
                             </TableCell>
                             <TableCell align="left">
@@ -375,15 +427,7 @@ function MenagementBox(props) {
                                 >
                                   แก้ไข
                                 </Button>
-                                <Button
-                                  sx={{ width: 75 }}
-                                  color="error"
-                                  endIcon={<DeleteForeverIcon />}
-                                  onClick={handleDelete(row)}
-                                  variant="contained"
-                                >
-                                  ลบ
-                                </Button>
+                                <ExportHere />
                               </Stack>
                             </TableCell>
                           </TableRow>
@@ -401,6 +445,8 @@ function MenagementBox(props) {
                               {row.course_title}
                             </TableCell>
                             <TableCell align="left">{row.group_name}</TableCell>
+                            <TableCell align="left">{row.start_time}</TableCell>
+                            <TableCell align="left">{row.end_time}</TableCell>
                             <TableCell align="left">{row.date}</TableCell>
                             <TableCell align="left">
                               {row.memberTechingName}
@@ -408,14 +454,19 @@ function MenagementBox(props) {
                             <TableCell align="left">
                               <CardSelect
                                 labelPara="เลือกอาจารย์สอนแทน"
-                                menuItemPara={semester}
+                                menuItemPara={memberReplaceOptions}
                                 onChangePara={handleChangMemberReplace}
                                 valuePara={memberReplaceSelected}
                               />
                             </TableCell>
                             <TableCell align="left">
-                              <Stack direction="row" spacing={2}>
+                              <Stack
+                                key={row.replaceTeachId}
+                                direction="row"
+                                spacing={2}
+                              >
                                 <Button
+                                  key={row.replaceTeachId + 1}
                                   sx={{ width: 75 }}
                                   color="success"
                                   endIcon={<SaveIcon />}
@@ -426,6 +477,7 @@ function MenagementBox(props) {
                                   ยืนยัน
                                 </Button>
                                 <Button
+                                  key={row.replaceTeachId + 2}
                                   sx={{ width: 75 }}
                                   color="inherit"
                                   onClick={handleCancel}
