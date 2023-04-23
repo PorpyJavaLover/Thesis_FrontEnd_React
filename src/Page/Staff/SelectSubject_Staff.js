@@ -31,14 +31,15 @@ export default class SelectSubjectStaff extends Component {
             timetables: [],
             member: [],
             memberSelected: null,
-            disableState:true
+            yearSelected: null,
+            semesterSelected: null,
+            disableState: true
         }
     }
 
     componentDidMount() {
         MemberAPIServiceStaff.getAllMember().then((res) => {
             this.setState({ member: res.data });
-            console.log(res.data);
         });
     }
 
@@ -49,12 +50,31 @@ export default class SelectSubjectStaff extends Component {
     setMemberSelected = (item) => {
         this.setState({
             memberSelected: item,
-            disableState:false
         })
     }
 
+    setYearSelected = (item) => {
+        this.setState({
+            yearSelected: item,
+        })
+    }
+
+    setSemesterSelected = (item) => {
+        this.setState({
+            semesterSelected: item,
+        })
+    }
+
+    setDisable = () => {
+        this.getPlanState(this.state.memberSelected);
+        this.setState({
+            disableState: false
+        })
+
+    }
+
     getPlanState = (memberId) => {
-        PlanAPIServiceStaff.getPlan().then((resPlan) => {
+        PlanAPIServiceStaff.getPlan(this.state.yearSelected,this.state.semesterSelected).then((resPlan) => {
             this.setState({ plans: resPlan.data });
             TimetableAPIServiceStaff.getTimetableByMemberId(memberId).then((resTimetable) => {
                 this.setState({ timetables: resTimetable.data })
@@ -91,7 +111,7 @@ export default class SelectSubjectStaff extends Component {
         return (
             <div>
                 <HeaderBox title={"การจัดการรายวิชาที่จะเปิดสอน"} />
-                <SelectTeacherBox title={"เมนูเลือกอาจารย์"} setMemberSelected={this.setMemberSelected.bind(this)} getPlanState={this.getPlanState.bind(this)} member={this.state.member} />
+                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)} getPlanState={this.getPlanState.bind(this)} member={this.state.member} setYearSelected={this.setYearSelected.bind(this)} setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
                 <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updatePlanState={this.updatePlanState.bind(this)} memberSelected={this.state.memberSelected} plans={this.state.plans} timetables={this.state.timetables} />
             </div>
         )
@@ -108,6 +128,23 @@ function HeaderBox(props) {
 
 function SelectTeacherBox(props) {
 
+    const currentYear = new Date().getFullYear();
+
+    const yearOptions = [
+        { key: '1', value: currentYear + 543, text: currentYear + 543 },
+        { key: '2', value: currentYear + 543 - 1, text: currentYear + 543 - 1 },
+        { key: '3', value: currentYear + 543 - 2, text: currentYear + 543 - 2 },
+        { key: '4', value: currentYear + 543 - 3, text: currentYear + 543 - 3 },
+    ];
+
+    const semesterOptions = [
+        { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
+        { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
+        { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
+    ]
+
+    const [yearsSelected, setYearsSelected] = useState(null);
+    const [semesterSelected, setSemesterSelected] = useState(null);
     const [member, setMember] = useState(props.member);
     const [memberSelected, setMemberSelected] = useState(null);
 
@@ -116,6 +153,22 @@ function SelectTeacherBox(props) {
         setMemberSelected(event.target.value);
         props.getPlanState(event.target.value);
     };
+
+    const handleChangeYear = (event) => {
+        props.setYearSelected(event.target.value);
+        setYearsSelected(event.target.value);
+    };
+
+    const handleChangeSemester = (event) => {
+        props.setSemesterSelected(event.target.value);
+        setSemesterSelected(event.target.value);
+    };
+
+    useEffect(() => {
+        if (yearsSelected != null && semesterSelected != null && memberSelected != null) {
+            props.setDisable();
+        }
+    }, [yearsSelected, semesterSelected, memberSelected])
 
     useEffect(() => {
         setMember(props.member);
@@ -126,6 +179,12 @@ function SelectTeacherBox(props) {
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+                    <Grid item sm={12} xs={12}>
+                        <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
+                    </Grid>
+                    <Grid item sm={12} xs={12}>
+                        <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
+                    </Grid>
                     <Grid item sm={12} xs={12}>
                         <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={member} onChangePara={handleChangeMember} valuePara={memberSelected} />
                     </Grid>
@@ -149,12 +208,12 @@ function ManagementBox(props) {
     const handleSwitchLect = (value) => () => {
         const courseType = 0;
         if (value.selected_lect === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {
                 value.selected_lect = true;
                 props.updatePlanState();
             });
         } else if (value.selected_lect === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {
                 value.selected_lect = false;
                 props.updatePlanState();
             });
@@ -163,12 +222,12 @@ function ManagementBox(props) {
     const handleSwitchPerf = (value) => () => {
         const courseType = 1;
         if (value.selected_perf === false) {
-            TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {
                 value.selected_perf = true;
                 props.updatePlanState();
             });
         } else if (value.selected_perf === true) {
-            TimetableAPIServiceStaff.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id , props.memberSelected).then(() => {
+            TimetableAPIServiceStaff.deletTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {
                 value.selected_perf = false;
                 props.updatePlanState();
             });
@@ -260,7 +319,7 @@ function ManagementBox(props) {
         return stabilizedThis.map((el) => el[0]);
     }
 
-    
+
 
     function EnhancedTableHead(props) {
         const { order, orderBy, onRequestSort } = props;
@@ -310,7 +369,7 @@ function ManagementBox(props) {
     //render
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 3 , display: props.disableState ? 'none' : 'block' }} >
+        <Container maxWidth='false' sx={{ pt: 2, pb: 3, display: props.disableState ? 'none' : 'block' }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >

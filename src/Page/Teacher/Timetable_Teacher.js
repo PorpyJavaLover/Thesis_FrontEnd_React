@@ -448,15 +448,15 @@ function ManagementBox(props) {
   const TableCellTime = (row) => {
     if (row.time_locker === true) {
       return <>
-        <TableCell width="8%" align="left">{dayConvert(row.day_of_week)}  🔒</TableCell>
-        <TableCell width="8%" align="left">{row.start_time}  🔒</TableCell>
-        <TableCell width="8%" align="left">{row.end_time}  🔒</TableCell>
+        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ?  null : dayConvert(parseInt(row.day_of_week))}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.start_time  == "null" ?  null : row.start_time}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.end_time == "null" ?  null : row.end_time}  🔒</TableCell>
       </>
     } else {
       return <>
-        <TableCell width="8%" align="left">{dayConvert(row.day_of_week)}</TableCell>
-        <TableCell width="8%" align="left">{row.start_time}</TableCell>
-        <TableCell width="8%" align="left">{row.end_time}</TableCell>
+        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ?  null : dayConvert(parseInt(row.day_of_week))}</TableCell>
+        <TableCell width="8%" align="left">{row.start_time  == "null" ?  null : row.start_time} </TableCell>
+        <TableCell width="8%" align="left">{row.end_time == "null" ?  null : row.end_time}</TableCell>
       </>
     }
   };
@@ -483,9 +483,9 @@ function ManagementBox(props) {
 
   const TableCellRoom = (row) => {
     if (row.room_locker === true) {
-      return <TableCell width="8%" align="left">{row.room_name} 🔒</TableCell>
+      return <TableCell width="8%" align="left">{row.room_name  == "null" ?  null : row.room_name} 🔒</TableCell>
     } else {
-      return <TableCell width="8%" align="left">{row.room_name}</TableCell>
+      return <TableCell width="8%" align="left">{row.room_name  == "null" ?  null : row.room_name}</TableCell>
     }
   };
 

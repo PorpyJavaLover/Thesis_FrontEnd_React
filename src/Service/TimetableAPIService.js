@@ -20,19 +20,19 @@ export const TimetableAPIServiceTeacher = new class TimetableAPIServiceTeacher e
         return axios.get(this.url + '/timetable/teacher/show/member/time/' + mId, { headers: this.headers });
     }
 
-    createTimetable(yId, sId, cId , cType, gId) {
+    createTimetable(yId, sId, cId, cType, gId) {
         const body = {
             'years': yId,
             'semester': sId,
             'courseId': cId,
-            'courseType' : cType,
+            'courseType': cType,
             'groupId': gId
         };
         return axios.post(this.url + '/timetable/teacher/create ', body, { headers: this.headers });
     }
 
-    deletTimetable(yId, sId, cId , cType, gId) {
-        return axios.delete(this.url + '/timetable/teacher/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/'+ cType + '/' + gId, { headers: this.headers });
+    deletTimetable(yId, sId, cId, cType, gId) {
+        return axios.delete(this.url + '/timetable/teacher/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId, { headers: this.headers });
     }
 
 }
@@ -43,8 +43,8 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
         return axios.get(this.url + '/timetable/staff/show/all' + '/' + memberId, { headers: this.headers });
     }
 
-    getTimetable() {
-        return axios.get(this.url + '/timetable/staff/show/all', { headers: this.headers });
+    getTimetable(yId, sId) {
+        return axios.get(this.url + '/timetable/staff/show/all' + '/' + yId + '/' + sId, { headers: this.headers });
     }
 
     getStartTime(yId, sId, cId, cType, gId, dayOfWeek, endTime) {
@@ -67,16 +67,16 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
         return axios.get(this.url + '/timetable/staff/show/room' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId + '/' + dayOfWeek + '/' + startTime + '/' + endTime, { headers: this.headers });
     }
 
-    autoPilot() {
-        return axios.get(this.url + '/timetable/staff/auto_pilot', { headers: this.headers });
+    autoPilot(yId, sId) {
+        return axios.get(this.url + '/timetable/staff/auto_pilot' + '/' + yId + '/' + sId, { headers: this.headers });
     }
 
-    createTimetable(yId, sId, cId , cType, gId , mId) {
+    createTimetable(yId, sId, cId, cType, gId, mId) {
         const body = {
             'years': yId,
             'semester': sId,
             'courseId': cId,
-            'courseType' : cType,
+            'courseType': cType,
             'groupId': gId,
             'memberId': mId
         };
@@ -98,19 +98,19 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
             'time_locker': timeLocker,
             'room_locker': roomLocker
         };
-        return axios.put(this.url + '/timetable/staff/update/locker' + '/' + yId + '/' + sId + '/' + cId  + '/' + cType + '/' + gId, body, { headers: this.headers });
+        return axios.put(this.url + '/timetable/staff/update/locker' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId, body, { headers: this.headers });
     }
 
-    deletTimetable(yId, sId, cId , cType, gId, memberId) {
-        return axios.delete(this.url + '/timetable/staff/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/'+ cType + '/' + gId + '/' + memberId, { headers: this.headers });
+    deletTimetable(yId, sId, cId, cType, gId, memberId) {
+        return axios.delete(this.url + '/timetable/staff/delete/forPlan' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId + '/' + memberId, { headers: this.headers });
     }
 
-    clean(yId, sId, cId , cType, gId , dayOfWeek, startTime, endTime, roomId , timeLocker , roomLocker) {
-        return axios.delete(this.url + '/timetable/staff/clean' + '/' + yId + '/' + sId + '/' + cId + '/'+ cType + '/' + gId + '/' + dayOfWeek + '/' + startTime + '/' + endTime + '/' + roomId + '/' + timeLocker + '/' + roomLocker  , { headers: this.headers });
+    clean(yId, sId, cId, cType, gId, dayOfWeek, startTime, endTime, roomId, timeLocker, roomLocker) {
+        return axios.delete(this.url + '/timetable/staff/clean' + '/' + yId + '/' + sId + '/' + cId + '/' + cType + '/' + gId + '/' + dayOfWeek + '/' + startTime + '/' + endTime + '/' + roomId + '/' + timeLocker + '/' + roomLocker, { headers: this.headers });
     }
 
-    cleanAll() {
-        return axios.delete(this.url + '/timetable/staff/clean/all', { headers: this.headers });
+    cleanAll(yId, sId) {
+        return axios.delete(this.url + '/timetable/staff/clean/all' + '/' + yId + '/' + sId, { headers: this.headers });
     }
 
 }

@@ -31,17 +31,6 @@ const dataTestA = [
     nameReplaceLast: "จันทร์พรม",
   },
 ];
-const teaching = dataTestA[0];
-const text = `เนื่องด้วยข้าพเจ้า ${teaching.nameTeachingShort} ${teaching.nameTeachingFirst} ${teaching.nameTeachingLast} 
-สังกัดสาขา${teaching.oganize} ไม่สามารถมาปฏิบัติการสอนได้ ในวันที่ ${teaching.dateStart} เดือน ${teaching.monthStart} พ.ศ. ${teaching.yearsStart} 
-ถึงวันที่ ${teaching.dateEnd} เดือน ${teaching.monthEnd} พ.ศ. ${teaching.yearsEnd} เนื่องจาก ${teaching.note} 
-จึงขออนุญาตให้ ${teaching.nameReplaceShort}${teaching.nameReplaceFirst} ${teaching.nameReplaceLast} ทำการสอนแทน ดังนี้`;
-
-const text2 = `ลงชื่อ...${teaching.nameTeachingFirst} ${teaching.nameTeachingLast}..ผู้ขออนุญาต`;
-const text3 = `${teaching.nameTeachingShort} ${teaching.nameTeachingFirst} ${teaching.nameTeachingLast}`;
-
-const text4 = `ลงชื่อ...${teaching.nameReplaceFirst} ${teaching.nameReplaceLast}...ผู้สอนแทน`;
-const text5 = `${teaching.nameReplaceShort}${teaching.nameReplaceFirst} ${teaching.nameReplaceLast}`;
 
 const dataTestB = [
   {
@@ -72,8 +61,8 @@ export class ComponentToPrint extends React.Component {
     return (
       <div
         className="font"
-      // style={{ lineHeight: "", fontSize: "1rm", color: "red" }}
-      style={{  fontSize: "16px", fontFamily:"THSarabunNew" }}
+        // style={{ lineHeight: "", fontSize: "1rm", color: "red" }}
+        style={{ fontSize: "14px", fontFamily: "THSarabunNew" }}
       >
         <div>
           <p>
@@ -85,7 +74,6 @@ export class ComponentToPrint extends React.Component {
           <br />
           <p style={{ float: "center", align: "center", marginRight: "10%", marginTop: "2%", }} >
             ใบขออนุมัติสอนแทน
-            {this.props.a1}
           </p>
           <p
             style={{
@@ -113,7 +101,12 @@ export class ComponentToPrint extends React.Component {
             เรียน คณบดีคณะวิศวกรรมศาสตร์และเทคโนโลยี
           </p>
 
-          <p style={{ textIndent: "4.5em", lineHeight: "30px" }}>{text}</p>
+          <p style={{ textIndent: "4.5em", lineHeight: "30px" }}>{
+            `เนื่องด้วยข้าพเจ้า ${this.props.dataAAA.nameTeachingShort} ${this.props.dataAAA.nameTeachingFirst} ${this.props.dataAAA.nameTeachingLast} 
+สังกัดสาขา${this.props.dataAAA.oganize} ไม่สามารถมาปฏิบัติการสอนได้ ในวันที่ ${this.props.dataAAA.dateStart} เดือน ${this.props.dataAAA.monthStart} พ.ศ. ${this.props.dataAAA.yearsStart} 
+ถึงวันที่ ${this.props.dataAAA.dateEnd} เดือน ${this.props.dataAAA.monthEnd} พ.ศ. ${this.props.dataAAA.yearsEnd} เนื่องจาก ${this.props.dataAAA.note} 
+จึงขออนุญาตให้ ${this.props.dataAAA.nameReplaceShort}${this.props.dataAAA.nameReplaceFirst} ${this.props.dataAAA.nameReplaceLast} ทำการสอนแทน ดังนี้`
+          }</p>
         </div>
         <br />
         <div>
@@ -153,8 +146,8 @@ export class ComponentToPrint extends React.Component {
                 <td style={{ border: "1px solid black" }}>&nbsp;รวม&nbsp;</td>
                 <td style={{ border: "1px solid black" }}>&nbsp;คาบที่&nbsp;</td>
               </tr>
-              {dataTestB.map((item) => (
-                <tr 
+              {this.props.dataBBB.map((item) => (
+                <tr
                   style={{
                     textAlign: "center",
                     padding: 10,
@@ -203,10 +196,10 @@ export class ComponentToPrint extends React.Component {
               textIndent: "4.5em",
             }}
           >
-            {text2}
+            {`ลงชื่อ...........................................ผู้ขออนุญาต`}
 
           </p>
-          <p style={{ textIndent: "7em" }}>( {text3})</p>
+          <p style={{ textIndent: "7em" }}>( {`${this.props.dataAAA.nameTeachingShort} ${this.props.dataAAA.nameTeachingFirst} ${this.props.dataAAA.nameTeachingLast}`})</p>
           <br />
           <p
             style={{
@@ -215,10 +208,9 @@ export class ComponentToPrint extends React.Component {
               textIndent: "4.5em",
             }}
           >
-            {text4}
-
+            {`ลงชื่อ...........................................ผู้สอนแทน`}
           </p>
-          <p style={{ textIndent: "7em" }}>( นายสนั่น  จันทร์พรม )</p>
+          <p style={{ textIndent: "7em" }}>( {`${this.props.dataAAA.nameReplaceShort} ${this.props.dataAAA.nameReplaceFirst} ${this.props.dataAAA.nameReplaceLast}`}) </p>
         </div>
         <br />
         <table
@@ -260,7 +252,7 @@ export class ComponentToPrint extends React.Component {
               <td>
                 {" "}
                 <p style={{ textAlign: "center" }}>
-                  ลงชื่อ........................................................................
+                  ลงชื่อ...........................................
                 </p>
                 <p style={{ textAlign: "center" }}>(...........................................)</p>
                 <p style={{ textAlign: "center" }}>หัวหน้าสาขา</p>
@@ -268,7 +260,7 @@ export class ComponentToPrint extends React.Component {
               </td>
               <td>
                 <p style={{ textAlign: "center", marginTop: "10%" }}>
-                  ลงชื่อ........................................................................
+                  ลงชื่อ...........................................
                 </p>
 
                 <p style={{ textAlign: "center" }}>

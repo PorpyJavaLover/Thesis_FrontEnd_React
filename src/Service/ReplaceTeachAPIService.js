@@ -16,6 +16,16 @@ export const ReplaceTeachAPIServiceTeacher = new class ReplaceTeachAPIServiceTea
         return axios.get(this.url + '/replaceteach/teacher/member/replace/option' + '/' + replaceTeachId , { headers: this.headers });
     }
 
+    getPDFHead(replaceTeachId) {
+        return axios.get(this.url + '/replaceteach/teacher/pdf/head' + '/' + replaceTeachId , { headers: this.headers });
+    }
+
+    getPDFBody(leaveTeachId , replaceTeachId) {
+        return axios.get(this.url + '/replaceteach/teacher/pdf/body' + '/' + leaveTeachId + '/' + replaceTeachId , { headers: this.headers });
+    }
+
+    
+
     update(replaceTeachId,memberReplaceId) {
         const body = {
             'memberReplaceId': memberReplaceId,

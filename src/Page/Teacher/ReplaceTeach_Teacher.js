@@ -44,7 +44,7 @@ export default class ReplaceTeach extends Component {
   updateState = () => {
     ReplaceTeachAPIServiceTeacher.getAll().then((res) => {
       this.setState({ dataReplaceTeach: res.data });
-      console.log(res.data);
+      //console.log(res.data);
     })
   }
 
@@ -92,9 +92,10 @@ function MenagementBox(props) {
     setEditTemp(null);
   };
   const handleEdit = (dataInside) => () => {
+    console.log(dataInside);
     setEditTemp(dataInside.replaceTeachId);
     setMemberReplaceSelected(dataInside.memberReplaceId);
-    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId).then((res)=>{
+    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId).then((res) => {
       setMemberReplaceOptions(res.data);
     });
   }
@@ -106,7 +107,7 @@ function MenagementBox(props) {
   }*/
 
   const handleConfirm = (dataInside) => () => {
-    ReplaceTeachAPIServiceTeacher.update(dataInside.replaceTeachId,memberReplaceSelected).then(() => {
+    ReplaceTeachAPIServiceTeacher.update(dataInside.replaceTeachId, memberReplaceSelected).then(() => {
       setMemberReplaceOptions([]);
       setMemberReplaceSelected(null);
       setEditTemp(null);
@@ -128,13 +129,24 @@ function MenagementBox(props) {
   const container = React.useRef(null);
 
   const ExportHere = (data) => {
-    
+
 
     const componentRefPdf = useRef();
 
+    const [dataAA, setDataAA] = useState([]);
+    const [dataBB, setDataBB] = useState([]);
+
     const test = () => {
-      console.log(data);
-      //handlePrint();
+
+      console.log(data.data.replaceTeachId);
+      ReplaceTeachAPIServiceTeacher.getPDFHead(data.data.replaceTeachId).then((dataA) => {
+        setDataAA(dataA.data);
+        console.log(dataAA);
+        ReplaceTeachAPIServiceTeacher.getPDFBody(data.data.leaveTeachId , data.data.replaceTeachId).then((dataB) => {
+          setDataBB(dataB.data);
+          handlePrint();
+        });
+      });
     }
 
     const handlePrint = useReactToPrint({
@@ -144,7 +156,7 @@ function MenagementBox(props) {
     return (
       <div>
         <div style={{ display: "none" }}>
-          <ComponentToPrint ref={componentRefPdf} data={"hi"} />
+          <ComponentToPrint ref={componentRefPdf} dataAAA={dataAA}  dataBBB={dataBB} />
         </div>
         <div>
           <Button
@@ -163,7 +175,7 @@ function MenagementBox(props) {
       </div>
     );
   };
-  
+
 
   //sort and search
   const headCells = [
@@ -248,7 +260,7 @@ function MenagementBox(props) {
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={createSortHandler(headCell.id)}
               >
-                  {headCell.label}
+                {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -384,7 +396,7 @@ function MenagementBox(props) {
                             <TableCell width="8%" id={labelId} scope="row" align="left">
                               {row.leaveTeachId}
                             </TableCell>
-                            <TableCell width="10%"  align="left">
+                            <TableCell width="10%" align="left">
                               {row.course_code}
                             </TableCell>
                             <TableCell width="15%" align="left">
