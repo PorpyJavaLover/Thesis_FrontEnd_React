@@ -2,6 +2,7 @@ import React, { Component, useState, useEffect, useRef } from 'react'
 import APIService from '../../Service/FernAPIService'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
 import { ReplaceTeachAPIServiceTeacher, ReplaceTeachAPIServiceStaff } from '../../Service/ReplaceTeachAPIService';
+import MemberAPIService from '../../Service/MemberAPIService';
 import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 import CardDatePicker from '../../Component/CardDatePicker';
@@ -33,18 +34,21 @@ export default class ReplaceTeach extends Component {
     super(props);
     this.updateState = this.updateState.bind(this);
     this.state = {
-      dataReplaceTeach: []
+      dataReplaceTeach: [],
+      organiz: []
     }
   }
 
   componentDidMount() {
-    this.updateState()
+    this.updateState();
+    MemberAPIService.getAllOrganization().then((res) => {
+      this.setState({ organiz: res.data });
+    })
   }
 
   updateState = () => {
     ReplaceTeachAPIServiceTeacher.getAll().then((res) => {
       this.setState({ dataReplaceTeach: res.data });
-      //console.log(res.data);
     })
   }
 
@@ -52,7 +56,7 @@ export default class ReplaceTeach extends Component {
     return (
       <div>
         <HeaderBox title={"การจัดการสอนแทน"} />
-        <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataReplaceTeach={this.state.dataReplaceTeach} />
+        <MenagementBox title={"เมนูจัดการรายการ"} organiz={this.state.organiz} updateState={this.updateState.bind(this)} dataReplaceTeach={this.state.dataReplaceTeach} />
       </div>
     )
   }
@@ -73,8 +77,11 @@ function MenagementBox(props) {
   //state
 
   const [submitButtonState, setSubmitButtonState] = useState(true);
+  const [editButtonState, setEditButtonState] = useState(true);
   const [memberReplaceOptions, setMemberReplaceOptions] = useState([]);
   const [memberReplaceSelected, setMemberReplaceSelected] = useState(null);
+  const [OrganizOptions, setOrganizOptions] = useState([]);
+  const [OrganizSelected, setOrganizSelected] = useState(null);
   const [editTemp, setEditTemp] = useState(null);
 
   //function
@@ -82,6 +89,20 @@ function MenagementBox(props) {
   useEffect(() => {
     confirmTiggleUseEffect();
   }, [memberReplaceSelected]);
+
+  useEffect(() => {
+    editTiggleUseEffect();
+  }, [OrganizSelected]);
+
+  useEffect(() => {
+    setOrganizOptions(props.organiz);
+  }, [props.organiz]);
+
+  const handleChangOrganizSelected = (event) => {
+    setOrganizSelected(event.target.value);
+    setMemberReplaceSelected(null);
+    setEditTemp(null);
+  };
 
   const handleChangMemberReplace = (event) => {
     setMemberReplaceSelected(event.target.value);
@@ -91,11 +112,12 @@ function MenagementBox(props) {
     setMemberReplaceSelected(null);
     setEditTemp(null);
   };
+
   const handleEdit = (dataInside) => () => {
     console.log(dataInside);
     setEditTemp(dataInside.replaceTeachId);
     setMemberReplaceSelected(dataInside.memberReplaceId);
-    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId).then((res) => {
+    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId , OrganizSelected ).then((res) => {
       setMemberReplaceOptions(res.data);
     });
   }
@@ -124,9 +146,15 @@ function MenagementBox(props) {
     }
   }
 
+  const editTiggleUseEffect = () => {
+    if (OrganizSelected !== null) {
+      setEditButtonState(false)
+    } else {
+      setEditButtonState(true)
+    }
+  }
+
   const pdfExportComponent = React.useRef(null);
-  const excelExportComponent = React.useRef(null);
-  const container = React.useRef(null);
 
   const ExportHere = (data) => {
 
@@ -137,12 +165,11 @@ function MenagementBox(props) {
     const [dataBB, setDataBB] = useState([]);
 
     const test = () => {
-
       console.log(data.data.replaceTeachId);
       ReplaceTeachAPIServiceTeacher.getPDFHead(data.data.replaceTeachId).then((dataA) => {
         setDataAA(dataA.data);
         console.log(dataAA);
-        ReplaceTeachAPIServiceTeacher.getPDFBody(data.data.leaveTeachId , data.data.replaceTeachId).then((dataB) => {
+        ReplaceTeachAPIServiceTeacher.getPDFBody(data.data.leaveTeachId, data.data.replaceTeachId).then((dataB) => {
           setDataBB(dataB.data);
           handlePrint();
         });
@@ -156,7 +183,7 @@ function MenagementBox(props) {
     return (
       <div>
         <div style={{ display: "none" }}>
-          <ComponentToPrint ref={componentRefPdf} dataAAA={dataAA}  dataBBB={dataBB} />
+          <ComponentToPrint ref={componentRefPdf} dataAAA={dataAA} dataBBB={dataBB} />
         </div>
         <div>
           <Button
@@ -175,7 +202,6 @@ function MenagementBox(props) {
       </div>
     );
   };
-
 
   //sort and search
   const headCells = [
@@ -346,19 +372,30 @@ function MenagementBox(props) {
         <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
           <Grid item sm={12} xs={12}>
             <TableContainer >
-              <Box dir="rtl" sx={{ pb: 3, display: 'flex', alignItems: 'flex-end', }}>
-                <TextField
-                  dir="ltr"
-                  sx={{ width: 300, }}
-                  fullWidth
-                  id="filled-flexible"
-                  label="ค้นหา"
-                  value={searchValue || ''}
-                  onChange={handleChange}
-                  variant="standard"
-                />
-                <SearchIcon />
-              </Box>
+              <Grid container spacing={2} sx={{ pt: 0, pb: 3, pl: 3, pr: 3 }} >
+                <Grid item sm={6} xs={6}>
+                  <Box dir="ltr" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>
+                    <TextField
+                      dir="ltr"
+                      sx={{ width: 300, }}
+                      fullWidth
+                      id="filled-flexible"
+                      label="ค้นหา"
+                      value={searchValue || ''}
+                      onChange={handleChange}
+                      variant="standard"
+                    />
+                    <SearchIcon />
+                  </Box>
+                </Grid>
+                <Grid item sm={6} xs={6}>
+                  <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}>
+                    <Stack dir="ltr" direction="row" spacing={2}>
+                      <CardSelect labelPara="เลือกสาขา" menuItemPara={OrganizOptions} onChangePara={handleChangOrganizSelected} valuePara={OrganizSelected} />
+                    </Stack >
+                  </Box>
+                </Grid>
+              </Grid>
               <Table sx={{ minWidth: 650, }} aria-label="simple table">
                 <EnhancedTableHead
                   order={order}
@@ -384,7 +421,7 @@ function MenagementBox(props) {
                             <TableCell width="15%" align="left">{row.memberReplaceName}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 50 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                <Button sx={{ width: 50 }} disabled={editButtonState}  color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
                                 <ExportHere data={row} />
                               </Stack>
                             </TableCell>
@@ -424,7 +461,6 @@ function MenagementBox(props) {
                               <Stack key={row.replaceTeachId} direction="row" spacing={2}>
                                 <Button key={row.replaceTeachId + 1} sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={submitButtonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
                                 <Button key={row.replaceTeachId + 2} sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
-
                               </Stack>
                             </TableCell>
                           </TableRow>

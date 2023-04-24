@@ -26,6 +26,10 @@ export default new class MemberAPIService extends BaseAPIService {
             });
     }
 
+    getAllOrganization() {
+        return axios.get(this.url + '/organization/public/show/select');
+    }
+
 }
 
 export const MemberAPIServiceTeacher = new class MemberAPIServiceTeacher extends BaseAPIService {

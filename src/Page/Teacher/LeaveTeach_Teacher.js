@@ -24,6 +24,8 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 
+
+//@todo 1.ฟังก์ชัน update  2.การแสดงผล วันที่ วว/ดด/ปปปป
 export default class LeaveTeach extends Component {
 
   constructor(props) {
@@ -274,7 +276,6 @@ function MenagementBox(props) {
   }
 
   const handleConfirm = (dataInside) => () => {
-    //@todo แก้บัคการ update date
     LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, yearSelected, semesterSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
     setEditTemp(null);
     setYearSelected(null);
@@ -496,6 +497,9 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id} >
                             <TableCell id={labelId} scope="row" align="left">
+                            {row.id}
+                            </TableCell>
+                            <TableCell align="left">
                               <CardSelect labelPara="ปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangYear} valuePara={yearSelected} />
                             </TableCell>
                             <TableCell align="left">

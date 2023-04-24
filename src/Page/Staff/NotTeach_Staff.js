@@ -43,7 +43,7 @@ export default class NotTeachTeacher extends Component {
     }
 
     updateState = (memberId) => {
-        NotTeachAPIServiceStaff.getAllNotTeachByMemberId(memberId).then((res) => {
+        NotTeachAPIServiceStaff.getAllNotTeachByMemberId(this.state.yearSelected,this.state.semesterSelected,memberId).then((res) => {
             this.setState({ dataNotTeach: res.data });
         })
     }
@@ -71,7 +71,6 @@ export default class NotTeachTeacher extends Component {
         this.setState({
             disableState: false
         })
-
     }
 
     render() {
@@ -79,7 +78,7 @@ export default class NotTeachTeacher extends Component {
             <div >
                 <HeaderBox title={"การจัดการวันที่ไม่ขอสอน"} />
                 <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)} member={this.state.member} setYearSelected={this.setYearSelected.bind(this)} setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
-                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} updateState={this.updateState} memberSelected={this.state.memberSelected}  />
+                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} updateState={this.updateState} memberSelected={this.state.memberSelected}  />
                 <MenagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updateState={this.updateState}  memberSelected={this.state.memberSelected} dataNotTeach={this.state.dataNotTeach} />
             </div>
         )
@@ -99,10 +98,10 @@ function SelectTeacherBox(props) {
     const currentYear = new Date().getFullYear();
 
     const yearOptions = [
-        { key: '1', value: currentYear + 543, text: currentYear + 543 },
-        { key: '2', value: currentYear + 543 - 1, text: currentYear + 543 - 1 },
-        { key: '3', value: currentYear + 543 - 2, text: currentYear + 543 - 2 },
-        { key: '4', value: currentYear + 543 - 3, text: currentYear + 543 - 3 },
+        { key: '1', value: currentYear , text: currentYear + 543 },
+        { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
+        { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
+        { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
     ];
 
     const semesterOptions = [
@@ -246,7 +245,7 @@ function CreationBox(props) {
     };
 
     const handleSubmit = (event, data) => {
-        NotTeachAPIServiceStaff.createNotTeach(dayOfWeekSelected, timeStartSelected, timeEndSelected , props.memberSelected ).then(() => {
+        NotTeachAPIServiceStaff.createNotTeach( props.yearSelected , props.semesterSelected, dayOfWeekSelected, timeStartSelected, timeEndSelected , props.memberSelected ).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
             setTimeEndSelected(null);

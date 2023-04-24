@@ -26,7 +26,7 @@ const pagesTeacher = [
     { key: 4, name: 'การจัดการวันงดสอน', path: '/Teacher/LeaveTeach' },
     { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
     { key: 6, name: 'การจัดPDF', path: '/Teacher/PDFTeach' },
-    { key: 7, name: 'Test', path: '/Teacher/Test' },
+    { key: 7, name: 'Te st', path: '/Teacher/Test' },
 ];
 
 const pagesStaff = [

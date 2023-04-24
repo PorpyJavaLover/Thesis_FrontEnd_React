@@ -44,10 +44,10 @@ export default function App() {
             <Route path="/Staff/NotTeach" element={<SelectNotTeachStaff />} />
           </Route>
           <Route path="/" element={<Home />} />
+          <Route path="/Home" element={<Home />} />
           <Route path="/R2" element={<Replace2 />} />
           <Route path="/T1" element={<TableExampleApprove />} />
         </Route>
-        <Route path="/Home" element={<Home />} />
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/Singup" element={<Singup />} />
         <Route path="/Error404" element={<Error404 />} />

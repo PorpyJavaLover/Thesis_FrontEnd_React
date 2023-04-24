@@ -2,12 +2,12 @@ import React, { Component, useState, useEffect } from 'react'
 import { InputLabel, FormControl, Select, MenuItem, Card, } from '@mui/material';
 
 
-export default function CardSelect({ labelPara, valuePara, menuItemPara, onChangePara ,disabledPara = false  }) {
+export default function CardSelect({ labelPara, valuePara, menuItemPara, onChangePara ,disabledPara = false  , minWidthPara = 200 }) {
     return (
         <Card sx={{ boxShadow: 3, p: 1, }}>
             <FormControl fullWidth required >
                 <InputLabel>{labelPara}</InputLabel>
-                <Select
+                <Select 
                     complete="position"
                     fullWidth
                     label={labelPara}
@@ -15,6 +15,7 @@ export default function CardSelect({ labelPara, valuePara, menuItemPara, onChang
                     value={valuePara ?? ""}
                     variant="outlined"
                     disabled={disabledPara}
+                    sx={{ minWidth: minWidthPara}}
                 >
                     {menuItemPara.map((index) => (
                         <MenuItem key={index.value} value={index.value} > {index.text}</MenuItem>

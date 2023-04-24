@@ -12,8 +12,8 @@ export const ReplaceTeachAPIServiceTeacher = new class ReplaceTeachAPIServiceTea
         return axios.get(this.url + '/replaceteach/teacher/show/all ', { headers: this.headers });
     }
     
-    getMemberReplaceOption(replaceTeachId) {
-        return axios.get(this.url + '/replaceteach/teacher/member/replace/option' + '/' + replaceTeachId , { headers: this.headers });
+    getMemberReplaceOption(replaceTeachId , OrganizSelected) {
+        return axios.get(this.url + '/replaceteach/teacher/member/replace/option' + '/' + replaceTeachId  + '/' + OrganizSelected , { headers: this.headers });
     }
 
     getPDFHead(replaceTeachId) {
@@ -23,6 +23,7 @@ export const ReplaceTeachAPIServiceTeacher = new class ReplaceTeachAPIServiceTea
     getPDFBody(leaveTeachId , replaceTeachId) {
         return axios.get(this.url + '/replaceteach/teacher/pdf/body' + '/' + leaveTeachId + '/' + replaceTeachId , { headers: this.headers });
     }
+    
 
     
 

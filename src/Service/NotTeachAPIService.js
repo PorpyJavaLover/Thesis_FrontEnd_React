@@ -8,15 +8,17 @@ export default new class NotTeachAPIService extends BaseAPIService {
 
 export const NotTeachAPIServiceTeacher = new class NotTeachAPIServiceTeacher extends BaseAPIService {
 
-    getAllNotTeach() {
-        return axios.get(this.url + '/notteach/teacher/show/all', { headers: this.headers });
+    getAllNotTeach(yId, sId) {
+        return axios.get(this.url + '/notteach/teacher/show/all'  + '/' + yId + '/' + sId , { headers: this.headers });
     }
 
-    createNotTeach(dayOfWeek, timeStart, timeEnd) {
+    createNotTeach(yId, sId, dayOfWeek, timeStart, timeEnd) {
         const body = {
             'dayOfWeek': dayOfWeek,
             'timeStart': timeStart,
-            'timeEnd': timeEnd
+            'timeEnd': timeEnd,
+            'years': yId,
+            'semester':sId
         };
         return axios.post(this.url + '/notteach/teacher/create', body, { headers: this.headers });
     }
@@ -39,18 +41,18 @@ export const NotTeachAPIServiceTeacher = new class NotTeachAPIServiceTeacher ext
 
 export const NotTeachAPIServiceStaff = new class NotTeachAPIServiceStaff extends BaseAPIService {
 
-    getAllNotTeachByMemberId(memberId) {
-        console.log("test 1234   "  +   memberId);
-        return axios.get(this.url + '/notteach/staff/show/all' + '/' + memberId, { headers: this.headers });
+    getAllNotTeachByMemberId(yId, sId, memberId) {
+        return axios.get(this.url + '/notteach/staff/show/all' + '/' + yId + '/' + sId + '/' + memberId, { headers: this.headers });
     }
 
-    createNotTeach(dayOfWeek, timeStart, timeEnd , mId) {
-        console.log("test 5678   "  +   mId);
+    createNotTeach(yId, sId, dayOfWeek, timeStart, timeEnd , mId) {
         const body = {
             'dayOfWeek': dayOfWeek,
             'timeStart': timeStart,
             'timeEnd': timeEnd,
-            'memberId': mId
+            'memberId': mId,
+            'years': yId,
+            'semester':sId
         };
         return axios.post(this.url + '/notteach/staff/create', body, { headers: this.headers });
     }

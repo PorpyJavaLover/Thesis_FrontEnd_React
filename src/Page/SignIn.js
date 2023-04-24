@@ -22,8 +22,8 @@ function UserSignIn(props) {
         MemberAPIService.login(username, password);
     };
 
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
 
     return (
         <Container sx={{ p: 2 }} maxWidth="sm">
@@ -43,7 +43,7 @@ function UserSignIn(props) {
                                     เข้าสู่ระบบ
                             </Button>
                             <Button sx={{ width: 125 }} color="inherit" variant="contained" >
-                                <Link style={{ textDecoration: "none", color: "black" }} to={"/Home"} >
+                                <Link style={{ textDecoration: "none", color: "black" }} to={"/Singup"} >
                                     สมัครสมาชิก
                                 </Link>
                             </Button>
