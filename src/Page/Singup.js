@@ -106,12 +106,12 @@ function UserCreate(props) {
                     </Grid>
 
                     <Grid item sm={6} dir="ltr" >
-                        <Box dir="ltr" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>  //@todo <---check point  --> pd
+                        <Box dir="ltr" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>  {//@todo <---check point  --> pd}
                             <Button sx={{ width: 125 }} color="primary" onClick={handleSubmit} variant="contained" > เข้าสู่ระบบ </Button>
                         </Box>
                     </Grid>
                     <Grid item sm={6} dir="rtl" >
-                        <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}> //@todo <--- check point  --> pt
+                        <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}> {//@todo <--- check point  --> pt}
                             
                             <Button sx={{ width: 125 }} color="inherit" variant="contained" >
                                 <Link style={{ textDecoration: "none", color: "black" }} to={"/Singup"} > สมัครสมาชิก </Link>
