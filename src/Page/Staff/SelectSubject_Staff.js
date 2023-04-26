@@ -38,7 +38,7 @@ export default class SelectSubjectStaff extends Component {
     }
 
     componentDidMount() {
-        MemberAPIServiceStaff.getAllMember().then((res) => {
+        MemberAPIServiceStaff.getMemberOption().then((res) => {
             this.setState({ member: res.data });
         });
     }

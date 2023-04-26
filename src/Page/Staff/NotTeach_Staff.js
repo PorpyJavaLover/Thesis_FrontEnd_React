@@ -19,7 +19,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 
-export default class NotTeachTeacher extends Component {
+export default class NotTeachStaff extends Component {
 
     constructor(props) {
         super(props);
@@ -36,7 +36,7 @@ export default class NotTeachTeacher extends Component {
     }
 
     componentDidMount() {
-        MemberAPIServiceStaff.getAllMember().then((res) => {
+        MemberAPIServiceStaff.getMemberOption().then((res) => {
             this.setState({ member: res.data });
             console.log(res.data);
         });
@@ -710,8 +710,6 @@ function MenagementBox(props) {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
-
-
 
     //render
 

@@ -1,265 +1,518 @@
 import React, { Component, useState, useEffect } from 'react'
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import FernAPIService from '../../Service/FernAPIService'
+import { CardHeader, Box, Card, Button, Grid, Container, Typography, } from '@mui/material';
+import CardSelect from '../../Component/CardSelect'
+import CardTextField from '../../Component/CardTextField'
+import { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
+import { NotTeachAPIServiceStaff } from '../../Service/NotTeachAPIService'
+import SendIcon from '@mui/icons-material/Send';
+import SearchIcon from '@mui/icons-material/Search';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import TextField from '@mui/material/TextField';
+import PropTypes from 'prop-types';
+import { visuallyHidden } from '@mui/utils';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import SaveIcon from '@mui/icons-material/Save';
+import Stack from '@mui/material/Stack';
+import MemberAPIService from '../../Service/MemberAPIService';
 
-export default class Singup extends Component {
+export default class MenagementMemberStaff extends Component {
 
     constructor(props) {
         super(props);
-        this.updateState.bind(this);
+        this.updateState = this.updateState.bind(this);
+        this.setMemberSelected = this.setMemberSelected.bind(this);
         this.state = {
-            oganiz: []
+            member: [],
+            titleName: [],
+            memberSelected: null,
+            yearSelected: null,
+            semesterSelected: null,
+            disableState: true
         }
     }
 
     componentDidMount() {
-        FernAPIService.getAllOrganization().then((res) => {
-            this.setState({ oganiz: res.data });
-            console.log(this.state.oganiz);
-        })
         this.updateState();
+        MemberAPIService.getAllTitleName().then((res) => {
+            this.setState({ titleName: res.data });
+        })
     }
 
     updateState = () => {
-
+        MemberAPIServiceStaff.getMember().then((res) => {
+            this.setState({ member: res.data });
+            console.log(res.data);
+        });
     }
 
+    setMemberSelected = (item) => {
+        this.setState({
+            memberSelected: item,
+        })
+    }
+
+    setYearSelected = (item) => {
+        this.setState({
+            yearSelected: item,
+        })
+    }
+
+    setSemesterSelected = (item) => {
+        this.setState({
+            semesterSelected: item,
+        })
+    }
+
+    setDisable = () => {
+        this.updateState(this.state.memberSelected);
+        this.setState({
+            disableState: false
+        })
+    }
 
     render() {
         return (
-            <div>
-                <div>
-                    <UserCreate oganiz={this.state.oganiz} />
-                </div>
-            </div>)
+            <div >
+                <HeaderBox title={"การจัดการบัญชีสมาชิก"} />
+                <MenagementBox titleName={this.state.titleName} title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updateState={this.updateState} member={this.state.member} dataNotTeach={this.state.dataNotTeach} />
+            </div>
+        )
     }
 }
 
-function UserCreate(props) {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        var data = {
-            position: position,
-            idcard: idcard,
-            title: title,
-            fname: fname,
-            lname: lname,
-            username: username,
-            phonenumber: phonenumber,
-            email: email,
-            password: password,
-            confirmpassword: confirmpassword,
-        };
-        fetch("https://www.mecallapi.com/api/users/create", {
-            method: "POST",
-            headers: {
-                Accept: "application/form-data",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
-            .then((res) => res.json())
-            .then((result) => {
-                alert(result["message"]);
-                if (result["status"] === "ok") {
-                    window.location.href = "./L1";
-                }
-            });
+function HeaderBox(props) {
+    return (
+        <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
+            <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
+        </Box>
+    )
+}
+
+function MenagementBox(props) {
+
+
+    const roleOption = [
+        { key: '1', value: 1, text: "อาจารย์" },
+        { key: '2', value: 2, text: "เจ้าหน้าที่" },
+        { key: '3', value: 3, text: "แอดมิน" },
+    ];
+
+    const activeStatusOption = [
+        { key: '0', value: false, text: 'ปิดใช้งาน' },
+        { key: '1', value: true, text: 'เปิดใช้งาน' },
+    ];
+
+    //state
+
+    const [editTemp, setEditTemp] = useState(null);
+    const [confirmButtonStatus, setConfirmButtonStatus] = useState(true);
+    const [titleNameOption, setTitleNameOption] = useState([]);
+    const [titleNameSelected, setTitleNameSelected] = useState(null);
+    const [firstNameTH, setFirstNameTH] = useState(null);
+    const [lastNameTH, setLastNameTH] = useState(null);
+    const [firstNameEN, setFirstNameEN] = useState(null);
+    const [lastNameEN, setLastNameEN] = useState(null);
+    const [usernameRe, setUsername] = useState(null);
+    const [passwordRe, setPassword] = useState(null);
+    const [roleSelected, setRoleSelected] = useState(null);
+    const [activeStatusSelected, setActiveStatusSelected] = useState(null);
+
+    const [errerPassword, setErrerPassword] = useState(false);
+
+    const regexA = /^[ก-ฺเ-ๅ็-ํ]*$/;
+
+    const regexB = /^[a-zA-Z.]*$/;
+
+    const regexC = /^[a-zA-Z.0-9]*$/;
+
+    var regexD = { capital: /(?=.*[A-Z])/, length: /(?=.{8,12}$)/, specialChar: /[ -\/:-@\[-\`{-~]/, digit: /(?=.*[0-9])/, };
+
+    //function
+
+    useEffect(() => {
+        setTitleNameOption(props.titleName);
+    }, [props.titleName]);
+
+    useEffect(() => {
+
+        if (passwordRe == null || passwordRe == "") {
+            setErrerPassword(false);
+        }
+
+    }, [passwordRe]);
+
+    useEffect(() => {
+        if (titleNameSelected != null && firstNameTH != null && lastNameTH != null && firstNameEN != null &&
+            lastNameEN != null && usernameRe != null && passwordRe != null &&
+            roleSelected != null && activeStatusSelected != null && !errerPassword) {
+            setConfirmButtonStatus(false);
+        }
+        else {
+            setConfirmButtonStatus(true);
+        }
+    }, [titleNameSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected, errerPassword]);
+
+
+    const handleChangeTitle = (event) => {
+        setTitleNameSelected(event.target.value);
     };
 
-    const [position, setPosition] = useState("");
-    const [idcard, setIdcard] = useState("");
-    const [title, setTitle] = useState("");
-    const [fname, setFname] = useState("");
-    const [lname, setLname] = useState("");
-    const [username, setUsername] = useState("");
-    const [phonenumber, setPhonenumber] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmpassword, setConfirmpassword] = useState("");
+    const handleChangeRole = (event) => {
+        setRoleSelected(event.target.value);
+    };
 
+    const handleChangeActiveStatus = (event) => {
+        setActiveStatusSelected(event.target.value);
+    };
+
+    const handleChangePassword = (event) => {
+
+        setPassword(event.target.value);
+
+        if ((regexD.capital.test(event.target.value) && regexD.length.test(event.target.value) &&
+            regexD.specialChar.test(event.target.value) && regexD.digit.test(event.target.value))) {
+            setErrerPassword(false);
+        } else {
+            setErrerPassword(true);
+        }
+
+    };
+
+    const roleConvert = (dataInside) => {
+        if (dataInside.role == 1) {
+            return "อาจารย์";
+        } else if (dataInside.role == 2) {
+            return "เจ้าหน้าที่";
+        } else if (dataInside.role == 3) {
+            return "แอดมิน";
+        }
+    }
+
+    const activeStatusConvert = (dataInside) => {
+        if (dataInside.activeStatus) {
+            return "เปิดใช้งาน";
+        } else {
+            return "ปิดใช้งาน";
+        }
+    }
+
+    const handleEdit = (dataInside) => () => {
+
+        setEditTemp(dataInside.memberId);
+        setFirstNameTH(dataInside.firstNameTH);
+        setLastNameTH(dataInside.lastNameTH);
+        setFirstNameEN(dataInside.firstNameEN);
+        setLastNameEN(dataInside.lastNameEN);
+        setUsername(dataInside.username);
+        setPassword(dataInside.password);
+        setTitleNameSelected(dataInside.titleId);
+        setRoleSelected(dataInside.role);
+        setActiveStatusSelected(dataInside.activeStatus);
+
+        if ((regexD.capital.test(dataInside.password) && regexD.length.test(dataInside.password) &&
+            regexD.specialChar.test(dataInside.password) && regexD.digit.test(dataInside.password))) {
+            setErrerPassword(false);
+        } else {
+            setErrerPassword(true);
+        }
+    }
+
+    const handleConfirm = (dataInside) => () => {
+        MemberAPIServiceStaff.update(dataInside.memberId, titleNameSelected, firstNameTH, lastNameTH,
+            firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected).then(() => {
+                props.updateState();
+                setEditTemp(null);
+                setFirstNameTH(null);
+                setLastNameTH(null);
+                setFirstNameEN(null);
+                setLastNameEN(null);
+                setUsername(null);
+                setPassword(null);
+                setTitleNameSelected(null);
+                setRoleSelected(null);
+                setActiveStatusSelected(null);
+            })
+    }
+
+    const handleDelete = (dataInside) => () => {
+        MemberAPIServiceStaff.delete(dataInside.memberId).then(() => {
+            props.updateState();
+        })
+    }
+
+    const handleCancel = () => {
+        setEditTemp(null);
+    }
+
+    //sort and search
+
+    const headCells = [
+        {
+            id: 'titleName',
+            numeric: true,
+            label: 'คำนำหน้า',
+        },
+        {
+            id: 'firstNameTH',
+            numeric: true,
+            label: 'ชื่อภาษาไทย',
+        },
+        {
+            id: 'lastNameTH',
+            numeric: true,
+            label: 'นามสกุลภาษาไทย',
+        },
+        {
+            id: 'firstNameEN',
+            numeric: true,
+            label: 'ชื่อภาษาอังกฤษ',
+        },
+        {
+            id: 'lastNameEN',
+            numeric: true,
+            label: 'นามสกุลภาษาอังกฤษ',
+        },
+        {
+            id: 'username',
+            numeric: true,
+            label: 'ชื่อบัญชีสมาชิก',
+        },
+        {
+            id: 'password',
+            numeric: true,
+            label: 'รหัสผ่าน',
+        },
+        {
+            id: 'role',
+            numeric: true,
+            label: 'ระดับสิทธิ์',
+        },
+        {
+            id: 'activeStatus',
+            numeric: true,
+            label: 'สถานะบัญชี',
+        },
+        {
+            id: 'option',
+            numeric: true,
+            label: 'ตัวเลือก',
+        },
+    ];
+
+    const [filteredData, setFilteredData] = useState(props.member);
+    const [searchValue, setSearchValue] = useState('')
+
+    const handleChange = (e) => {
+        setSearchValue(e.target.value)
+    }
+
+    function escapeRegExp(value) {
+        return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    }
+
+    useEffect(() => {
+        setFilteredData(props.member);
+    }, [props.member])
+
+    useEffect(() => {
+        const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
+        setFilteredData(searchValue === '' ? props.member : props.member.filter((data) => {
+            return Object.keys(data).some((field) => {
+                return searchRegex.test(data[field].toString());
+            });
+
+        }))
+    }, [searchValue])
+
+    function descendingComparator(a, b, orderBy) {
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if (b[orderBy] > a[orderBy]) {
+            return 1;
+        }
+        return 0;
+    }
+
+    function getComparator(order, orderBy) {
+        return order === 'desc'
+            ? (a, b) => descendingComparator(a, b, orderBy)
+            : (a, b) => -descendingComparator(a, b, orderBy);
+    }
+
+    function stableSort(array, comparator) {
+        const stabilizedThis = array.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if (order !== 0) {
+                return order;
+            }
+            return a[1] - b[1];
+        });
+        return stabilizedThis.map((el) => el[0]);
+    }
+
+
+
+    function EnhancedTableHead(props) {
+        const { order, orderBy, onRequestSort } = props;
+        const createSortHandler = (property) => (event) => {
+            onRequestSort(event, property);
+        };
+        return (
+            <TableHead>
+                <TableRow>
+                    {headCells.map((headCell) => (
+                        <TableCell
+                            key={headCell.id}
+                            align={headCell.numeric ? 'left' : 'center'}
+                            sortDirection={orderBy === headCell.id ? order : false}
+                        >
+                            <TableSortLabel
+                                active={orderBy === headCell.id}
+                                direction={orderBy === headCell.id ? order : 'asc'}
+                                onClick={createSortHandler(headCell.id)}
+                            >
+                                {headCell.label}
+                                {orderBy === headCell.id ? (
+                                    <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                    </Box>
+                                ) : null}
+                            </TableSortLabel>
+                        </TableCell>
+                    ))}
+                </TableRow>
+            </TableHead>
+        );
+    }
+
+    EnhancedTableHead.propTypes = {
+        onRequestSort: PropTypes.func.isRequired,
+        order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+        orderBy: PropTypes.string.isRequired,
+        rowCount: PropTypes.number.isRequired,
+    };
+
+    const [order, setOrder] = React.useState('asc');
+    const [orderBy, setOrderBy] = React.useState('');
+
+    const handleRequestSort = (event, property) => {
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(property);
+    };
+
+    //render
 
     return (
-        <Container sx={{ p: 5 }} maxWidth="sm">
-            <div>
-                <Typography component="h1" variant="h5">
-                    Singup
-                </Typography>
-                <form onSubmit={handleSubmit}>
-                    <Grid container sx={{ pt: 2 }} spacing={2}>
-                        <Grid sx={{ minWidth: 160 }} item xs={10}>
-                            <Box>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select">สาขา</InputLabel>
-                                    <Select
-                                        Complete="position"
-                                        labelId="demo-simple-select-label"
-                                        id="สาขา"
-                                        required
-                                        fullWidth
-                                        variant="outlined"
-                                        label="สาขา"
-                                        onChange={(e) => setPosition(e.target.value)}
-                                    >
-                                        {props.oganiz.map((index) => (
-                                            <MenuItem key={index.value} value={index.value}>{index.text}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2, }}   >
+            <Card sx={{ boxShadow: 5, }}>
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+                    <Grid item sm={12} xs={12}>
+                        <TableContainer >
+                            <Box dir="rtl" sx={{ pb: 3, display: 'flex', alignItems: 'flex-end', }}>
+                                <TextField
+                                    dir="ltr"
+                                    sx={{ width: 300, }}
+                                    fullWidth
+                                    id="filled-flexible"
+                                    label="ค้นหา"
+                                    value={searchValue || ''}
+                                    onChange={handleChange}
+                                    variant="standard"
+                                />
+                                <SearchIcon />
                             </Box>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <TextField
-                                Complete="idcard"
-                                name="รหัสบัตรประจำตัว"
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="รหัสบัตรประจำตัว"
-                                label="รหัสบัตรประจำตัว"
-                                onChange={(e) => setIdcard(e.target.value)}
-                            //autoFocus
-                            />
-                        </Grid>
-                        <Grid sx={{ minWidth: 160 }} item xs={4.5}>
-                            <Box>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select">คำนำหน้า</InputLabel>
-                                    <Select
-                                        Complete="title"
-                                        labelId="demo-simple-select-label"
-                                        id="คำนำหน้า"
-                                        required
-                                        fullWidth
-                                        variant="outlined"
-                                        label="คำนำหน้า"
-                                        onChange={(e) => setTitle(e.target.value)}
-                                    >
-                                        <MenuItem value={10}>นาย</MenuItem>
-                                        <MenuItem value={20}>นาง</MenuItem>
-                                        <MenuItem value={30}>นางสาว</MenuItem>
-                                        <MenuItem value={40}>ดร.</MenuItem>
-                                        <MenuItem value={50}>ศาสตราจารย์</MenuItem>
-                                        <MenuItem value={60}>รองศาสตราจารย์</MenuItem>
-                                        <MenuItem value={70}>ผู้ช่วยศาสตราจารย์</MenuItem>
-                                        <MenuItem value={80}>ผู้ช่วยศาสตราจารย์ ดร.</MenuItem>
-                                        <MenuItem value={90}>รองศาสตราจารย์ ดร.</MenuItem>
-                                        <MenuItem value={100}>น.อ.ศ.</MenuItem>
-                                        <MenuItem value={110}>เจ้าหน้าที่</MenuItem>
-                                        <MenuItem value={120}>ว่าที่ร้อยตรีหญิง</MenuItem>
-                                        <MenuItem value={130}>อาจารย์</MenuItem>
-                                        <MenuItem value={140}>อาจารย์ ดร.</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={3.77}>
-                            <TextField
-                                Complete="fname"
-                                name="firstName"
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="firstName"
-                                label="First Name"
-                                onChange={(e) => setFname(e.target.value)}
-                            //autoFocus
-                            />
-                        </Grid>
-                        <Grid item xs={3.7}>
-                            <TextField
-                                Complete="lname"
-                                name="lastName"
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="lastName"
-                                label="Last Name"
-                                onChange={(e) => setLname(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Username"
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="phonenumber"
-                                label="Phone number"
-                                onChange={(e) => setPhonenumber(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={5}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email"
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={3.5}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="password"
-                                label="Password"
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={3.5}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="confirmpassword"
-                                label="Confirmpassword"
-                                onChange={(e) => setConfirmpassword(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                            >
-                                Create
-                            </Button>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                type="cancel"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                            >
-                                Cancel
-                            </Button>
-                        </Grid>
+                            <Table sx={{ minWidth: 650, }} aria-label="simple table">
+                                <EnhancedTableHead
+                                    order={order}
+                                    orderBy={orderBy}
+                                    onRequestSort={handleRequestSort}
+                                    rowCount={filteredData.length}
+                                />
+                                <TableBody>
+                                    {stableSort(filteredData, getComparator(order, orderBy))
+                                        .map((row, index) => {
+                                            const labelId = index;
+                                            if (editTemp !== row.memberId) {
+                                                return (
+                                                    <TableRow key={row.memberId} >
+                                                        <TableCell id={labelId} scope="row" align="left" >{row.titleName}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{row.firstNameTH}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{row.lastNameTH}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{row.firstNameEN}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{row.lastNameEN}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{row.username}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{row.password}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{roleConvert(row)}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >{activeStatusConvert(row)}</TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <Stack direction="row" spacing={2}>
+                                                                <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                                                <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
+                                                            </Stack>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            } else {
+                                                return (
+                                                    <TableRow key={row.memberId} >
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardSelect minWidthPara={80} labelPara="เลือกคำนำหน้า" menuItemPara={titleNameOption} onChangePara={handleChangeTitle} valuePara={titleNameSelected} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardTextField labelPara="ชื่อภาษาไทย" onChangePara={(e) => regexA.test(e.target.value) ? setFirstNameTH(e.target.value) : null} required valuePara={firstNameTH} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardTextField labelPara="นามสกุลภาษาไทย" onChangePara={(e) => regexA.test(e.target.value) ? setLastNameTH(e.target.value) : null} required valuePara={lastNameTH} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardTextField labelPara="ชื่อภาษาอังกฤษ" onChangePara={(e) => regexB.test(e.target.value) ? setFirstNameEN(e.target.value) : null} required valuePara={firstNameEN} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardTextField labelPara="นามสกุลภาษาอังกฤษ" onChangePara={(e) => regexB.test(e.target.value) ? setLastNameEN(e.target.value) : null} required valuePara={lastNameEN} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardTextField tooltipTitle="ตัวอักษร a-Z และตัวเลข 0-9" labelPara="ชื่อบัญชีสมาชิก" onChangePara={(e) => regexC.test(e.target.value) ? setUsername(e.target.value) : null} required valuePara={usernameRe} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardTextField tooltipTitle="ต้องความยาว 8-12 ตัวอักษร และต้องมีตัวอักษรพิเศษ, ตัวพิมพ์ใหญ่, ตัวเลข อย่างน้อยอย่างละ 1 ตัวษร" labelPara="รหัสผ่าน" errorPara={errerPassword} onChangePara={handleChangePassword} required valuePara={passwordRe} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardSelect minWidthPara={80} labelPara="เลือกคำนำหน้า" menuItemPara={roleOption} onChangePara={handleChangeRole} valuePara={roleSelected} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <CardSelect minWidthPara={80} labelPara="เลือกคำนำหน้า" menuItemPara={activeStatusOption} onChangePara={handleChangeActiveStatus} valuePara={activeStatusSelected} />
+                                                        </TableCell>
+                                                        <TableCell id={labelId} scope="row" align="left" >
+                                                            <Stack direction="row" spacing={2}>
+                                                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={confirmButtonStatus} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
+                                                                <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                                                            </Stack>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            }
+                                        })
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Grid>
-                </form>
-            </div>
+                </Grid>
+            </Card>
         </Container>
-    );
+    )
+
 }
+
+
+

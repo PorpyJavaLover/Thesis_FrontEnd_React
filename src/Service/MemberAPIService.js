@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
 import BaseAPIService from './BaseAPIService';
+import DOMPurify from 'dompurify';
 
 export default new class MemberAPIService extends BaseAPIService {
 
@@ -26,8 +27,38 @@ export default new class MemberAPIService extends BaseAPIService {
             });
     }
 
-    getAllOrganization() {
-        return axios.get(this.url + '/organization/public/show/select');
+    register(titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe) {
+
+        const body = {
+            'titleNameSelected': DOMPurify.sanitize(titleNameSelected),
+            'organizSelected': DOMPurify.sanitize(organizSelected),
+            'firstNameTH': DOMPurify.sanitize(firstNameTH),
+            'lastNameTH': DOMPurify.sanitize(lastNameTH),
+            'firstNameEN': DOMPurify.sanitize(firstNameEN),
+            'lastNameEN': DOMPurify.sanitize(lastNameEN),
+            'usernameRe': DOMPurify.sanitize(usernameRe),
+            'passwordRe': DOMPurify.sanitize(passwordRe),
+        };
+
+        return axios.post(this.url + '/member/anonymous/register', body).then((response) => {
+            window.location.href = '/SignIn';
+        }).catch((err) => {
+            console.log(err.message);
+        }).finally(() => {
+
+        })
+    }
+
+    getAllFaculty() {
+        return axios.get(this.url + '/organization/public/show/option/faculty');
+    }
+
+    getAllOrganiz(parent) {
+        return axios.get(this.url + '/organization/public/show/option/organiz' + '/' + parent);
+    }
+
+    getAllTitleName() {
+        return axios.get(this.url + '/title/public/show/option');
     }
 
 }
@@ -38,8 +69,35 @@ export const MemberAPIServiceTeacher = new class MemberAPIServiceTeacher extends
 
 export const MemberAPIServiceStaff = new class MemberAPIServiceStaff extends BaseAPIService {
 
-    getAllMember() {
+    getMember() {
         return axios.get(this.url + '/member/staff/show/all', { headers: this.headers });
     }
+
+    getMemberOption() {
+        return axios.get(this.url + '/member/staff/show/option', { headers: this.headers });
+    }
+
+    update(memberId, titleNameSelected, firstNameTH, lastNameTH, firstNameEN,
+        lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected) {
+
+        const body = {
+            'titleNameSelected': DOMPurify.sanitize(titleNameSelected),
+            'firstNameTH': DOMPurify.sanitize(firstNameTH),
+            'lastNameTH': DOMPurify.sanitize(lastNameTH),
+            'firstNameEN': DOMPurify.sanitize(firstNameEN),
+            'lastNameEN': DOMPurify.sanitize(lastNameEN),
+            'usernameRe': DOMPurify.sanitize(usernameRe),
+            'passwordRe': DOMPurify.sanitize(passwordRe),
+            'roleSelected': DOMPurify.sanitize(roleSelected),
+            'activeStatusSelected': DOMPurify.sanitize(activeStatusSelected)
+        };
+
+        return axios.put(this.url + '/member/staff/update' + '/' + memberId, body, { headers: this.headers });
+    }
+
+    delete(memberId) {
+        return axios.delete(this.url + '/member/staff/delete' + '/' + memberId, { headers: this.headers });
+    }
+
 
 }

@@ -25,8 +25,8 @@ const pagesTeacher = [
     { key: 3, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
     { key: 4, name: 'การจัดการวันงดสอน', path: '/Teacher/LeaveTeach' },
     { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
-    { key: 6, name: 'การจัดPDF', path: '/Teacher/PDFTeach' },
-    { key: 7, name: 'Te st', path: '/Teacher/Test' },
+    //{ key: 6, name: 'การจัดPDF', path: '/Teacher/PDFTeach' },
+    { key: 7, name: 'Test', path: '/Teacher/Test' },
 ];
 
 const pagesStaff = [
@@ -42,13 +42,16 @@ export default function Norbar() {
 
     const roleSelecction = () => {
         if (!isExpired) {
-            if (role === "Teacher") {
+            if(role === "Newbie"){
+                return<MenuNewbie />;
+            } else if (role === "Teacher") {
                 return <MenuTeacher />;
             } else if (role === "Staff") {
                 return <MenuStaff />;
             }
         } else {
             return <MenuAnonymous />;
+           
         }
     }
 
@@ -83,6 +86,88 @@ function MenuAnonymous() {
                 </Container>
             </AppBar>
         </Box>
+    );
+}
+
+function MenuNewbie() {
+
+    const [state, setState] = React.useState({
+        left: false,
+    });
+
+    const toggleDrawer = (side, open) => event => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        setState({ ...state, [side]: open });
+    };
+
+    const sideList = side => (
+
+        <Box
+            sx={{ width: 250 }}
+            role="presentation"
+            onClick={toggleDrawer(side, false)}
+            onKeyDown={toggleDrawer(side, false)}
+        >
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton >
+                        <Link style={{ textDecoration: "none", }} to={'/'} >
+                            <ListItemText primary={"หน้าหลัก"} sx={{ color: "#4D4D4D" }} />
+                        </Link>
+                    </ListItemButton>
+                </ListItem>
+                {
+                    pagesStaff.map((page) => (
+                        <ListItem key={page.key} disablePadding>
+                            <ListItemButton >
+                                <Link style={{ textDecoration: "none", }} to={page.path} >
+                                    <ListItemText primary={page.name} sx={{ color: "#4D4D4D" }} />
+                                </Link>
+                            </ListItemButton>
+                        </ListItem>
+
+                    ))
+                }
+            </List>
+        </Box>
+    );
+
+    return (
+        <AppBar position="static">
+            <Container maxWidth="xl">
+                <Toolbar disableGutters>
+                    <Box sx={{ flexGrow: 1, alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Box sx={{ p: 1 }}>
+                                <img src={logo} alt="Logo" width="60" height="60" />
+                            </Box>
+                            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} >
+                                <Stack spacing={1} sx={{ alignItems: 'flex-start' }} >
+                                    <Typography variant="h5" textAlign="center"> การจัดตารางสอนและจัดการสอนแทน </Typography>
+                                    <Typography variant="h6" textAlign="center"> Scheduling Teach And Replacement Teacher System </Typography>
+                                </Stack>
+                            </Box>
+                        </Stack>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
+                            <Box sx={{ p: 1 }}>
+                                <img src={logo} alt="Logo" width="60" height="60" />
+                            </Box>
+                            <Button color="inherit" sx={{ color: "white", alignItems: 'center', }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
+                        </Stack >
+                        <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}>
+                            {sideList('left')}
+                        </Drawer>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, alignItems: 'center', display: 'flex', flexDirection: "row-reverse" }}>
+                        <UserMenu />
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
     );
 }
 
@@ -263,6 +348,8 @@ function MenuStaff() {
     );
 }
 
+
+
 function UserMenu() {
 
     const SignOutEf = () => {
@@ -286,7 +373,10 @@ function UserMenu() {
     };
 
     const role = () => {
-        if (localStorage.getItem('role') === "Teacher") {
+
+        if (localStorage.getItem('role') === "Newbie") {
+            return "(ผู้ใช้ใหม่)";
+        } else if (localStorage.getItem('role') === "Teacher") {
             return "(อาจารย์)";
         } else if (localStorage.getItem('role') === "Staff") {
             return "(เจ้าหน้าที่)";
@@ -336,3 +426,6 @@ function UserMenu() {
         </Box>
     );
 }
+
+
+

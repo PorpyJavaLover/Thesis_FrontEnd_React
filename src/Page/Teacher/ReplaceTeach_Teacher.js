@@ -35,14 +35,14 @@ export default class ReplaceTeach extends Component {
     this.updateState = this.updateState.bind(this);
     this.state = {
       dataReplaceTeach: [],
-      organiz: []
+      faculty: []
     }
   }
 
   componentDidMount() {
     this.updateState();
-    MemberAPIService.getAllOrganization().then((res) => {
-      this.setState({ organiz: res.data });
+    MemberAPIService.getAllFaculty().then((res) => {
+      this.setState({ faculty: res.data });
     })
   }
 
@@ -56,7 +56,7 @@ export default class ReplaceTeach extends Component {
     return (
       <div>
         <HeaderBox title={"การจัดการสอนแทน"} />
-        <MenagementBox title={"เมนูจัดการรายการ"} organiz={this.state.organiz} updateState={this.updateState.bind(this)} dataReplaceTeach={this.state.dataReplaceTeach} />
+        <MenagementBox title={"เมนูจัดการรายการ"} faculty={this.state.faculty} updateState={this.updateState.bind(this)} dataReplaceTeach={this.state.dataReplaceTeach} />
       </div>
     )
   }
@@ -80,9 +80,12 @@ function MenagementBox(props) {
   const [editButtonState, setEditButtonState] = useState(true);
   const [memberReplaceOptions, setMemberReplaceOptions] = useState([]);
   const [memberReplaceSelected, setMemberReplaceSelected] = useState(null);
-  const [OrganizOptions, setOrganizOptions] = useState([]);
+  const [OrganizOptions, setOrganizOption] = useState([]);
   const [OrganizSelected, setOrganizSelected] = useState(null);
+  const [facultyOption, setFacultyOption] = useState([]);
+  const [facultySelected, setFacultySelected] = useState(null);
   const [editTemp, setEditTemp] = useState(null);
+  const [organizOptionStatus, setOrganizOptionStatus] = useState(true);
 
   //function
 
@@ -95,8 +98,16 @@ function MenagementBox(props) {
   }, [OrganizSelected]);
 
   useEffect(() => {
-    setOrganizOptions(props.organiz);
-  }, [props.organiz]);
+    setFacultyOption(props.faculty);
+  }, [props.faculty]);
+
+  const handleChangeFaculty = (event) => {
+    setFacultySelected(event.target.value);
+    MemberAPIService.getAllOrganiz(event.target.value).then((res) => {
+      setOrganizOption(res.data);
+    })
+    setOrganizOptionStatus(false);
+  };
 
   const handleChangOrganizSelected = (event) => {
     setOrganizSelected(event.target.value);
@@ -117,7 +128,7 @@ function MenagementBox(props) {
     console.log(dataInside);
     setEditTemp(dataInside.replaceTeachId);
     setMemberReplaceSelected(dataInside.memberReplaceId);
-    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId , OrganizSelected ).then((res) => {
+    ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId, OrganizSelected).then((res) => {
       setMemberReplaceOptions(res.data);
     });
   }
@@ -391,7 +402,8 @@ function MenagementBox(props) {
                 <Grid item sm={6} xs={6}>
                   <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}>
                     <Stack dir="ltr" direction="row" spacing={2}>
-                      <CardSelect labelPara="เลือกสาขา" menuItemPara={OrganizOptions} onChangePara={handleChangOrganizSelected} valuePara={OrganizSelected} />
+                      <CardSelect labelPara="เลือกคณะ" minWidthPara={200}  menuItemPara={facultyOption} onChangePara={handleChangeFaculty} valuePara={facultySelected} />
+                      <CardSelect labelPara="เลือกสาขา" minWidthPara={200} disabledPara={organizOptionStatus} menuItemPara={OrganizOptions} onChangePara={handleChangOrganizSelected} valuePara={OrganizSelected} />
                     </Stack >
                   </Box>
                 </Grid>
@@ -421,7 +433,7 @@ function MenagementBox(props) {
                             <TableCell width="15%" align="left">{row.memberReplaceName}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
-                                <Button sx={{ width: 50 }} disabled={editButtonState}  color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                <Button sx={{ width: 50 }} disabled={editButtonState} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
                                 <ExportHere data={row} />
                               </Stack>
                             </TableCell>

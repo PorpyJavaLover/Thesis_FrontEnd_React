@@ -59,7 +59,7 @@ export default new class APIService {
 
     //
     getAllMemberStaff() {
-        return axios.get(API_REST_URL + '/member/staff/show/all', { headers });
+        return axios.get(API_REST_URL + '/staff/show/option/member', { headers });
     }
 
     //

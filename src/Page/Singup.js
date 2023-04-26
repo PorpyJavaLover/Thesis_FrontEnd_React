@@ -1,9 +1,10 @@
 import React, { Component, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import { CardHeader, Box, TextField, Card, Button, Grid, Container, Typography, Stack } from '@mui/material';
+import { CardHeader, Box, TextField, Card, Button, Grid, Container, Typography, Stack, Tooltip } from '@mui/material';
 import CardTextField from '../Component/CardTextField'
 import CardSelect from '../Component/CardSelect'
 import MemberAPIService from '../Service/MemberAPIService';
+
 
 
 export default class SignUp extends Component {
@@ -12,15 +13,19 @@ export default class SignUp extends Component {
         super(props);
         this.updateState.bind(this);
         this.state = {
-            oganiz: [],
+            faculty: [],
             titleName: []
         }
     }
 
     componentDidMount() {
-        MemberAPIService.getAllOrganization().then((res) => {
-            this.setState({ oganiz: res.data });
+        MemberAPIService.getAllFaculty().then((res) => {
+            this.setState({ faculty: res.data });
         })
+        MemberAPIService.getAllTitleName().then((res) => {
+            this.setState({ titleName: res.data });
+        })
+
     }
 
     updateState = () => {
@@ -30,7 +35,7 @@ export default class SignUp extends Component {
     render() {
         return (
             <div>
-                <UserCreate title={"สมัครสมาชิก"} oganiz={this.state.oganiz} titleName={this.state.titleName} />
+                <UserCreate title={"สมัครสมาชิก"} faculty={this.state.faculty} titleName={this.state.titleName} />
             </div>
         )
     }
@@ -38,37 +43,97 @@ export default class SignUp extends Component {
 
 function UserCreate(props) {
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        MemberAPIService.login(username, password);
-    };
-
     const [titleNameOption, setTitleNameOption] = useState([]);
     const [titleNameSelected, setTitleNameSelected] = useState(null);
+    const [facultyOption, setFacultyOption] = useState([]);
+    const [facultySelected, setFacultySelected] = useState(null);
     const [organizOption, setOrganizOption] = useState([]);
     const [organizSelected, setOrganizSelected] = useState(null);
     const [firstNameTH, setFirstNameTH] = useState(null);
     const [lastNameTH, setLastNameTH] = useState(null);
     const [firstNameEN, setFirstNameEN] = useState(null);
     const [lastNameEN, setLastNameEN] = useState(null);
-    const [username, setUsername] = useState(null);
-    const [password, setPassword] = useState(null);
-    const [confirmpassword, setConfirmpassword] = useState(null);
+    const [usernameRe, setUsername] = useState(null);
+    const [passwordRe, setPassword] = useState(null);
+    const [confirmPasswordRe, setConfirmPassword] = useState(null);
+
+    const [confirmButtonStatus, setConfirmButtonStatus] = useState(true);
+    const [organizOptionStatus, setOrganizOptionStatus] = useState(true);
+
+    const [errerPassword, setErrerPassword] = useState(false);
+    const [errerConfirmPassword, setErrerConfirmPassword] = useState(false);
 
     useEffect(() => {
         setTitleNameOption(props.titleName);
     }, [props.titleName]);
 
     useEffect(() => {
-        setOrganizOption(props.oganiz);
-    }, [props.oganiz]);
+        setFacultyOption(props.faculty);
+    }, [props.faculty]);
+
+    useEffect(() => {
+
+        if (titleNameSelected != null && organizSelected != null && firstNameTH != null && lastNameTH != null && firstNameEN != null &&
+            lastNameEN != null && usernameRe != null && passwordRe != null && confirmPasswordRe != null && !errerPassword && !errerConfirmPassword) {
+            setConfirmButtonStatus(false);
+        }
+        else {
+            setConfirmButtonStatus(true);
+        }
+    }, [titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe, confirmPasswordRe, errerPassword, errerConfirmPassword]);
+
+    useEffect(() => {
+        if (passwordRe == null || passwordRe == "") {
+            setErrerPassword(false);
+        }
+        if (passwordRe == confirmPasswordRe || confirmPasswordRe == null) {
+            setErrerConfirmPassword(false);
+        }
+        else {
+            setErrerConfirmPassword(true);
+        }
+    }, [passwordRe, confirmPasswordRe]);
+
+    const regexA = /^[ก-ฺเ-ๅ็-ํ]*$/;
+
+    const regexB = /^[a-zA-Z.]*$/;
+
+    const regexC = /^[a-zA-Z.0-9]*$/;
+
+    var regexD = { capital: /(?=.*[A-Z])/, length: /(?=.{8,12}$)/, specialChar: /[ -\/:-@\[-\`{-~]/, digit: /(?=.*[0-9])/, };
+
+    const handleChangePassword = (event) => {
+
+        setPassword(event.target.value);
+
+        if ((regexD.capital.test(event.target.value) && regexD.length.test(event.target.value) &&
+            regexD.specialChar.test(event.target.value) && regexD.digit.test(event.target.value))) {
+            setErrerPassword(false);
+        } else {
+            setErrerPassword(true);
+        }
+
+    };
 
     const handleChangeTitle = (event) => {
         setTitleNameSelected(event.target.value);
     };
 
+    const handleChangeFaculty = (event) => {
+        setFacultySelected(event.target.value);
+        MemberAPIService.getAllOrganiz(event.target.value).then((res) => {
+            setOrganizOption(res.data);
+        })
+        setOrganizOptionStatus(false);
+    };
+
     const handleChangeOrganiz = (event) => {
         setOrganizSelected(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        MemberAPIService.register(titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe);
     };
 
     return (
@@ -77,46 +142,48 @@ function UserCreate(props) {
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h6' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ p: 2 }} >
 
-                    <Grid item sm={12} >
-                        <CardSelect labelPara="สาขา" menuItemPara={organizOption} onChangePara={handleChangeOrganiz} valuePara={organizSelected} />
+                    <Grid item sm={6} xs={12} >
+                        <CardSelect labelPara="เลือกคณะ" menuItemPara={facultyOption} onChangePara={handleChangeFaculty} valuePara={facultySelected} />
                     </Grid>
-                    <Grid item sm={12} >
-                        <CardSelect labelPara="คำนำหน้า" menuItemPara={titleNameOption} onChangePara={handleChangeTitle} valuePara={titleNameSelected} />
+                    <Grid item sm={6} xs={12} >
+                        <CardSelect labelPara="เลือกสาขา" disabledPara={organizOptionStatus} menuItemPara={organizOption} onChangePara={handleChangeOrganiz} valuePara={organizSelected} />
                     </Grid>
-                    <Grid item sm={6} >
-                        <CardTextField labelPara="ชื่อภาษาไทย" onChangePara={(e) => setFirstNameTH(e.target.value)} required valuePara={firstNameTH} />
+                    <Grid item sm={12} xs={12} >
+                        <CardSelect labelPara="เลือกคำนำหน้า" menuItemPara={titleNameOption} onChangePara={handleChangeTitle} valuePara={titleNameSelected} />
                     </Grid>
-                    <Grid item sm={6} >
-                        <CardTextField labelPara="นามสกุลภาษาไทย" onChangePara={(e) => setLastNameTH(e.target.value)} required valuePara={lastNameTH} />
+                    <Grid item sm={6} xs={12} >
+                        <CardTextField labelPara="ชื่อภาษาไทย" onChangePara={(e) => regexA.test(e.target.value) ? setFirstNameTH(e.target.value) : null} required valuePara={firstNameTH} />
                     </Grid>
-                    <Grid item sm={6} >
-                        <CardTextField labelPara="ชื่อภาษาอังกฤษ" onChangePara={(e) => setFirstNameEN(e.target.value)} required valuePara={firstNameEN} />
+                    <Grid item sm={6} xs={12} >
+                        <CardTextField labelPara="นามสกุลภาษาไทย" onChangePara={(e) => regexA.test(e.target.value) ? setLastNameTH(e.target.value) : null} required valuePara={lastNameTH} />
                     </Grid>
-                    <Grid item sm={6} >
-                        <CardTextField labelPara="นามสกุลภาษาอังกฤษ" onChangePara={(e) => setLastNameEN(e.target.value)} required valuePara={lastNameEN} />
+                    <Grid item sm={6} xs={12} >
+                        <CardTextField labelPara="ชื่อภาษาอังกฤษ" onChangePara={(e) => regexB.test(e.target.value) ? setFirstNameEN(e.target.value) : null} required valuePara={firstNameEN} />
                     </Grid>
-                    <Grid item sm={12} >
-                        <CardTextField labelPara="ชื่อสมาชิก" onChangePara={(e) => setUsername(e.target.value)} required valuePara={username} />
+                    <Grid item sm={6} xs={12} >
+                        <CardTextField labelPara="นามสกุลภาษาอังกฤษ" onChangePara={(e) => regexB.test(e.target.value) ? setLastNameEN(e.target.value) : null} required valuePara={lastNameEN} />
                     </Grid>
-                    <Grid item sm={12} >
-                        <CardTextField labelPara="รหัสสมาชิก" onChangePara={(e) => setPassword(e.target.value)} required valuePara={password} />
+                    <Grid item sm={12} xs={12} >
+                        <CardTextField labelPara="ชื่อบัญชีสมาชิก" helperTextPara={"ตัวอักษร a-Z และตัวเลข 0-9"} onChangePara={(e) => regexC.test(e.target.value) ? setUsername(e.target.value) : null} required valuePara={usernameRe} />
                     </Grid>
-                    <Grid item sm={12} >
-                        <CardTextField labelPara="ยืนยันรหัสสมาชิก" onChangePara={(e) => setConfirmpassword(e.target.value)} required valuePara={confirmpassword} />
+                    <Grid item sm={12} xs={12} >
+                        <CardTextField labelPara="รหัสผ่าน" errorPara={errerPassword} helperTextPara={"ต้องความยาว 8-12 ตัวอักษร และต้องมีตัวอักษรพิเศษ, ตัวพิมพ์ใหญ่, ตัวเลข อย่างน้อยอย่างละ 1 ตัวษร "} typePara="password" onChangePara={handleChangePassword} required valuePara={passwordRe} />
                     </Grid>
-
-                    <Grid item sm={6} dir="ltr" >
-                        <Box dir="ltr" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>  {//@todo <---check point  --> pd}
-                            <Button sx={{ width: 125 }} color="primary" onClick={handleSubmit} variant="contained" > เข้าสู่ระบบ </Button>
+                    <Grid item sm={12} xs={12} >
+                        <CardTextField labelPara="ยืนยันรหัสผ่าน" errorPara={errerConfirmPassword} typePara="password" onChangePara={(e) => regexC.test(e.target.value) ? setConfirmPassword(e.target.value) : null} required valuePara={confirmPasswordRe} />
+                    </Grid>
+                    <Grid item sm={6} xs={12} dir="ltr" >
+                        <Box dir="ltr" sx={{ display: 'flex', alignItems: 'flex-end', }}>
+                            <Button sx={{ width: 125 }} color="inherit" variant="contained" >
+                                <Link style={{ textDecoration: "none", color: "black" }} to={"/SignIn"} > เข้าสู่ระบบ </Link>
+                            </Button>
                         </Box>
                     </Grid>
-                    <Grid item sm={6} dir="rtl" >
-                        <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}> {//@todo <--- check point  --> pt}
-                            
-                            <Button sx={{ width: 125 }} color="inherit" variant="contained" >
-                                <Link style={{ textDecoration: "none", color: "black" }} to={"/Singup"} > สมัครสมาชิก </Link>
+                    <Grid item sm={6} xs={12} dir="rtl" >
+                        <Box dir="rtl" spacing={2} sx={{ display: 'flex', alignItems: 'flex-end', }}>
+                            <Button sx={{ width: 125 }} disabled={confirmButtonStatus} onClick={handleSubmit} color="primary" variant="contained" >
+                                สมัครสมาชิก
                             </Button>
-
                         </Box>
                     </Grid>
                 </Grid>

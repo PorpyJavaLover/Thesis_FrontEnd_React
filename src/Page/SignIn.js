@@ -35,19 +35,23 @@ function UserSignIn(props) {
                         <CardTextField labelPara="ชื่อสมาชิก" onChangePara={(e) => setUsername(e.target.value)} required valuePara={username} />
                     </Grid>
                     <Grid item xs={12}>
-                        <CardTextField labelPara="รหัสสมาชิก" typePara="password" onChangePara={(e) => setPassword(e.target.value)} required valuePara={password} />
+                        <CardTextField labelPara="รหัสผ่าน" typePara="password" onChangePara={(e) => setPassword(e.target.value)} required valuePara={password} />
                     </Grid>
-                    <Grid item xs={12}>
-                        <Stack direction="row" spacing={2}>
+                    <Grid item sm={6} dir="ltr" >
+                        <Box dir="ltr" sx={{ display: 'flex', alignItems: 'flex-end', }}>
                             <Button sx={{ width: 125 }} color="primary" onClick={handleSubmit} variant="contained" >
-                                    เข้าสู่ระบบ
+                                เข้าสู่ระบบ
                             </Button>
+                        </Box>
+                    </Grid>
+                    <Grid item sm={6} dir="rtl" >
+                        <Box dir="rtl" spacing={2} sx={{ display: 'flex', alignItems: 'flex-end', }}>
                             <Button sx={{ width: 125 }} color="inherit" variant="contained" >
-                                <Link style={{ textDecoration: "none", color: "black" }} to={"/Singup"} >
+                                <Link style={{ textDecoration: "none", color: "black" }} to={"/SignUp"} >
                                     สมัครสมาชิก
                                 </Link>
                             </Button>
-                        </Stack>
+                        </Box>
                     </Grid>
                 </Grid>
             </Card>

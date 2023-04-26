@@ -14,7 +14,7 @@ export default class SelectSubjectStaff extends Component {
     componentDidMount() {
         APIService.getAllPlan().then((resA) => {
             this.setState({ plans: resA.data });
-            APIService.getAllMember().then((resB) => {
+            APIService.getMemberOption().then((resB) => {
                 this.setState({ members: resB.data });
                 APIService.getAllTimetable().then((resC) => {
                     this.setState({ timetables: resC.data });
