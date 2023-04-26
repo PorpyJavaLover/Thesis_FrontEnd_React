@@ -9,8 +9,8 @@ import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
 import SelectNotTeachStaff from "./Page/Staff/NotTeach_Staff";
 import LeaveTeachTeacher from "./Page/Teacher/LeaveTeach_Teacher";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
-import PDFTeach from "./Component/PdfExport/PDFReplace";
-// import Replace2 from "./Page/Replace2";
+import PDFTeach from "./Page/Teacher/PDFTeach_Teacher";
+import Replace2 from "./Page/Replace2";
 import SignIn from "./Page/SignIn";
 import Error404 from "./Page/Error404";
 import PrivateRoutes from "./Util/PrivateRoutes";
@@ -44,15 +44,8 @@ export default function App() {
               element={<SelectNotTeachTeacher />}
             />
             <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
-            <Route path="/Teacher/view-replace" element={<ViewReplace />} />
-            <Route path="/Teacher/input-replace" element={<InputReplace />} />
-            <Route path="/Teacher/edit-replace" element={<EditReplace />} />
-            <Route path="/Teacher/PDFTeach" element={<PDFSubject />} />
-
-            <Route
-              path="/Teacher/ReplaceTeach"
-              element={<ReplaceTeachTeacher />}
-            />
+            <Route path="/Teacher/ReplaceTeach" element={<ReplaceTeachTeacher />} />
+            <Route path="/Teacher/PDFTeach" element={<PDFTeach />} />
           </Route>
           <Route element={<StaffRoutes />}>
             <Route
@@ -62,13 +55,13 @@ export default function App() {
             <Route path="/Staff/Timetable" element={<TimetableStaff />} />
             <Route path="/Staff/NotTeach" element={<SelectNotTeachStaff />} />
           </Route>
-          <Route path="/" element={<Navbar />} />
-
-          {/* <Route path="/T1" element={<TableExampleApprove />} /> */}
+          <Route path="/" element={<Home />} />
+          <Route path="/R2" element={<Replace2 />} />
+          <Route path="/T1" element={<TableExampleApprove />} />
         </Route>
         <Route path="/Home" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        {/* <Route path="/Singup" element={<Singup />} /> */}
+        <Route path="/SignIn" element={<SignIn />} />
+        <Route path="/Singup" element={<Singup />} />
         <Route path="/Error404" element={<Error404 />} />
       </Routes>
     </BrowserRouter>

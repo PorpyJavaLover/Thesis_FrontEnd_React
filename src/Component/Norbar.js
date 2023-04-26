@@ -29,7 +29,8 @@ const pagesTeacher = [
   { key: 3, name: "การจัดการรายวิชา", path: "/Teacher/Timetable" },
   { key: 4, name: "การจัดการวันงดสอน", path: "/Teacher/LeaveTeach" },
   { key: 5, name: "การจัดการสอนแทน", path: "/Teacher/ReplaceTeach" },
-  { key: 5, name: "การจัดPDF", path: "/Teacher/PDFTeach" },
+  { key: 6, name: "การจัดPDF", path: "/Teacher/PDFTeach" },
+  { key: 7, name: "Te st", path: "/Teacher/Test" },
 ];
 
 const pagesStaff = [
@@ -69,13 +70,19 @@ function MenuAnonymous() {
           <Toolbar disableGutters>
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <Box sx={{ p: 1 }}>
-                <img src={logo} alt="Logo" width="51" height="51" />
+                <img src={logo} alt="Logo" width="60" height="60" />
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                <Typography variant="h4" textAlign="center">
-                  {" "}
-                  การจัดตารางสอนและจัดการสอนแทน{" "}
-                </Typography>
+                <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
+                  <Typography variant="h5" textAlign="center">
+                    {" "}
+                    การจัดตารางสอนและจัดการสอนแทน{" "}
+                  </Typography>
+                  <Typography variant="h6" textAlign="center">
+                    {" "}
+                    Scheduling Teach And Replacement Teacher System{" "}
+                  </Typography>
+                </Stack>
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
                 <Typography variant="h6" textAlign="center">
@@ -137,12 +144,46 @@ function MenuTeacher() {
     </Box>
   );
 
+  const sideList = (side) => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(side, false)}
+      onKeyDown={toggleDrawer(side, false)}
+    >
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <Link style={{ textDecoration: "none" }} to={"/"}>
+              <ListItemText primary={"หน้าหลัก"} sx={{ color: "#4D4D4D" }} />
+            </Link>
+          </ListItemButton>
+        </ListItem>
+        {pagesTeacher.map((page) => (
+          <ListItem key={page.key} disablePadding>
+            <ListItemButton>
+              <Link style={{ textDecoration: "none" }} to={page.path}>
+                <ListItemText primary={page.name} sx={{ color: "#4D4D4D" }} />
+              </Link>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <Box sx={{ p: 1 }}>
+                <img src={logo} alt="Logo" width="60" height="60" />
+              </Box>
               <Button
                 color="inherit"
                 sx={{ my: 2, color: "white", display: "block", height: "50px" }}
@@ -175,6 +216,9 @@ function MenuTeacher() {
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <Box sx={{ p: 1 }}>
+                <img src={logo} alt="Logo" width="60" height="60" />
+              </Box>
               <Button
                 color="inherit"
                 sx={{ color: "white", alignItems: "center" }}
@@ -251,6 +295,34 @@ function MenuStaff() {
     </Box>
   );
 
+  const sideList = (side) => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(side, false)}
+      onKeyDown={toggleDrawer(side, false)}
+    >
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton>
+            <Link style={{ textDecoration: "none" }} to={"/"}>
+              <ListItemText primary={"หน้าหลัก"} sx={{ color: "#4D4D4D" }} />
+            </Link>
+          </ListItemButton>
+        </ListItem>
+        {pagesStaff.map((page) => (
+          <ListItem key={page.key} disablePadding>
+            <ListItemButton>
+              <Link style={{ textDecoration: "none" }} to={page.path}>
+                <ListItemText primary={page.name} sx={{ color: "#4D4D4D" }} />
+              </Link>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -263,6 +335,9 @@ function MenuStaff() {
             }}
           >
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <Box sx={{ p: 1 }}>
+                <img src={logo} alt="Logo" width="60" height="60" />
+              </Box>
               <Button
                 color="inherit"
                 sx={{ my: 2, color: "white", display: "block", height: "50px" }}
@@ -294,6 +369,9 @@ function MenuStaff() {
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <Box sx={{ p: 1 }}>
+                <img src={logo} alt="Logo" width="60" height="60" />
+              </Box>
               <Button
                 color="inherit"
                 sx={{ color: "white", alignItems: "center" }}

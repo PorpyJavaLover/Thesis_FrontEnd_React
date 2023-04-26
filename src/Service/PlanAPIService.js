@@ -16,8 +16,8 @@ export const PlanAPIServiceTeacher = new class PlanAPIServiceTeacher extends Bas
 
 export const PlanAPIServiceStaff = new class PlanAPIServiceStaff extends BaseAPIService {
 
-    getPlan() {
-        return axios.get(this.url + '/plan/staff/show/all', { headers: this.headers });
+    getPlan(yId, sId) {
+        return axios.get(this.url + '/plan/staff/show/all'+ '/' + yId + '/' + sId, { headers: this.headers });
     }
 
 }

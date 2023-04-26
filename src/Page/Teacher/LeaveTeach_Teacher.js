@@ -35,6 +35,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SaveIcon from "@mui/icons-material/Save";
 import Stack from "@mui/material/Stack";
 
+//@todo 1.ฟังก์ชัน update  2.การแสดงผล วันที่ วว/ดด/ปปปป
 export default class LeaveTeach extends Component {
   constructor(props) {
     super(props);
@@ -307,22 +308,25 @@ function MenagementBox(props) {
   const convertDate = (dateStr) => {
     const dateArr = dateStr.split("-");
     const yearNum = parseInt(dateArr[0]);
-    const year = yearNum - 543;
+    const year = yearNum;
     return year + "-" + dateArr[1] + "-" + dateArr[2];
   };
 
   const handleEdit = (dataInside) => () => {
     setEditTemp(dataInside.id);
-    setYearSelected(parseInt(dataInside.years) - 543);
+    setYearSelected(dataInside.years_value);
     setSemesterSelected(dataInside.semester);
     setDateStartSelected(
       format(
-        new Date(convertDate(dataInside.dateStart)),
+        new Date(convertDate(dataInside.dateStart_value)),
         "yyyy-MM-dd"
       ).toString()
     );
     setDateEndSelected(
-      format(new Date(convertDate(dataInside.dateEnd)), "yyyy-MM-dd").toString()
+      format(
+        new Date(convertDate(dataInside.dateEnd_value)),
+        "yyyy-MM-dd"
+      ).toString()
     );
     setReasonNote(dataInside.note);
 
@@ -338,15 +342,20 @@ function MenagementBox(props) {
   };
 
   const handleConfirm = (dataInside) => () => {
-    //@todo แก้บัคการ update date
     LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(
       dataInside.id,
-      dataInside.years,
-      dataInside.semester,
-      dataInside.dateStart,
-      dataInside.dateEnd,
-      dataInside.note
+      yearSelected,
+      semesterSelected,
+      dateStartSelected,
+      dateEndSelected,
+      reasonNote
     ).then(() => {
+      setEditTemp(null);
+      setYearSelected(null);
+      setSemesterSelected(null);
+      setDateStartSelected(null);
+      setDateEndSelected(null);
+      setReasonNote(null);
       props.updateState();
     });
   };
@@ -382,7 +391,7 @@ function MenagementBox(props) {
       label: "รหัส รายการงดสอน",
     },
     {
-      id: "years",
+      id: "years_name",
       numeric: true,
       label: "ปีการศึกษา",
     },
@@ -581,7 +590,7 @@ function MenagementBox(props) {
                               scope="row"
                               align="left"
                             >
-                              {row.years}
+                              {row.years_name}
                             </TableCell>
                             <TableCell width="15%" align="left">
                               {row.semester}
@@ -622,6 +631,9 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id}>
                             <TableCell id={labelId} scope="row" align="left">
+                              {row.id}
+                            </TableCell>
+                            <TableCell align="left">
                               <CardSelect
                                 labelPara="ปีการศึกษา"
                                 menuItemPara={yearOptions}

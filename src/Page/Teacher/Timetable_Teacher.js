@@ -611,13 +611,16 @@ function ManagementBox(props) {
       return (
         <>
           <TableCell width="8%" align="left">
-            {dayConvert(row.day_of_week)} 🔒
+            {dayConvert(parseInt(row.day_of_week)) == "null"
+              ? null
+              : dayConvert(parseInt(row.day_of_week))}{" "}
+            🔒
           </TableCell>
           <TableCell width="8%" align="left">
-            {row.start_time} 🔒
+            {row.start_time == "null" ? null : row.start_time} 🔒
           </TableCell>
           <TableCell width="8%" align="left">
-            {row.end_time} 🔒
+            {row.end_time == "null" ? null : row.end_time} 🔒
           </TableCell>
         </>
       );
@@ -625,13 +628,15 @@ function ManagementBox(props) {
       return (
         <>
           <TableCell width="8%" align="left">
-            {dayConvert(row.day_of_week)}
+            {dayConvert(parseInt(row.day_of_week)) == "null"
+              ? null
+              : dayConvert(parseInt(row.day_of_week))}
           </TableCell>
           <TableCell width="8%" align="left">
-            {row.start_time}
+            {row.start_time == "null" ? null : row.start_time}{" "}
           </TableCell>
           <TableCell width="8%" align="left">
-            {row.end_time}
+            {row.end_time == "null" ? null : row.end_time}
           </TableCell>
         </>
       );
@@ -710,13 +715,13 @@ function ManagementBox(props) {
     if (row.room_locker === true) {
       return (
         <TableCell width="8%" align="left">
-          {row.room_name} 🔒
+          {row.room_name == "null" ? null : row.room_name} 🔒
         </TableCell>
       );
     } else {
       return (
         <TableCell width="8%" align="left">
-          {row.room_name}
+          {row.room_name == "null" ? null : row.room_name}
         </TableCell>
       );
     }

@@ -1,56 +1,67 @@
-import React, { Component, useState, useEffect } from "react";
-import {
-  CardHeader,
-  Box,
-  Card,
-  Button,
-  Grid,
-  Container,
-  Typography,
-} from "@mui/material";
-import CardSelect from "../../Component/Card/CardSelect";
-import { TimetableAPIServiceStaff } from "../../Service/TimetableAPIService";
-import SearchIcon from "@mui/icons-material/Search";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import TextField from "@mui/material/TextField";
-import PropTypes from "prop-types";
-import { visuallyHidden } from "@mui/utils";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import SaveIcon from "@mui/icons-material/Save";
-import Stack from "@mui/material/Stack";
-import ToggleButton from "@mui/material/ToggleButton";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import TodayIcon from "@mui/icons-material/Today";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import TreeView from "@mui/lab/TreeView";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import TreeItem from "@mui/lab/TreeItem";
+import React, { Component, useState, useEffect } from 'react'
+import { CardHeader, Box, Card, Button, Grid, Container, Typography, } from '@mui/material';
+import CardSelect from '../../Component/CardSelect'
+import { TimetableAPIServiceStaff } from '../../Service/TimetableAPIService';
+import SearchIcon from '@mui/icons-material/Search';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import TextField from '@mui/material/TextField';
+import PropTypes from 'prop-types';
+import { visuallyHidden } from '@mui/utils';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import SaveIcon from '@mui/icons-material/Save';
+import Stack from '@mui/material/Stack';
+import ToggleButton from '@mui/material/ToggleButton';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import TodayIcon from '@mui/icons-material/Today';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+import SendIcon from '@mui/icons-material/Send';
+
 
 export default class TimetableStaff extends Component {
 
   constructor(props) {
     super(props);
     this.updateState.bind(this);
+    this.setYearSelected = this.setYearSelected.bind(this);
+    this.setSemesterSelected = this.setSemesterSelected.bind(this);
+    this.setDisable = this.setDisable.bind(this);
     this.state = {
-      dataTimetable: []
+      dataTimetable: [],
+      yearSelected: null,
+      semesterSelected: null,
+      disableState: true
     }
   }
 
-  componentDidMount() {
+  setYearSelected = (item) => {
+    this.setState({
+      yearSelected: item,
+    })
+  }
+
+  setSemesterSelected = (item) => {
+    this.setState({
+      semesterSelected: item,
+    })
+  }
+
+  setDisable = () => {
     this.updateState();
+    this.setState({
+      disableState: false
+    })
+
   }
 
   updateState = () => {
-    TimetableAPIServiceStaff.getTimetable().then((res) => {
+    TimetableAPIServiceStaff.getTimetable(this.state.yearSelected,this.state.semesterSelected).then((res) => {
       this.setState({ dataTimetable: res.data });
     })
   }
@@ -59,7 +70,8 @@ export default class TimetableStaff extends Component {
     return (
       <div>
         <HeaderBox title={"การจัดการรายวิชา"} />
-        <ManagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
+        <SelectYearsAndSemesterBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)} setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+        <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
       </div>
     );
   }
@@ -76,28 +88,61 @@ function HeaderBox(props) {
   );
 }
 
-const data = {
-  id: "root",
-  name: "หมายเหตุ",
-  children: [
-    {
-      id: "1",
-      name: "สีแดง - นักศึกษามีเรียน",
-    },
-    {
-      id: "2",
-      name: "สีเหลือง - อาจารย์มีสอน",
-    },
-    {
-      id: "3",
-      name: "สีขาว - อาจารย์ไม่ขอสอน",
-    },
-    {
-      id: "4",
-      name: "สีเหลือง - ห้องเรียนถูกใช้ในชั่วโมงนั้น",
-    },
-  ],
-};
+function SelectYearsAndSemesterBox(props) {
+
+  const currentYear = new Date().getFullYear();
+
+  const yearOptions = [
+    { key: '1', value: currentYear, text: currentYear + 543 },
+    { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
+    { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
+    { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
+  ];
+
+  const semesterOptions = [
+    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
+    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
+    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
+  ]
+
+  const [yearsSelected, setYearsSelected] = useState(null);
+  const [semesterSelected, setSemesterSelected] = useState(null);
+
+  const handleChangeYear = (event) => {
+    props.setYearSelected(event.target.value);
+    setYearsSelected(event.target.value);
+  };
+
+  const handleChangeSemester = (event) => {
+    props.setSemesterSelected(event.target.value);
+    setSemesterSelected(event.target.value);
+  };
+
+  useEffect(() => {
+    if (yearsSelected != null && semesterSelected != null) {
+      props.setDisable();
+    }
+  }, [yearsSelected, semesterSelected])
+
+  return (
+    <Container maxWidth='false' sx={{ pt: 2, pb: 3 }} >
+      <Card sx={{ boxShadow: 5, }}>
+        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+          <Grid item sm={12} xs={12}>
+            <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
+          </Grid>
+          <Grid item sm={12} xs={12}>
+            <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
+          </Grid>
+        </Grid>
+      </Card>
+    </Container >
+  )
+}
+
+
+function ManagementBox(props) {
 
 function ManagementBox(props) {
   let dayOfWeekOptions = [
@@ -108,40 +153,6 @@ function ManagementBox(props) {
     { key: "5", value: 5, text: "วันศุกร์" },
     { key: "6", value: 6, text: "วันเสาร์" },
     { key: "7", value: 7, text: "วันอาทิตย์" },
-  ];
-
-  const timeStartOptionTemplate = [
-    { key: "1", value: "08:00:00", text: "08:00:00" },
-    { key: "2", value: "09:00:00", text: "09:00:00" },
-    { key: "3", value: "10:00:00", text: "10:00:00" },
-    { key: "4", value: "11:00:00", text: "11:00:00" },
-    { key: "5", value: "12:00:00", text: "12:00:00" },
-    { key: "6", value: "13:00:00", text: "13:00:00" },
-    { key: "7", value: "14:00:00", text: "14:00:00" },
-    { key: "8", value: "15:00:00", text: "15:00:00" },
-    { key: "9", value: "16:00:00", text: "16:00:00" },
-    { key: "10", value: "17:00:00", text: "17:00:00" },
-    { key: "11", value: "18:00:00", text: "18:00:00" },
-    { key: "12", value: "19:00:00", text: "19:00:00" },
-    { key: "13", value: "20:00:00", text: "20:00:00" },
-    { key: "14", value: "21:00:00", text: "21:00:00" },
-  ];
-
-  const timeEndOptionTemplate = [
-    { key: "1", value: "09:00:00", text: "09:00:00" },
-    { key: "2", value: "10:00:00", text: "10:00:00" },
-    { key: "3", value: "11:00:00", text: "11:00:00" },
-    { key: "4", value: "12:00:00", text: "12:00:00" },
-    { key: "5", value: "13:00:00", text: "13:00:00" },
-    { key: "6", value: "14:00:00", text: "14:00:00" },
-    { key: "7", value: "15:00:00", text: "15:00:00" },
-    { key: "8", value: "16:00:00", text: "16:00:00" },
-    { key: "9", value: "17:00:00", text: "17:00:00" },
-    { key: "10", value: "18:00:00", text: "18:00:00" },
-    { key: "11", value: "19:00:00", text: "19:00:00" },
-    { key: "12", value: "20:00:00", text: "20:00:00" },
-    { key: "13", value: "21:00:00", text: "21:00:00" },
-    { key: "14", value: "22:00:00", text: "22:00:00" },
   ];
 
   //state
@@ -322,16 +333,8 @@ function ManagementBox(props) {
     setTimeStartSelected(dataInside.start_time);
     setTimeEndSelected(dataInside.end_time);
     setRoomSelected(dataInside.room_id);
-    if (dataInside.day_of_week !== null) {
-      TimetableAPIServiceStaff.getEndTime(
-        dataInside.years,
-        dataInside.semester,
-        dataInside.course_id,
-        dataInside.course_type,
-        dataInside.group_id,
-        dataInside.day_of_week,
-        null
-      ).then((res) => {
+    if (dataInside.day_of_week != "null") {
+      TimetableAPIServiceStaff.getEndTimeOption(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
         setTimeEndOptions(res.data);
       });
       TimetableAPIServiceStaff.getStartTime(
@@ -349,17 +352,8 @@ function ManagementBox(props) {
       setTimeEndOptions([]);
       setTimeStartOptions([]);
     }
-    if (dataInside.start_time !== null && dataInside.end_time !== null) {
-      TimetableAPIServiceStaff.getRoom(
-        dataInside.years,
-        dataInside.semester,
-        dataInside.course_id,
-        dataInside.course_type,
-        dataInside.group_id,
-        dataInside.day_of_week,
-        dataInside.start_time,
-        dataInside.end_time
-      ).then((res) => {
+    if (dataInside.start_time !== "null" && dataInside.end_time !== "null") {
+      TimetableAPIServiceStaff.getRoom(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time).then((res) => {
         setRoomOptions(res.data);
       });
     } else {
@@ -638,33 +632,17 @@ function ManagementBox(props) {
 
   const TableCellTime = (row) => {
     if (row.time_locker === true) {
-      return (
-        <>
-          <TableCell width="10%" align="left">
-            {dayConvert(row.day_of_week)} 🔒
-          </TableCell>
-          <TableCell width="10%" align="left">
-            {row.start_time} 🔒
-          </TableCell>
-          <TableCell width="10%" align="left">
-            {row.end_time}
-          </TableCell>
-        </>
-      );
+      return <>
+        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ? null : dayConvert(parseInt(row.day_of_week))}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.start_time == "null" ? null : row.start_time}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.end_time == "null" ? null : row.end_time}  🔒</TableCell>
+      </>
     } else {
-      return (
-        <>
-          <TableCell width="10%" align="left">
-            {dayConvert(row.day_of_week)}
-          </TableCell>
-          <TableCell width="10%" align="left">
-            {row.start_time}
-          </TableCell>
-          <TableCell width="10%" align="left">
-            {row.end_time}
-          </TableCell>
-        </>
-      );
+      return <>
+        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ? null : dayConvert(parseInt(row.day_of_week))}</TableCell>
+        <TableCell width="8%" align="left">{row.start_time == "null" ? null : row.start_time} </TableCell>
+        <TableCell width="8%" align="left">{row.end_time == "null" ? null : row.end_time}</TableCell>
+      </>
     }
   };
 
@@ -704,17 +682,9 @@ function ManagementBox(props) {
 
   const TableCellRoom = (row) => {
     if (row.room_locker === true) {
-      return (
-        <TableCell width="10%" align="left">
-          {row.room_name} 🔒
-        </TableCell>
-      );
+      return <TableCell width="8%" align="left">{row.room_name == "null" ? null : row.room_name} 🔒</TableCell>
     } else {
-      return (
-        <TableCell width="10%" align="left">
-          {row.room_name}
-        </TableCell>
-      );
+      return <TableCell width="8%" align="left">{row.room_name == "null" ? null : row.room_name}</TableCell>
     }
   };
 
@@ -741,7 +711,7 @@ function ManagementBox(props) {
   };
 
   const autoPilot = () => {
-    TimetableAPIServiceStaff.autoPilot().then((res) => {
+    TimetableAPIServiceStaff.autoPilot(props.yearSelected , props.semesterSelected).then((res) => {
       props.updateState();
     });
   };
@@ -752,12 +722,10 @@ function ManagementBox(props) {
     setOpen(true);
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
+  const cleanAll = () => {
+    TimetableAPIServiceStaff.cleanAll(props.yearSelected , props.semesterSelected).then((res) => {
+      props.updateState();
+    });
   };
 
   const renderTree = (nodes) => (
@@ -769,18 +737,13 @@ function ManagementBox(props) {
   );
 
   return (
-    <Container maxWidth="false" sx={{ pt: 2, pb: 2 }}>
-      <Card sx={{ boxShadow: 5 }}>
-        <CardHeader
-          title={props.title}
-          titleTypographyProps={{ fontWeight: "bold", variant: "h5" }}
-          sx={{
-            backgroundColor: "primary.main",
-            color: "primary.contrastText",
-            p: 1,
-          }}
-        />
-        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }}>
+
+    <Container maxWidth='false' sx={{ pt: 2, pb: 2, display: props.disableState ? 'none' : 'block' }} >
+
+      <Card sx={{ boxShadow: 5, }}>
+        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+
           <Grid item sm={12} xs={12}>
             <TableContainer>
               <Grid container spacing={2} sx={{ pt: 0, pb: 3, pl: 3, pr: 3 }}>
@@ -860,24 +823,14 @@ function ManagementBox(props) {
                       const labelId = index;
                       if (editTemp !== row.id) {
                         return (
-                          <TableRow key={row.id}>
-                            <TableCell
-                              width="20%"
-                              id={labelId}
-                              scope="row"
-                              align="left"
-                            >
-                              {row.group_name}
-                            </TableCell>
-                            <TableCell width="20%" align="left">
-                              {row.course_name}
-                            </TableCell>
-                            <TableCell width="10%" align="left">
-                              {row.course_type_name}
-                            </TableCell>
-                            <TableCell width="10%" align="left">
-                              {row.member_name}
-                            </TableCell>
+                          <TableRow key={row.id} >
+                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.course_type_name}</TableCell>
+                            <TableCell width="10%" align="left">{row.course_code}</TableCell>
+                            <TableCell width="25%" align="left">{row.course_name}</TableCell>
+                            <TableCell width="8%" align="left">{row.group_name}</TableCell>
+                            <TableCell width="15%" align="left">{row.member.map((inMember) => {
+                              return <TableRow key={inMember.member_id}> {inMember.member_name} </TableRow>;
+                            })}</TableCell>
                             {TableCellTime(row)}
                             {TableCellRoom(row)}
                             <TableCell align="left">
@@ -905,24 +858,14 @@ function ManagementBox(props) {
                         );
                       } else {
                         return (
-                          <TableRow key={row.id}>
-                            <TableCell
-                              width="20%"
-                              id={labelId}
-                              scope="row"
-                              align="left"
-                            >
-                              {row.group_name}
-                            </TableCell>
-                            <TableCell width="20%" align="left">
-                              {row.course_name}
-                            </TableCell>
-                            <TableCell width="10%" align="left">
-                              {row.course_type_name}
-                            </TableCell>
-                            <TableCell width="10%" align="left">
-                              {row.member_name}
-                            </TableCell>
+                          <TableRow key={row.id} >
+                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.course_type_name}</TableCell>
+                            <TableCell width="10%" align="left">{row.course_code}</TableCell>
+                            <TableCell width="25%" align="left">{row.course_name}</TableCell>
+                            <TableCell width="8%" align="left">{row.group_name}</TableCell>
+                            <TableCell width="15%" align="left">{row.member.map((inMember) => {
+                              return <TableRow key={inMember.member_id}> {inMember.member_name} </TableRow>;
+                            })}</TableCell>
                             {CardSelectTime(row)}
                             {CardSelectRoom(row)}
                             <TableCell align="left">

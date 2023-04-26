@@ -33,6 +33,9 @@ function UserSignIn(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);
+
   return (
     <Container sx={{ p: 2 }} maxWidth="sm">
       <Card sx={{ boxShadow: 5 }}>
@@ -76,7 +79,7 @@ function UserSignIn(props) {
               <Button sx={{ width: 125 }} color="inherit" variant="contained">
                 <Link
                   style={{ textDecoration: "none", color: "black" }}
-                  to={"/Home"}
+                  to={"/Singup"}
                 >
                   สมัครสมาชิก
                 </Link>

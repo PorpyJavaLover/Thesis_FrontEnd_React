@@ -13,14 +13,15 @@ import {
   ReplaceTeachAPIServiceTeacher,
   ReplaceTeachAPIServiceStaff,
 } from "../../Service/ReplaceTeachAPIService";
+import MemberAPIService from "../../Service/MemberAPIService";
 import SendIcon from "@mui/icons-material/Send";
 import { format } from "date-fns";
-import CardDatePicker from "../../Component/Card/CardDatePicker";
-import CardSelect from "../../Component/Card/CardSelect";
-import CardTextField from "../../Component/Card/CardTextField";
-import FullFeaturedCrudGrid from "../../Component/Card/CardDataGrid";
+import CardDatePicker from "../../Component/CardDatePicker";
+import CardSelect from "../../Component/CardSelect";
+import CardTextField from "../../Component/CardTextField";
+import FullFeaturedCrudGrid from "../../Component/CardDataGrid";
 import Moment from "react-moment";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/S๐earch";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -35,7 +36,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SaveIcon from "@mui/icons-material/Save";
 import Stack from "@mui/material/Stack";
 import { useReactToPrint } from "react-to-print";
-import { ComponentToPrint } from "../../Component/PdfExport/PDFReplace";
+import { ComponentToPrint } from "./PDFTeach_Teacher";
 import { savePDF } from "@progress/kendo-react-pdf";
 
 export default class ReplaceTeach extends Component {
@@ -44,17 +45,20 @@ export default class ReplaceTeach extends Component {
     this.updateState = this.updateState.bind(this);
     this.state = {
       dataReplaceTeach: [],
+      organiz: [],
     };
   }
 
   componentDidMount() {
     this.updateState();
+    MemberAPIService.getAllOrganization().then((res) => {
+      this.setState({ organiz: res.data });
+    });
   }
 
   updateState = () => {
     ReplaceTeachAPIServiceTeacher.getAll().then((res) => {
       this.setState({ dataReplaceTeach: res.data });
-      console.log(res.data);
     });
   };
 
@@ -64,6 +68,7 @@ export default class ReplaceTeach extends Component {
         <HeaderBox title={"การจัดการสอนแทน"} />
         <MenagementBox
           title={"เมนูจัดการรายการ"}
+          organiz={this.state.organiz}
           updateState={this.updateState.bind(this)}
           dataReplaceTeach={this.state.dataReplaceTeach}
         />
@@ -89,8 +94,11 @@ function MenagementBox(props) {
   //state
 
   const [submitButtonState, setSubmitButtonState] = useState(true);
+  const [editButtonState, setEditButtonState] = useState(true);
   const [memberReplaceOptions, setMemberReplaceOptions] = useState([]);
   const [memberReplaceSelected, setMemberReplaceSelected] = useState(null);
+  const [OrganizOptions, setOrganizOptions] = useState([]);
+  const [OrganizSelected, setOrganizSelected] = useState(null);
   const [editTemp, setEditTemp] = useState(null);
 
   //function
@@ -98,6 +106,20 @@ function MenagementBox(props) {
   useEffect(() => {
     confirmTiggleUseEffect();
   }, [memberReplaceSelected]);
+
+  useEffect(() => {
+    editTiggleUseEffect();
+  }, [OrganizSelected]);
+
+  useEffect(() => {
+    setOrganizOptions(props.organiz);
+  }, [props.organiz]);
+
+  const handleChangOrganizSelected = (event) => {
+    setOrganizSelected(event.target.value);
+    setMemberReplaceSelected(null);
+    setEditTemp(null);
+  };
 
   const handleChangMemberReplace = (event) => {
     setMemberReplaceSelected(event.target.value);
@@ -107,11 +129,14 @@ function MenagementBox(props) {
     setMemberReplaceSelected(null);
     setEditTemp(null);
   };
+
   const handleEdit = (dataInside) => () => {
+    console.log(dataInside);
     setEditTemp(dataInside.replaceTeachId);
     setMemberReplaceSelected(dataInside.memberReplaceId);
     ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(
-      dataInside.replaceTeachId
+      dataInside.replaceTeachId,
+      OrganizSelected
     ).then((res) => {
       setMemberReplaceOptions(res.data);
     });
@@ -177,6 +202,70 @@ function MenagementBox(props) {
     );
   };
 
+  const editTiggleUseEffect = () => {
+    if (OrganizSelected !== null) {
+      setEditButtonState(false);
+    } else {
+      setEditButtonState(true);
+    }
+  };
+
+  const pdfExportComponent = React.useRef(null);
+
+  const ExportHere = (data) => {
+    const componentRefPdf = useRef();
+
+    const [dataAA, setDataAA] = useState([]);
+    const [dataBB, setDataBB] = useState([]);
+
+    const test = () => {
+      console.log(data.data.replaceTeachId);
+      ReplaceTeachAPIServiceTeacher.getPDFHead(data.data.replaceTeachId).then(
+        (dataA) => {
+          setDataAA(dataA.data);
+          console.log(dataAA);
+          ReplaceTeachAPIServiceTeacher.getPDFBody(
+            data.data.leaveTeachId,
+            data.data.replaceTeachId
+          ).then((dataB) => {
+            setDataBB(dataB.data);
+            handlePrint();
+          });
+        }
+      );
+    };
+
+    const handlePrint = useReactToPrint({
+      content: () => componentRefPdf.current,
+    });
+
+    return (
+      <div>
+        <div style={{ display: "none" }}>
+          <ComponentToPrint
+            ref={componentRefPdf}
+            dataAAA={dataAA}
+            dataBBB={dataBB}
+          />
+        </div>
+        <div>
+          <Button
+            type="ghost"
+            onClick={test}
+            variant="contained"
+            ref={pdfExportComponent}
+            papersize="auto"
+            margin={40}
+            filename={`Report for ${new Date().getFullYear()}`}
+            author="KendoReact Team"
+          >
+            PDF
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   //sort and search
   const headCells = [
     {
@@ -208,6 +297,16 @@ function MenagementBox(props) {
       id: "end_time",
       numeric: true,
       label: "สิ้นสุด",
+    },
+    {
+      id: "date",
+      numeric: true,
+      label: "เริ่มสอน",
+    },
+    {
+      id: "end_time",
+      numeric: true,
+      label: "ชื่ออาจารย์งดสอน",
     },
     {
       id: "date",
@@ -355,22 +454,42 @@ function MenagementBox(props) {
         <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }}>
           <Grid item sm={12} xs={12}>
             <TableContainer>
-              <Box
-                dir="rtl"
-                sx={{ pb: 3, display: "flex", alignItems: "flex-end" }}
-              >
-                <TextField
-                  dir="ltr"
-                  sx={{ width: 300 }}
-                  fullWidth
-                  id="filled-flexible"
-                  label="ค้นหา"
-                  value={searchValue || ""}
-                  onChange={handleChange}
-                  variant="standard"
-                />
-                <SearchIcon />
-              </Box>
+              <Grid container spacing={2} sx={{ pt: 0, pb: 3, pl: 3, pr: 3 }}>
+                <Grid item sm={6} xs={6}>
+                  <Box
+                    dir="ltr"
+                    sx={{ pb: 2, display: "flex", alignItems: "flex-end" }}
+                  >
+                    <TextField
+                      dir="ltr"
+                      sx={{ width: 300 }}
+                      fullWidth
+                      id="filled-flexible"
+                      label="ค้นหา"
+                      value={searchValue || ""}
+                      onChange={handleChange}
+                      variant="standard"
+                    />
+                    <SearchIcon />
+                  </Box>
+                </Grid>
+                <Grid item sm={6} xs={6}>
+                  <Box
+                    dir="rtl"
+                    spacing={2}
+                    sx={{ pt: 2, display: "flex", alignItems: "flex-end" }}
+                  >
+                    <Stack dir="ltr" direction="row" spacing={2}>
+                      <CardSelect
+                        labelPara="เลือกสาขา"
+                        menuItemPara={OrganizOptions}
+                        onChangePara={handleChangOrganizSelected}
+                        valuePara={OrganizSelected}
+                      />
+                    </Stack>
+                  </Box>
+                </Grid>
+              </Grid>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <EnhancedTableHead
                   order={order}
@@ -396,6 +515,57 @@ function MenagementBox(props) {
                             <TableCell width="10%" align="left">
                               {row.course_code}
                             </TableCell>
+                            <TableCell width="20%" align="left">
+                              {row.course_title}
+                            </TableCell>
+                            <TableCell width="10%" align="left">
+                              {row.group_name}
+                            </TableCell>
+                            <TableCell width="8%" align="left">
+                              {row.start_time}
+                            </TableCell>
+                            <TableCell width="8%" align="left">
+                              {row.end_time}
+                            </TableCell>
+                            <TableCell width="8%" align="left">
+                              {row.date}
+                            </TableCell>
+                            <TableCell width="15%" align="left">
+                              {row.memberTechingName}
+                            </TableCell>
+                            <TableCell width="15%" align="left">
+                              {row.memberReplaceName}
+                            </TableCell>
+                            <TableCell align="left">
+                              <Stack direction="row" spacing={2}>
+                                <Button
+                                  sx={{ width: 50 }}
+                                  disabled={editButtonState}
+                                  color="inherit"
+                                  onClick={handleEdit(row)}
+                                  variant="contained"
+                                >
+                                  แก้ไข
+                                </Button>
+                                <ExportHere data={row} />
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      } else {
+                        return (
+                          <TableRow key={row.replaceTeachId}>
+                            <TableCell
+                              width="8%"
+                              id={labelId}
+                              scope="row"
+                              align="left"
+                            >
+                              {row.leaveTeachId}
+                            </TableCell>
+                            <TableCell width="10%" align="left">
+                              {row.course_code}
+                            </TableCell>
                             <TableCell width="15%" align="left">
                               {row.course_title}
                             </TableCell>
@@ -408,50 +578,13 @@ function MenagementBox(props) {
                             <TableCell width="8%" align="left">
                               {row.end_time}
                             </TableCell>
-                            <TableCell width="15%" align="left">
+                            <TableCell width="8%" align="left">
                               {row.date}
                             </TableCell>
-                            <TableCell width="15%" align="left">
+                            <TableCell width="10%" align="left">
                               {row.memberTechingName}
                             </TableCell>
-                            <TableCell width="15%" align="left">
-                              {row.memberReplaceName}
-                            </TableCell>
-                            <TableCell align="left">
-                              <Stack direction="row" spacing={2}>
-                                <Button
-                                  sx={{ width: 75 }}
-                                  color="inherit"
-                                  onClick={handleEdit(row)}
-                                  variant="contained"
-                                >
-                                  แก้ไข
-                                </Button>
-                                <ExportHere />
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      } else {
-                        return (
-                          <TableRow key={row.replaceTeachId}>
-                            <TableCell id={labelId} scope="row" align="left">
-                              {row.leaveTeachId}
-                            </TableCell>
-                            <TableCell align="left">
-                              {row.course_code}
-                            </TableCell>
-                            <TableCell align="left">
-                              {row.course_title}
-                            </TableCell>
-                            <TableCell align="left">{row.group_name}</TableCell>
-                            <TableCell align="left">{row.start_time}</TableCell>
-                            <TableCell align="left">{row.end_time}</TableCell>
-                            <TableCell align="left">{row.date}</TableCell>
-                            <TableCell align="left">
-                              {row.memberTechingName}
-                            </TableCell>
-                            <TableCell align="left">
+                            <TableCell width="20%" align="left">
                               <CardSelect
                                 labelPara="เลือกอาจารย์สอนแทน"
                                 menuItemPara={memberReplaceOptions}
