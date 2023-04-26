@@ -1,265 +1,126 @@
 import React, { Component, useState, useEffect } from 'react'
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import FernAPIService from '../Service/FernAPIService'
+import { Link } from 'react-router-dom';
+import { CardHeader, Box, TextField, Card, Button, Grid, Container, Typography, Stack } from '@mui/material';
+import CardTextField from '../Component/CardTextField'
+import CardSelect from '../Component/CardSelect'
+import MemberAPIService from '../Service/MemberAPIService';
 
-export default class Singin extends Component {
+
+export default class SignUp extends Component {
 
     constructor(props) {
         super(props);
         this.updateState.bind(this);
         this.state = {
-            oganiz: []
+            oganiz: [],
+            titleName: []
         }
     }
 
     componentDidMount() {
-        FernAPIService.getAllOrganization().then((res) => {
+        MemberAPIService.getAllOrganization().then((res) => {
             this.setState({ oganiz: res.data });
-            console.log(this.state.oganiz);
         })
-        this.updateState();
     }
 
     updateState = () => {
 
     }
 
-
     render() {
         return (
             <div>
-                <div>
-                    <UserCreate oganiz={this.state.oganiz} />
-                </div>
-            </div>)
+                <UserCreate title={"สมัครสมาชิก"} oganiz={this.state.oganiz} titleName={this.state.titleName} />
+            </div>
+        )
     }
 }
 
 function UserCreate(props) {
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        var data = {
-            position: position,
-            idcard: idcard,
-            title: title,
-            fname: fname,
-            lname: lname,
-            username: username,
-            phonenumber: phonenumber,
-            email: email,
-            password: password,
-            confirmpassword: confirmpassword,
-        };
-        fetch("https://www.mecallapi.com/api/users/create", {
-            method: "POST",
-            headers: {
-                Accept: "application/form-data",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
-            .then((res) => res.json())
-            .then((result) => {
-                alert(result["message"]);
-                if (result["status"] === "ok") {
-                    window.location.href = "./L1";
-                }
-            });
+        MemberAPIService.login(username, password);
     };
 
-    const [position, setPosition] = useState("");
-    const [idcard, setIdcard] = useState("");
-    const [title, setTitle] = useState("");
-    const [fname, setFname] = useState("");
-    const [lname, setLname] = useState("");
-    const [username, setUsername] = useState("");
-    const [phonenumber, setPhonenumber] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmpassword, setConfirmpassword] = useState("");
+    const [titleNameOption, setTitleNameOption] = useState([]);
+    const [titleNameSelected, setTitleNameSelected] = useState(null);
+    const [organizOption, setOrganizOption] = useState([]);
+    const [organizSelected, setOrganizSelected] = useState(null);
+    const [firstNameTH, setFirstNameTH] = useState(null);
+    const [lastNameTH, setLastNameTH] = useState(null);
+    const [firstNameEN, setFirstNameEN] = useState(null);
+    const [lastNameEN, setLastNameEN] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [confirmpassword, setConfirmpassword] = useState(null);
 
+    useEffect(() => {
+        setTitleNameOption(props.titleName);
+    }, [props.titleName]);
+
+    useEffect(() => {
+        setOrganizOption(props.oganiz);
+    }, [props.oganiz]);
+
+    const handleChangeTitle = (event) => {
+        setTitleNameSelected(event.target.value);
+    };
+
+    const handleChangeOrganiz = (event) => {
+        setOrganizSelected(event.target.value);
+    };
 
     return (
-        <Container sx={{ p: 5 }} maxWidth="sm">
-            <div>
-                <Typography component="h1" variant="h5">
-                    Singup
-                </Typography>
-                <form onSubmit={handleSubmit}>
-                    <Grid container sx={{ pt: 2 }} spacing={2}>
-                        <Grid sx={{ minWidth: 160 }} item xs={10}>
-                            <Box>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select">สาขา</InputLabel>
-                                    <Select
-                                        Complete="position"
-                                        labelId="demo-simple-select-label"
-                                        id="สาขา"
-                                        required
-                                        fullWidth
-                                        variant="outlined"
-                                        label="สาขา"
-                                        onChange={(e) => setPosition(e.target.value)}
-                                    >
-                                        {props.oganiz.map((index) => (
-                                            <MenuItem key={index.value} value={index.value}>{index.text}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <TextField
-                                Complete="idcard"
-                                name="รหัสบัตรประจำตัว"
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="รหัสบัตรประจำตัว"
-                                label="รหัสบัตรประจำตัว"
-                                onChange={(e) => setIdcard(e.target.value)}
-                            //autoFocus
-                            />
-                        </Grid>
-                        <Grid sx={{ minWidth: 160 }} item xs={4.5}>
-                            <Box>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select">คำนำหน้า</InputLabel>
-                                    <Select
-                                        Complete="title"
-                                        labelId="demo-simple-select-label"
-                                        id="คำนำหน้า"
-                                        required
-                                        fullWidth
-                                        variant="outlined"
-                                        label="คำนำหน้า"
-                                        onChange={(e) => setTitle(e.target.value)}
-                                    >
-                                        <MenuItem value={10}>นาย</MenuItem>
-                                        <MenuItem value={20}>นาง</MenuItem>
-                                        <MenuItem value={30}>นางสาว</MenuItem>
-                                        <MenuItem value={40}>ดร.</MenuItem>
-                                        <MenuItem value={50}>ศาสตราจารย์</MenuItem>
-                                        <MenuItem value={60}>รองศาสตราจารย์</MenuItem>
-                                        <MenuItem value={70}>ผู้ช่วยศาสตราจารย์</MenuItem>
-                                        <MenuItem value={80}>ผู้ช่วยศาสตราจารย์ ดร.</MenuItem>
-                                        <MenuItem value={90}>รองศาสตราจารย์ ดร.</MenuItem>
-                                        <MenuItem value={100}>น.อ.ศ.</MenuItem>
-                                        <MenuItem value={110}>เจ้าหน้าที่</MenuItem>
-                                        <MenuItem value={120}>ว่าที่ร้อยตรีหญิง</MenuItem>
-                                        <MenuItem value={130}>อาจารย์</MenuItem>
-                                        <MenuItem value={140}>อาจารย์ ดร.</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={3.77}>
-                            <TextField
-                                Complete="fname"
-                                name="firstName"
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="firstName"
-                                label="First Name"
-                                onChange={(e) => setFname(e.target.value)}
-                            //autoFocus
-                            />
-                        </Grid>
-                        <Grid item xs={3.7}>
-                            <TextField
-                                Complete="lname"
-                                name="lastName"
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="lastName"
-                                label="Last Name"
-                                onChange={(e) => setLname(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Username"
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="phonenumber"
-                                label="Phone number"
-                                onChange={(e) => setPhonenumber(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={5}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email"
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={3.5}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="password"
-                                label="Password"
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={3.5}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="confirmpassword"
-                                label="Confirmpassword"
-                                onChange={(e) => setConfirmpassword(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                            >
-                                Create
-                            </Button>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                type="cancel"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                            >
-                                Cancel
-                            </Button>
-                        </Grid>
+        <Container sx={{ p: 2 }} maxWidth="md">
+            <Card sx={{ boxShadow: 5, }}>
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h6' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                <Grid container spacing={2} sx={{ p: 2 }} >
+
+                    <Grid item sm={12} >
+                        <CardSelect labelPara="สาขา" menuItemPara={organizOption} onChangePara={handleChangeOrganiz} valuePara={organizSelected} />
                     </Grid>
-                </form>
-            </div>
-        </Container>
+                    <Grid item sm={12} >
+                        <CardSelect labelPara="คำนำหน้า" menuItemPara={titleNameOption} onChangePara={handleChangeTitle} valuePara={titleNameSelected} />
+                    </Grid>
+                    <Grid item sm={6} >
+                        <CardTextField labelPara="ชื่อภาษาไทย" onChangePara={(e) => setFirstNameTH(e.target.value)} required valuePara={firstNameTH} />
+                    </Grid>
+                    <Grid item sm={6} >
+                        <CardTextField labelPara="นามสกุลภาษาไทย" onChangePara={(e) => setLastNameTH(e.target.value)} required valuePara={lastNameTH} />
+                    </Grid>
+                    <Grid item sm={6} >
+                        <CardTextField labelPara="ชื่อภาษาอังกฤษ" onChangePara={(e) => setFirstNameEN(e.target.value)} required valuePara={firstNameEN} />
+                    </Grid>
+                    <Grid item sm={6} >
+                        <CardTextField labelPara="นามสกุลภาษาอังกฤษ" onChangePara={(e) => setLastNameEN(e.target.value)} required valuePara={lastNameEN} />
+                    </Grid>
+                    <Grid item sm={12} >
+                        <CardTextField labelPara="ชื่อสมาชิก" onChangePara={(e) => setUsername(e.target.value)} required valuePara={username} />
+                    </Grid>
+                    <Grid item sm={12} >
+                        <CardTextField labelPara="รหัสสมาชิก" onChangePara={(e) => setPassword(e.target.value)} required valuePara={password} />
+                    </Grid>
+                    <Grid item sm={12} >
+                        <CardTextField labelPara="ยืนยันรหัสสมาชิก" onChangePara={(e) => setConfirmpassword(e.target.value)} required valuePara={confirmpassword} />
+                    </Grid>
+
+                    <Grid item sm={6} dir="ltr" >
+                        <Box dir="ltr" sx={{ pb: 2, display: 'flex', alignItems: 'flex-end', }}>  {//@todo <---check point  --> pd}
+                            <Button sx={{ width: 125 }} color="primary" onClick={handleSubmit} variant="contained" > เข้าสู่ระบบ </Button>
+                        </Box>
+                    </Grid>
+                    <Grid item sm={6} dir="rtl" >
+                        <Box dir="rtl" spacing={2} sx={{ pt: 2, display: 'flex', alignItems: 'flex-end', }}> {//@todo <--- check point  --> pt}
+                            
+                            <Button sx={{ width: 125 }} color="inherit" variant="contained" >
+                                <Link style={{ textDecoration: "none", color: "black" }} to={"/Singup"} > สมัครสมาชิก </Link>
+                            </Button>
+
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Card>
+        </Container >
     );
 }

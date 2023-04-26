@@ -1,73 +1,54 @@
 import React, { Component } from 'react'
 import { Divider, Form, Label, Button } from 'semantic-ui-react'
 import APIService from '../Service/APIService'
+import { makeStyles } from "@mui/styles";
+import AliceCarousel from "react-alice-carousel";
+import "react-alice-carousel/lib/alice-carousel.css";
+import { Card, CardMedia } from "@mui/material";
+import img1 from "./img/ยินดีต้อนรับ2.jpg";
+import img2 from "./img/ปี 2566.jpg";
+import img4 from "./img/ยินดีต้อนรับ.jpg";
+import {Box } from '@mui/material';
 
+const useStyles = makeStyles({
+    root: {
+        maxWidth: 1400,
+        margin: "0 auto",
+    },
+});
 
+const items = [
+    <Card>
+        <CardMedia component="img" height="500" width="200" image={img2} />
+    </Card>,
+    <Card>
+        <CardMedia component="img" height="500" width="200" image={img1} />
+    </Card>,
+    <Card>
+        <CardMedia component="img" height="500" width="200" image={img4} />
+    </Card>,
+];
 
-export default class Home extends Component {
+export default function MyCarousel() {
+    const classes = useStyles();
 
-    constructor(props) {
-        super(props);
-        this.onChangeUsername = this.onChangeUsername.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.state = {
-            username: "",
-            password: "",
-        };
-    }
-
-    onChangeUsername = (event) => {
-        this.setState({ username: event.target.value });
-    }
-
-    onChangePassword = (event) => {
-        this.setState({ password: event.target.value });
-    }
-
-    handleLogin = (event) => {
-        console.log("login");
-        APIService.login(this.state.username, this.state.password);
-    }
-
-
-
-    render() {
-        return (
-
-            <Form>
-                <Form.Field inline>
-                    <input
-                        type='text'
-                        placeholder='Username'
-                        name="username"
-                        value={this.state.username}
-                        onChange={this.onChangeUsername}
-                    />
-                    <Label pointing='left'>
-                        That name is taken!
-                    </Label>
-                </Form.Field>
-
-                <Form.Field inline>
-                    <input
-                        type='password'
-                        placeholder='Password'
-                        name="password"
-                        value={this.state.password}
-                        onChange={this.onChangePassword}
-                    />
-                    <Label pointing='left'>
-                        Your password must be 6 characters or more
-                    </Label>
-
-                </Form.Field>
-
-                <button
-                    onClick={this.handleLogin}
-                >Submit</button>
-
-            </Form >
-
-        )
-    }
+    return (
+        <div className={classes.root}>
+            <Box sx={{ pt : 5 }}>
+                <AliceCarousel
+                    items={items}
+                    responsive={{
+                        1000: { items: 1 },
+                        2000: { items: 2 },
+                        3000: { items: 3 },
+                    }}
+                    autoPlay
+                    autoPlayInterval={2500}
+                    animationDuration={2500}
+                    infinite
+                    disableButtonsControls
+                />
+            </Box>
+        </div>
+    );
 }

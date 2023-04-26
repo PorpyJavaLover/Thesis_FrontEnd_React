@@ -1,0 +1,61 @@
+/* @font-face {
+  font-family: 'THSarabunNew', sans-serif;;
+  src: url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap');
+}  */
+body{
+    font-size: 0.9167rem;
+    font-family: 'THSarabunNew', THSarabunNew;
+    color: black;
+    
+  }
+  .header {
+    display: block;
+  }
+  @media print {
+    @page {
+      size: A4;
+      margin: 2.54cm 2cm 2.54cm 3cm;
+
+    }
+    body {
+      font-size: 0.9167rem;
+      font-family: 'THSarabunNew', THSarabunNew;
+      color: black;
+    }
+    .header {
+      display: none;
+    } 
+    /* @font-face {
+    font-family: 'THSarabunNew';
+    src: url('./THSarabunNew/THSarabunNew.ttf'); */
+  
+}
+.font {
+  font-size: 0.9167rem;
+ 
+}
+
+.tt-table table{
+  border: none; 
+
+}
+ 
+table {
+    border-collapse: collapse;
+}
+
+/* table, td, th {
+    border: 1px solid black;
+} */
+
+
+/* .p{
+  text-align: justify;
+  margin-bottom: 1em;
+} */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap');
+
+
+  
+
+ 

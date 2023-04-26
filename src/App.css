@@ -36,30 +36,3 @@
     transform: rotate(360deg);
   }
 }
-
-.selectsubject{
-  padding-top: 0.25em;
-  padding-left: 0.25em;
-  padding-right: 0.25em;
-  padding-bottom: 0.25em;
-  height: 100%;
-  width: 100%;
-}
-
-.navbar{
-  padding-top: 0.25em;
-  padding-left: 0.25em;
-  padding-right: 0.25em;
-  padding-bottom: 0.25em;
-  height: 100%;
-  width: 100%;
-}
-
-.footer{
-  background-color: #333333;
-  color: #ffffff;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-}
