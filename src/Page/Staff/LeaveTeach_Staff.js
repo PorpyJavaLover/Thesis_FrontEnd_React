@@ -2,6 +2,7 @@ import React, { Component, useState, useEffect } from 'react'
 import APIService from '../../Service/FernAPIService'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
 import { LeaveTeachAPIServiceTeacher, LeaveTeachAPIServiceStaff } from '../../Service/LeaveTeachAPIService';
+import MemberAPIService , { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
 import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 import CardDatePicker from '../../Component/CardDatePicker';
@@ -31,8 +32,11 @@ export default class LeaveTeach extends Component {
   constructor(props) {
     super(props);
     this.updateState = this.updateState.bind(this);
+    this.setMemberSelected = this.setMemberSelected.bind(this);
     this.state = {
       dataLeaveTeach: [],
+      member: [],
+      memberSelected: null,
       yearSelected: null,
       semesterSelected: null,
       disableState: true
@@ -40,12 +44,20 @@ export default class LeaveTeach extends Component {
   }
 
   componentDidMount() {
-
+    MemberAPIServiceStaff.getMemberOption().then((res) => {
+      this.setState({ member: res.data });
+    });
   }
 
   updateState = () => {
-    LeaveTeachAPIServiceTeacher.getAllTeacherLeaveTeach(this.state.yearSelected,this.state.semesterSelected).then((res) => {
+    LeaveTeachAPIServiceStaff.getAllStaffLeaveTeach(this.state.yearSelected,this.state.semesterSelected,this.state.memberSelected).then((res) => {
       this.setState({ dataLeaveTeach: res.data });
+    })
+  }
+
+  setMemberSelected = (item) => {
+    this.setState({
+      memberSelected: item,
     })
   }
 
@@ -71,18 +83,20 @@ export default class LeaveTeach extends Component {
   render() {
     return (
       <div>
-
+        
         <HeaderBox title={"การจัดการวันงดสอน"} />
 
-        <SelectionBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)}
+        <SelectionBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
+           member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
           setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
 
         <CreationBox title={"เมนูสร้างรายการ"} updateState={this.updateState.bind(this)} disableState={this.state.disableState}
-          yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
+        memberSelected={this.state.memberSelected} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
 
         <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataLeaveTeach={this.state.dataLeaveTeach}
-          disableState={this.state.disableState} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
-
+        disableState={this.state.disableState} memberSelected={this.state.memberSelected} 
+        yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected}  />
+      
       </div>
     )
   }
@@ -101,7 +115,7 @@ function SelectionBox(props) {
   const currentYear = new Date().getFullYear();
 
   const yearOptions = [
-    { key: '1', value: currentYear, text: currentYear + 543 },
+    { key: '1', value: currentYear , text: currentYear + 543 },
     { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
     { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
     { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
@@ -115,6 +129,14 @@ function SelectionBox(props) {
 
   const [yearsSelected, setYearsSelected] = useState(null);
   const [semesterSelected, setSemesterSelected] = useState(null);
+  const [member, setMember] = useState(props.member);
+  const [memberSelected, setMemberSelected] = useState(null);
+
+  const handleChangeMember = (event) => {
+    props.setMemberSelected(event.target.value);
+    setMemberSelected(event.target.value);
+    console.log(event.target.value);
+  };
 
   const handleChangeYear = (event) => {
     props.setYearSelected(event.target.value);
@@ -127,10 +149,14 @@ function SelectionBox(props) {
   };
 
   useEffect(() => {
-    if (yearsSelected != null && semesterSelected != null ) {
+    if (yearsSelected != null && semesterSelected != null && memberSelected != null) {
       props.setDisable();
     }
-  }, [yearsSelected, semesterSelected])
+  }, [yearsSelected, semesterSelected, memberSelected])
+
+  useEffect(() => {
+    setMember(props.member);
+  }, [props.member])
 
   return (
     <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
@@ -143,6 +169,9 @@ function SelectionBox(props) {
           <Grid item sm={6} xs={6}>
             <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
           </Grid>
+          <Grid item sm={12} xs={12}>
+            <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={member} onChangePara={handleChangeMember} valuePara={memberSelected} />
+          </Grid>
         </Grid>
       </Card>
     </Container >
@@ -151,43 +180,17 @@ function SelectionBox(props) {
 
 function CreationBox(props) {
 
-  const currentYear = new Date().getFullYear();
-
-  const yearOptions = [
-    { key: '1', value: currentYear, text: currentYear + 543 },
-    { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
-    { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
-    { key: '3', value: currentYear - 3, text: currentYear + 543 - 3 }
-  ];
-
-  const semester = [
-    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
-    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
-    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
-  ]
-
   //state
   const [confirmButtonState, setConfirmButtonState] = useState(true);
   const [dateStartSelected, setDateStartSelected] = useState(null);
   const [dateEndSelected, setDateEndSelected] = useState(null);
-  const [semesterSelected, setSemesterSelected] = useState(null);
   const [reasonNote, setReasonNote] = useState(null);
-  const [yearSelected, setYearSelected] = useState(null);
 
 
   //function
   useEffect(() => {
     confirmTiggleUseEffect();
   }, [dateStartSelected, dateEndSelected, props.semesterSelected, reasonNote]);
-
-
-  const handleChangYear = (event) => {
-    setYearSelected(event.target.value);
-  };
-
-  const handleChangSemester = (event) => {
-    setSemesterSelected(event.target.value);
-  };
 
   const handleChangDateStart = (value) => {
     setDateStartSelected(format(new Date(value), 'yyyy-MM-dd').toString());
@@ -203,20 +206,16 @@ function CreationBox(props) {
   };
 
   const handleCancel = () => {
-    setYearSelected(null);
     setDateStartSelected(null);
     setDateEndSelected(null);
-    setSemesterSelected(null);
     setReasonNote(null);
   };
 
   const handleSubmit = () => {
-    LeaveTeachAPIServiceTeacher.createLeaveTeach(props.semesterSelected, props.yearSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
+    LeaveTeachAPIServiceStaff.createLeaveTeach(props.semesterSelected, props.yearSelected, props.memberSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
       props.updateState();
-      setYearSelected(null);
       setDateStartSelected(null);
       setDateEndSelected(null);
-      setSemesterSelected(null);
       setReasonNote(null);
     });
   };
@@ -234,7 +233,7 @@ function CreationBox(props) {
   }
 
   return (
-    <Container maxWidth='false' sx={{ display: props.disableState ? 'none' : 'block' }} >
+    <Container maxWidth='false' sx={{ pt: 2 , display: props.disableState ? 'none' : 'block' }} >
       <Card sx={{ boxShadow: 5, }}>
         <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
         <Grid container spacing={2} sx={{ p: 2 }} >
@@ -262,21 +261,6 @@ function CreationBox(props) {
 }
 
 function MenagementBox(props) {
-
-  const currentYear = new Date().getFullYear();
-
-  const yearOptions = [
-    { key: '1', value: currentYear, text: currentYear + 543 },
-    { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
-    { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
-    { key: '3', value: currentYear - 3, text: currentYear + 543 - 3 }
-  ];
-
-  const semester = [
-    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
-    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
-    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
-  ]
 
   //state
 
@@ -355,13 +339,13 @@ function MenagementBox(props) {
 
   const handleConfirm = (dataInside) => () => {
     LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, yearSelected, semesterSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
-      setEditTemp(null);
-      setYearSelected(null);
-      setSemesterSelected(null);
-      setDateStartSelected(null);
-      setDateEndSelected(null);
-      setReasonNote(null);
-      props.updateState();
+    setEditTemp(null);
+    setYearSelected(null);
+    setSemesterSelected(null);
+    setDateStartSelected(null);
+    setDateEndSelected(null);
+    setReasonNote(null);
+    props.updateState();
     });
   }
 
@@ -558,8 +542,6 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id} >
                             <TableCell width="15%" id={labelId} scope="row" align="left" >{row.id}</TableCell>
-                            {/*<TableCell width="15%" id={labelId} scope="row" align="left" >{row.years_name}</TableCell>
-                            <TableCell width="15%" align="left">{row.semester}</TableCell>*/}
                             <TableCell width="20%" align="left">{row.dateStart}</TableCell>
                             <TableCell width="20%" align="left">{row.dateEnd}</TableCell>
                             <TableCell width="15%" align="left">{row.note}</TableCell>
@@ -575,16 +557,8 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id} >
                             <TableCell id={labelId} scope="row" align="left">
-                              {row.id}
+                            {row.id}
                             </TableCell>
-                            {/*
-                            <TableCell align="left">
-                              <CardSelect labelPara="ปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangYear} valuePara={yearSelected} />
-                            </TableCell>
-                            <TableCell align="left">
-                              <CardSelect labelPara="ภาคการศึกษา" menuItemPara={semester} onChangePara={handleChangSemester} valuePara={semesterSelected} />
-                            </TableCell>
-                            */}
                             <TableCell align="left">
                               <CardDatePicker labelPara="วันที่งดสอน" onChangePara={handleChangDateStart} valuePara={dateStartSelected} />
                             </TableCell>

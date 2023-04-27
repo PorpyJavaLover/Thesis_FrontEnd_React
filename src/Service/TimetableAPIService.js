@@ -12,8 +12,8 @@ export const TimetableAPIServiceTeacher = new class TimetableAPIServiceTeacher e
         return axios.get(this.url + '/timetable/teacher/show/all/ForPlan', { headers: this.headers });
     }
 
-    getTimetable() {
-        return axios.get(this.url + '/timetable/teacher/show/all', { headers: this.headers });
+    getTimetable(yId, sId) {
+        return axios.get(this.url + '/timetable/teacher/show/all' + '/' + yId + '/' + sId, { headers: this.headers });
     }
 
     getMemberTime(mId) {

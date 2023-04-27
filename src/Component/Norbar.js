@@ -25,14 +25,15 @@ const pagesTeacher = [
     { key: 3, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
     { key: 4, name: 'การจัดการวันงดสอน', path: '/Teacher/LeaveTeach' },
     { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
-    //{ key: 6, name: 'การจัดPDF', path: '/Teacher/PDFTeach' },
-    { key: 7, name: 'Test', path: '/Teacher/Test' },
 ];
 
 const pagesStaff = [
     { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน', path: '/Staff/SelectSubject' },
     { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Staff/NotTeach' },
     { key: 3, name: 'การจัดการรายวิชา', path: '/Staff/Timetable' },
+    { key: 4, name: 'การจัดการวันงดสอน', path: '/Teacher/LeaveStaff' },
+    { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceStaff' },
+    { key: 6, name: 'การจัดการสมาชิก', path: '/Teacher/MenagementMemberStaff' },
 ];
 
 export default function Norbar() {
@@ -51,7 +52,6 @@ export default function Norbar() {
             }
         } else {
             return <MenuAnonymous />;
-           
         }
     }
 

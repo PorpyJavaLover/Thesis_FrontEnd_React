@@ -6,7 +6,6 @@ import CardSelect from '../Component/CardSelect'
 import MemberAPIService from '../Service/MemberAPIService';
 
 
-
 export default class SignUp extends Component {
 
     constructor(props) {
@@ -43,6 +42,11 @@ export default class SignUp extends Component {
 
 function UserCreate(props) {
 
+    const roleOption = [
+        { key: '1', value: 1, text: "อาจารย์" },
+        { key: '2', value: 2, text: "เจ้าหน้าที่" },
+    ];
+
     const [titleNameOption, setTitleNameOption] = useState([]);
     const [titleNameSelected, setTitleNameSelected] = useState(null);
     const [facultyOption, setFacultyOption] = useState([]);
@@ -56,12 +60,15 @@ function UserCreate(props) {
     const [usernameRe, setUsername] = useState(null);
     const [passwordRe, setPassword] = useState(null);
     const [confirmPasswordRe, setConfirmPassword] = useState(null);
+    const [roleSelected, setRoleSelected] = useState(null);
 
     const [confirmButtonStatus, setConfirmButtonStatus] = useState(true);
     const [organizOptionStatus, setOrganizOptionStatus] = useState(true);
 
     const [errerPassword, setErrerPassword] = useState(false);
     const [errerConfirmPassword, setErrerConfirmPassword] = useState(false);
+
+    const [errerUsernameSame, setErrerUsernameSame] = useState(false);
 
     useEffect(() => {
         setTitleNameOption(props.titleName);
@@ -70,6 +77,10 @@ function UserCreate(props) {
     useEffect(() => {
         setFacultyOption(props.faculty);
     }, [props.faculty]);
+
+    useEffect(() => {
+        setErrerUsernameSame(false);
+    }, [usernameRe]);
 
     useEffect(() => {
 
@@ -115,6 +126,11 @@ function UserCreate(props) {
 
     };
 
+
+    const handleChangeRole = (event) => {
+        setRoleSelected(event.target.value);
+    };
+
     const handleChangeTitle = (event) => {
         setTitleNameSelected(event.target.value);
     };
@@ -133,7 +149,15 @@ function UserCreate(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        MemberAPIService.register(titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe);
+        MemberAPIService.register(titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected).then((response) => {
+            window.location.href = '/SignIn';
+        }).catch((err) => {
+            if (err.response.data.error = "Member.login.username.NotFound") {
+                setErrerUsernameSame(true);
+            }
+        }).finally(() => {
+
+        })
     };
 
     return (
@@ -148,7 +172,10 @@ function UserCreate(props) {
                     <Grid item sm={6} xs={12} >
                         <CardSelect labelPara="เลือกสาขา" disabledPara={organizOptionStatus} menuItemPara={organizOption} onChangePara={handleChangeOrganiz} valuePara={organizSelected} />
                     </Grid>
-                    <Grid item sm={12} xs={12} >
+                    <Grid item sm={6} xs={12} >
+                        <CardSelect labelPara="เลือกระดับสิทธิ์" menuItemPara={roleOption} onChangePara={handleChangeRole} valuePara={roleSelected} />
+                    </Grid>
+                    <Grid item sm={6} xs={12} >
                         <CardSelect labelPara="เลือกคำนำหน้า" menuItemPara={titleNameOption} onChangePara={handleChangeTitle} valuePara={titleNameSelected} />
                     </Grid>
                     <Grid item sm={6} xs={12} >
@@ -164,7 +191,7 @@ function UserCreate(props) {
                         <CardTextField labelPara="นามสกุลภาษาอังกฤษ" onChangePara={(e) => regexB.test(e.target.value) ? setLastNameEN(e.target.value) : null} required valuePara={lastNameEN} />
                     </Grid>
                     <Grid item sm={12} xs={12} >
-                        <CardTextField labelPara="ชื่อบัญชีสมาชิก" helperTextPara={"ตัวอักษร a-Z และตัวเลข 0-9"} onChangePara={(e) => regexC.test(e.target.value) ? setUsername(e.target.value) : null} required valuePara={usernameRe} />
+                        <CardTextField labelPara="ชื่อบัญชีสมาชิก" errorPara={errerUsernameSame} helperTextPara={errerUsernameSame == false ?  "ตัวอักษร a-Z และตัวเลข 0-9" : "**ชื่อบัญชีสมาชิกซ้ำ**" } onChangePara={(e) => regexC.test(e.target.value) ? setUsername(e.target.value) : null} required valuePara={usernameRe} />
                     </Grid>
                     <Grid item sm={12} xs={12} >
                         <CardTextField labelPara="รหัสผ่าน" errorPara={errerPassword} helperTextPara={"ต้องความยาว 8-12 ตัวอักษร และต้องมีตัวอักษรพิเศษ, ตัวพิมพ์ใหญ่, ตัวเลข อย่างน้อยอย่างละ 1 ตัวษร "} typePara="password" onChangePara={handleChangePassword} required valuePara={passwordRe} />

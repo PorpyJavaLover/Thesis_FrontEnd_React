@@ -8,8 +8,8 @@ export default new class ReplaceTeachAPIService extends BaseAPIService {
 
 export const ReplaceTeachAPIServiceTeacher = new class ReplaceTeachAPIServiceTeacher extends BaseAPIService {
     
-    getAll() {
-        return axios.get(this.url + '/replaceteach/teacher/show/all ', { headers: this.headers });
+    getAll(years , semester) {
+        return axios.get(this.url + '/replaceteach/teacher/show/all' + '/' + years + '/' + semester, { headers: this.headers });
     }
     
     getMemberReplaceOption(replaceTeachId , OrganizSelected) {
@@ -24,9 +24,6 @@ export const ReplaceTeachAPIServiceTeacher = new class ReplaceTeachAPIServiceTea
         return axios.get(this.url + '/replaceteach/teacher/pdf/body' + '/' + leaveTeachId + '/' + replaceTeachId , { headers: this.headers });
     }
     
-
-    
-
     update(replaceTeachId,memberReplaceId) {
         const body = {
             'memberReplaceId': memberReplaceId,
@@ -35,13 +32,14 @@ export const ReplaceTeachAPIServiceTeacher = new class ReplaceTeachAPIServiceTea
     }
 
     delete(replaceTeachId) {
-
         return axios.delete(this.url + '/replaceteach/teacher/delete'  + '/' + replaceTeachId , { headers: this.headers });
     }
-
-
+    
 }
 
 export const ReplaceTeachAPIServiceStaff = new class ReplaceTeachAPIServiceStaff extends BaseAPIService {
 
+    getAll(years , semester, memberId) {
+        return axios.get(this.url + '/replaceteach/staff/show/all' + '/' + years + '/' + semester + '/' + memberId, { headers: this.headers });
+    }
 }

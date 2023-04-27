@@ -22,12 +22,17 @@ export default new class MemberAPIService extends BaseAPIService {
                 if (err.message === 'Network Error') {
                     console.log('Connection Refused');
                 }
-            }).finally(() => {
+                console.log(err.XMLHttpRequest);
+                console.log(err.response.data.error);
+                console.log(err.response.data);
+                console.log(err.response);
+                console.log(err.data);
 
+            }).finally(() => {
             });
     }
 
-    register(titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe) {
+    register(titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected) {
 
         const body = {
             'titleNameSelected': DOMPurify.sanitize(titleNameSelected),
@@ -38,15 +43,10 @@ export default new class MemberAPIService extends BaseAPIService {
             'lastNameEN': DOMPurify.sanitize(lastNameEN),
             'usernameRe': DOMPurify.sanitize(usernameRe),
             'passwordRe': DOMPurify.sanitize(passwordRe),
+            'roleSelected': DOMPurify.sanitize(roleSelected),
         };
 
-        return axios.post(this.url + '/member/anonymous/register', body).then((response) => {
-            window.location.href = '/SignIn';
-        }).catch((err) => {
-            console.log(err.message);
-        }).finally(() => {
-
-        })
+        return axios.post(this.url + '/member/anonymous/register', body)
     }
 
     getAllFaculty() {

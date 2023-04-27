@@ -8,8 +8,8 @@ export default new class LeaveTeachAPIService extends BaseAPIService {
 
 export const LeaveTeachAPIServiceTeacher = new class LeaveTeachAPIServiceTeacher extends BaseAPIService {
 
-    getAllTeacherLeaveTeach() {
-        return axios.get(this.url + '/leaveteach/teacher/show/all ', { headers: this.headers });
+    getAllTeacherLeaveTeach(years , semester) {
+        return axios.get(this.url + '/leaveteach/teacher/show/all' + '/' + years + '/' + semester  , { headers: this.headers });
     }
 
     getAllOrganization() {
@@ -27,9 +27,9 @@ export const LeaveTeachAPIServiceTeacher = new class LeaveTeachAPIServiceTeacher
         return axios.post(this.url + '/leaveteach/teacher/create ', body, { headers: this.headers });
     }
 
-    updateTeacherLeaveTeach(leaveTeachId, year, semester, dateStart, dateEnd, reasonNote) {
+    updateTeacherLeaveTeach(leaveTeachId, years, semester, dateStart, dateEnd, reasonNote) {
         const body = {
-            'year': year,
+            'years': years,
             'semester': semester,
             'dateStart': dateStart,
             'dateEnd': dateEnd,
@@ -42,9 +42,24 @@ export const LeaveTeachAPIServiceTeacher = new class LeaveTeachAPIServiceTeacher
         return axios.delete(this.url + '/leaveteach/teacher/delete' + '/' + leaveTeachId, { headers: this.headers });
     }
 
-  
 }
 
 export const LeaveTeachAPIServiceStaff = new class LeaveTeachAPIServiceStaff extends BaseAPIService {
+
+    getAllStaffLeaveTeach(years , semester, memberId) {
+        return axios.get(this.url + '/leaveteach/staff/show/all' + '/' + years + '/' + semester + '/' + memberId, { headers: this.headers });
+    }
+
+    createLeaveTeach(semester, year, memberId , dateStart, dateEnd, note) {
+        const body = {
+            'semester': semester,
+            'year': year,
+            'memberId' : memberId,
+            'dateStart': dateStart,
+            'dateEnd': dateEnd,
+            'note': note
+        };
+        return axios.post(this.url + '/leaveteach/staff/create ', body, { headers: this.headers });
+    }
 
 }

@@ -22,19 +22,37 @@ export default class NotTeachTeacher extends Component {
 
     constructor(props) {
         super(props);
-        this.updateState.bind(this);
+        this.updateState = this.updateState.bind(this);
         this.state = {
-            dataNotTeach: []
+            dataNotTeach: [],
+            yearSelected: null,
+            semesterSelected: null,
+            disableState: true
         }
     }
 
-    componentDidMount() {
-        this.updateState();
+    updateState = () => {
+        NotTeachAPIServiceTeacher.getAllNotTeach(this.state.yearSelected, this.state.semesterSelected).then((res) => {
+            this.setState({ dataNotTeach: res.data });
+        })
     }
 
-    updateState = () => {
-        NotTeachAPIServiceTeacher.getAllNotTeach().then((res) => {
-            this.setState({ dataNotTeach: res.data });
+    setYearSelected = (item) => {
+        this.setState({
+            yearSelected: item,
+        })
+    }
+
+    setSemesterSelected = (item) => {
+        this.setState({
+            semesterSelected: item,
+        })
+    }
+
+    setDisable = () => {
+        this.updateState();
+        this.setState({
+            disableState: false
         })
     }
 
@@ -42,8 +60,12 @@ export default class NotTeachTeacher extends Component {
         return (
             <div >
                 <HeaderBox title={"การจัดการวันที่ไม่ขอสอน"} />
-                <CreationBox title={"เมนูสร้างรายการ"} updateState={this.updateState} />
-                <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState} dataNotTeach={this.state.dataNotTeach} />
+                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"}  setYearSelected={this.setYearSelected.bind(this)}
+                    setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected} 
+                semesterSelected={this.state.semesterSelected} updateState={this.updateState}  />
+                <MenagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} 
+                dataNotTeach={this.state.dataNotTeach} updateState={this.updateState} />
             </div>
         )
     }
@@ -54,6 +76,59 @@ function HeaderBox(props) {
         <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
             <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
         </Box>
+    )
+}
+
+function SelectTeacherBox(props) {
+
+    const currentYear = new Date().getFullYear();
+
+    const yearOptions = [
+        { key: '1', value: currentYear, text: currentYear + 543 },
+        { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
+        { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
+        { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
+    ];
+
+    const semesterOptions = [
+        { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
+        { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
+        { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
+    ]
+
+    const [yearsSelected, setYearsSelected] = useState(null);
+    const [semesterSelected, setSemesterSelected] = useState(null);
+
+    const handleChangeYear = (event) => {
+        props.setYearSelected(event.target.value);
+        setYearsSelected(event.target.value);
+    };
+
+    const handleChangeSemester = (event) => {
+        props.setSemesterSelected(event.target.value);
+        setSemesterSelected(event.target.value);
+    };
+
+    useEffect(() => {
+        if (yearsSelected != null && semesterSelected != null ) {
+            props.setDisable();
+        }
+    }, [yearsSelected, semesterSelected])
+
+    return (
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+            <Card sx={{ boxShadow: 5, }}>
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+                    <Grid item sm={6} xs={6}>
+                        <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
+                    </Grid>
+                    <Grid item sm={6} xs={6}>
+                        <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
+                    </Grid>
+                </Grid>
+            </Card>
+        </Container >
     )
 }
 
@@ -142,7 +217,7 @@ function CreationBox(props) {
         console.log(dayOfWeekSelected);
         console.log(timeStartSelected);
         console.log(timeEndSelected);
-        NotTeachAPIServiceTeacher.createNotTeach(dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
+        NotTeachAPIServiceTeacher.createNotTeach(props.yearSelected, props.semesterSelected, dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
             setTimeEndSelected(null);
@@ -225,7 +300,7 @@ function CreationBox(props) {
     }
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2, display: props.disableState ? 'none' : 'block'  }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
@@ -607,7 +682,7 @@ function MenagementBox(props) {
     //render
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+        <Container maxWidth='false' sx={{ pb: 2, display: props.disableState ? 'none' : 'block'  }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >

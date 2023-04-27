@@ -70,11 +70,10 @@ export default class SelectSubjectStaff extends Component {
         this.setState({
             disableState: false
         })
-
     }
 
     getPlanState = (memberId) => {
-        PlanAPIServiceStaff.getPlan(this.state.yearSelected,this.state.semesterSelected).then((resPlan) => {
+        PlanAPIServiceStaff.getPlan(this.state.yearSelected, this.state.semesterSelected).then((resPlan) => {
             this.setState({ plans: resPlan.data });
             TimetableAPIServiceStaff.getTimetableByMemberId(memberId).then((resTimetable) => {
                 this.setState({ timetables: resTimetable.data })
@@ -111,8 +110,12 @@ export default class SelectSubjectStaff extends Component {
         return (
             <div>
                 <HeaderBox title={"การจัดการรายวิชาที่จะเปิดสอน"} />
-                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)} getPlanState={this.getPlanState.bind(this)} member={this.state.member} setYearSelected={this.setYearSelected.bind(this)} setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
-                <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updatePlanState={this.updatePlanState.bind(this)} memberSelected={this.state.memberSelected} plans={this.state.plans} timetables={this.state.timetables} />
+                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
+                    getPlanState={this.getPlanState.bind(this)} member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
+                    setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+                <ManagementBox title={"เมนูจัดการรายการ"} updatePlanState={this.updatePlanState.bind(this)}
+                    disableState={this.state.disableState} plans={this.state.plans} timetables={this.state.timetables}
+                    memberSelected={this.state.memberSelected} />
             </div>
         )
     }
@@ -175,14 +178,14 @@ function SelectTeacherBox(props) {
     }, [props.member])
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 3 }} >
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
-                    <Grid item sm={12} xs={12}>
+                    <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
                     </Grid>
-                    <Grid item sm={12} xs={12}>
+                    <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
                     </Grid>
                     <Grid item sm={12} xs={12}>

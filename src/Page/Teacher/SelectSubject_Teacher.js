@@ -1,12 +1,13 @@
 import React, { Component, useState, useEffect } from 'react'
 import { CardHeader, Box, Card, Grid, Container, Typography, Switch } from '@mui/material';
+import CardSelect from '../../Component/CardSelect'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { PlanAPIServiceTeacher } from '../../Service/PlanAPIService'
+import { PlanAPIServiceTeacher , PlanAPIServiceStaff } from '../../Service/PlanAPIService'
 import { TimetableAPIServiceTeacher } from '../../Service/TimetableAPIService'
 import PropTypes from 'prop-types';
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -22,24 +23,51 @@ export default class SelectSubjectTeacher extends Component {
     constructor(props) {
         super(props);
         this.updatePlanState = this.updatePlanState.bind(this);
+        this.getPlanState = this.getPlanState.bind(this);
         this.state = {
             plans: [],
-            timetables: []
+            timetables: [],
+            yearSelected: null,
+            semesterSelected: null,
+            disableState: true
         }
     }
 
     componentDidMount() {
-        PlanAPIServiceTeacher.getPlan().then((resPlan) => {
+
+    }
+
+    updatePlanState = () => {
+        this.setState({ plans: this.state.plans });
+    }
+
+    setYearSelected = (item) => {
+        this.setState({
+            yearSelected: item,
+        })
+    }
+
+    setSemesterSelected = (item) => {
+        this.setState({
+            semesterSelected: item,
+        })
+    }
+
+    setDisable = () => {
+        this.getPlanState();
+        this.setState({
+            disableState: false
+        })
+    }
+
+    getPlanState = () => {
+        PlanAPIServiceStaff.getPlan(this.state.yearSelected, this.state.semesterSelected).then((resPlan) => {
             this.setState({ plans: resPlan.data });
             TimetableAPIServiceTeacher.getTimetableForPlan().then((resTimetable) => {
                 this.setState({ timetables: resTimetable.data })
                 this.tableMapping();
             });
         });
-    }
-
-    updatePlanState = () => {
-        this.setState({ plans: this.state.plans });
     }
 
     tableMapping = () => {
@@ -49,7 +77,7 @@ export default class SelectSubjectTeacher extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if (plan.years_value + plan.semester + plan.course_id + plan.group_id + JSON.parse(localStorage.getItem('member_id')) === timetable.years + timetable.semester + timetable.course_id + timetable.group_id + timetable.member_id) {
+                if (plan.years_value + plan.semester + plan.course_id + plan.group_id  === timetable.years + timetable.semester + timetable.course_id + timetable.group_id ) {
                     if (timetable.course_type == 0) {
                         plan.selected_lect = true;
                     } else {
@@ -66,13 +94,15 @@ export default class SelectSubjectTeacher extends Component {
         });
     }
 
-
-
     render() {
         return (
             <div>
                 <HeaderBox title={"การจัดการรายวิชาที่จะเปิดสอน"} />
-                <MenagementBox title={"เมนูจัดการรายการ"} updatePlanState={this.updatePlanState.bind(this)} plans={this.state.plans} timetables={this.state.timetables} />
+                <SelectionBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)} getPlanState={this.getPlanState.bind(this)}
+                    setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+                <MenagementBox title={"เมนูจัดการรายการ"} updatePlanState={this.updatePlanState.bind(this)}
+                    disableState={this.state.disableState} plans={this.state.plans} timetables={this.state.timetables} />
+
             </div>
         )
     }
@@ -86,6 +116,59 @@ function HeaderBox(props) {
     )
 }
 
+function SelectionBox(props) {
+
+    const currentYear = new Date().getFullYear();
+
+    const yearOptions = [
+        { key: '1', value: currentYear + 543, text: currentYear + 543 },
+        { key: '2', value: currentYear + 543 - 1, text: currentYear + 543 - 1 },
+        { key: '3', value: currentYear + 543 - 2, text: currentYear + 543 - 2 },
+        { key: '4', value: currentYear + 543 - 3, text: currentYear + 543 - 3 },
+    ];
+
+    const semesterOptions = [
+        { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
+        { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
+        { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
+    ]
+
+    const [yearsSelected, setYearsSelected] = useState(null);
+    const [semesterSelected, setSemesterSelected] = useState(null);
+
+    const handleChangeYear = (event) => {
+        props.setYearSelected(event.target.value);
+        setYearsSelected(event.target.value);
+    };
+
+    const handleChangeSemester = (event) => {
+        props.setSemesterSelected(event.target.value);
+        setSemesterSelected(event.target.value);
+    };
+
+    useEffect(() => {
+        if (yearsSelected != null && semesterSelected != null) {
+            props.setDisable();
+        }
+    }, [yearsSelected, semesterSelected])
+
+    return (
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+            <Card sx={{ boxShadow: 5, }}>
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+                    <Grid item sm={6} xs={6}>
+                        <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
+                    </Grid>
+                    <Grid item sm={6} xs={6}>
+                        <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
+                    </Grid>
+                </Grid>
+            </Card>
+        </Container >
+    )
+
+}
 
 function MenagementBox(props) {
 
@@ -253,7 +336,7 @@ function MenagementBox(props) {
     };
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 3 }} >
+        <Container maxWidth='false' sx={{ pt: 2, pb: 3, display: props.disableState ? 'none' : 'block' }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
@@ -292,7 +375,7 @@ function MenagementBox(props) {
                                                     <TableCell align="left">{row.course_title}</TableCell>
                                                     <TableCell align="left">
                                                         <FormControlLabel control={<Switch disabled={row.disable_lect} checked={row.selected_lect} onClick={handleSwitchLect(row)} />} label="ทฤษฎี" labelPlacement="start" />
-                                                        <FormControlLabel control={<Switch disabled={row.disable_perf}checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />
+                                                        <FormControlLabel control={<Switch disabled={row.disable_perf} checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />
                                                     </TableCell>
                                                 </TableRow>
                                             );

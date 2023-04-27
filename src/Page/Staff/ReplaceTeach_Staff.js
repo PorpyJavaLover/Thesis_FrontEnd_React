@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect, useRef } from 'react'
 import APIService from '../../Service/FernAPIService'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
 import { ReplaceTeachAPIServiceTeacher, ReplaceTeachAPIServiceStaff } from '../../Service/ReplaceTeachAPIService';
-import MemberAPIService from '../../Service/MemberAPIService';
+import MemberAPIService, { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
 import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 import CardDatePicker from '../../Component/CardDatePicker';
@@ -25,7 +25,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 import { useReactToPrint } from "react-to-print";
-import { ComponentToPrint } from "./PDFTeach_Teacher";
+import { ComponentToPrint } from "../Teacher/PDFTeach_Teacher";
 import { savePDF } from "@progress/kendo-react-pdf";
 
 export default class ReplaceTeach extends Component {
@@ -33,9 +33,12 @@ export default class ReplaceTeach extends Component {
   constructor(props) {
     super(props);
     this.updateState = this.updateState.bind(this);
+    this.setMemberSelected = this.setMemberSelected.bind(this);
     this.state = {
       dataReplaceTeach: [],
       faculty: [],
+      member: [],
+      memberSelected: null,
       yearSelected: null,
       semesterSelected: null,
       disableState: true
@@ -43,14 +46,23 @@ export default class ReplaceTeach extends Component {
   }
 
   componentDidMount() {
+    MemberAPIServiceStaff.getMemberOption().then((res) => {
+      this.setState({ member: res.data });
+    });
     MemberAPIService.getAllFaculty().then((res) => {
       this.setState({ faculty: res.data });
     })
   }
 
   updateState = () => {
-    ReplaceTeachAPIServiceTeacher.getAll(this.state.yearSelected, this.state.semesterSelected).then((res) => {
+    ReplaceTeachAPIServiceStaff.getAll(this.state.yearSelected, this.state.semesterSelected, this.state.memberSelected).then((res) => {
       this.setState({ dataReplaceTeach: res.data });
+    })
+  }
+
+  setMemberSelected = (item) => {
+    this.setState({
+      memberSelected: item,
     })
   }
 
@@ -77,10 +89,14 @@ export default class ReplaceTeach extends Component {
     return (
       <div>
         <HeaderBox title={"การจัดการสอนแทน"} />
-        <SelectionBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)}
+
+        <SelectionBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
+          member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
           setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
-        <MenagementBox title={"เมนูจัดการรายการ"} faculty={this.state.faculty} updateState={this.updateState.bind(this)}
-          disableState={this.state.disableState} dataReplaceTeach={this.state.dataReplaceTeach} />
+
+        <MenagementBox title={"เมนูจัดการรายการ"} faculty={this.state.faculty} dataReplaceTeach={this.state.dataReplaceTeach} updateState={this.updateState.bind(this)}
+          disableState={this.state.disableState} memberSelected={this.state.memberSelected} />
+
       </div>
     )
   }
@@ -113,6 +129,14 @@ function SelectionBox(props) {
 
   const [yearsSelected, setYearsSelected] = useState(null);
   const [semesterSelected, setSemesterSelected] = useState(null);
+  const [member, setMember] = useState(props.member);
+  const [memberSelected, setMemberSelected] = useState(null);
+
+  const handleChangeMember = (event) => {
+    props.setMemberSelected(event.target.value);
+    setMemberSelected(event.target.value);
+    console.log(event.target.value);
+  };
 
   const handleChangeYear = (event) => {
     props.setYearSelected(event.target.value);
@@ -125,10 +149,14 @@ function SelectionBox(props) {
   };
 
   useEffect(() => {
-    if (yearsSelected != null && semesterSelected != null) {
+    if (yearsSelected != null && semesterSelected != null && memberSelected != null) {
       props.setDisable();
     }
-  }, [yearsSelected, semesterSelected])
+  }, [yearsSelected, semesterSelected, memberSelected])
+
+  useEffect(() => {
+    setMember(props.member);
+  }, [props.member])
 
   return (
     <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
@@ -140,6 +168,9 @@ function SelectionBox(props) {
           </Grid>
           <Grid item sm={6} xs={6}>
             <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
+          </Grid>
+          <Grid item sm={12} xs={12}>
+            <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={member} onChangePara={handleChangeMember} valuePara={memberSelected} />
           </Grid>
         </Grid>
       </Card>

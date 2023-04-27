@@ -31,7 +31,7 @@ export default class NotTeachStaff extends Component {
             memberSelected: null,
             yearSelected: null,
             semesterSelected: null,
-            disableState:true
+            disableState: true
         }
     }
 
@@ -43,7 +43,7 @@ export default class NotTeachStaff extends Component {
     }
 
     updateState = (memberId) => {
-        NotTeachAPIServiceStaff.getAllNotTeachByMemberId(this.state.yearSelected,this.state.semesterSelected,memberId).then((res) => {
+        NotTeachAPIServiceStaff.getAllNotTeachByMemberId(this.state.yearSelected, this.state.semesterSelected, memberId).then((res) => {
             this.setState({ dataNotTeach: res.data });
         })
     }
@@ -77,9 +77,13 @@ export default class NotTeachStaff extends Component {
         return (
             <div >
                 <HeaderBox title={"การจัดการวันที่ไม่ขอสอน"} />
-                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)} member={this.state.member} setYearSelected={this.setYearSelected.bind(this)} setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
-                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} updateState={this.updateState} memberSelected={this.state.memberSelected}  />
-                <MenagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updateState={this.updateState}  memberSelected={this.state.memberSelected} dataNotTeach={this.state.dataNotTeach} />
+                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
+                    member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
+                    setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected} 
+                semesterSelected={this.state.semesterSelected} updateState={this.updateState} memberSelected={this.state.memberSelected} />
+                <MenagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updateState={this.updateState} 
+                memberSelected={this.state.memberSelected} dataNotTeach={this.state.dataNotTeach} />
             </div>
         )
     }
@@ -98,7 +102,7 @@ function SelectTeacherBox(props) {
     const currentYear = new Date().getFullYear();
 
     const yearOptions = [
-        { key: '1', value: currentYear , text: currentYear + 543 },
+        { key: '1', value: currentYear, text: currentYear + 543 },
         { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
         { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
         { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
@@ -141,14 +145,14 @@ function SelectTeacherBox(props) {
     }, [props.member])
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 3 }} >
+        <Container maxWidth='false' sx={{ pt: 2 }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
-                    <Grid item sm={12} xs={12}>
+                    <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
                     </Grid>
-                    <Grid item sm={12} xs={12}>
+                    <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
                     </Grid>
                     <Grid item sm={12} xs={12}>
@@ -218,7 +222,7 @@ function CreationBox(props) {
         handleSubmitTiggle();
     }, [dayOfWeekSelected, timeStartSelected, timeEndSelected]);
 
-    useEffect(() => { 
+    useEffect(() => {
         setDisableState(props.disableState);
     }, [props.disableState])
 
@@ -245,7 +249,7 @@ function CreationBox(props) {
     };
 
     const handleSubmit = (event, data) => {
-        NotTeachAPIServiceStaff.createNotTeach( props.yearSelected , props.semesterSelected, dayOfWeekSelected, timeStartSelected, timeEndSelected , props.memberSelected ).then(() => {
+        NotTeachAPIServiceStaff.createNotTeach(props.yearSelected, props.semesterSelected, dayOfWeekSelected, timeStartSelected, timeEndSelected, props.memberSelected).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
             setTimeEndSelected(null);
@@ -328,7 +332,7 @@ function CreationBox(props) {
     }
 
     return (
-        <Container maxWidth='false' sx={{ pt: 2, pb: 2 , display: disableState ? 'none' : 'block'  }} >
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2, display: disableState ? 'none' : 'block' }} >
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
@@ -411,7 +415,7 @@ function MenagementBox(props) {
     const [timeEndSelected, setTimeEndSelected] = useState(null);
     const [buttonState, setButtonState] = useState(true);
 
-  
+
 
     //function
 
@@ -660,7 +664,7 @@ function MenagementBox(props) {
         return stabilizedThis.map((el) => el[0]);
     }
 
-    
+
 
     function EnhancedTableHead(props) {
         const { order, orderBy, onRequestSort } = props;
@@ -713,83 +717,83 @@ function MenagementBox(props) {
 
     //render
 
-        return (
-            <Container maxWidth='false' sx={{ pt: 2, pb: 2 , display: props.disableState ? 'none' : 'block' }}   >
-                <Card sx={{ boxShadow: 5, }}>
-                    <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
-                    <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
-                        <Grid item sm={12} xs={12}>
-                            <TableContainer >
-                                <Box dir="rtl" sx={{ pb: 3, display: 'flex', alignItems: 'flex-end', }}>
-                                    <TextField
-                                        dir="ltr"
-                                        sx={{ width: 300, }}
-                                        fullWidth
-                                        id="filled-flexible"
-                                        label="ค้นหา"
-                                        value={searchValue || ''}
-                                        onChange={handleChange}
-                                        variant="standard"
-                                    />
-                                    <SearchIcon />
-                                </Box>
-                                <Table sx={{ minWidth: 650, }} aria-label="simple table">
-                                    <EnhancedTableHead
-                                        order={order}
-                                        orderBy={orderBy}
-                                        onRequestSort={handleRequestSort}
-                                        rowCount={filteredData.length}
-                                    />
-                                    <TableBody>
-                                        {stableSort(filteredData, getComparator(order, orderBy))
-                                            .map((row, index) => {
-                                                const labelId = index;
-                                                if (editTemp !== row.notId) {
-                                                    return (
-                                                        <TableRow key={row.notId} >
-                                                            <TableCell width="25%" id={labelId} scope="row" align="left" >{dayConvert(row.dayOfWeek)}</TableCell>
-                                                            <TableCell width="25%" align="left">{row.timeStart}</TableCell>
-                                                            <TableCell width="25%" align="left">{row.timeEnd}</TableCell>
-                                                            <TableCell align="left">
-                                                                <Stack direction="row" spacing={2}>
-                                                                    <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
-                                                                    <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
-                                                                </Stack>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    );
-                                                } else {
-                                                    return (
-                                                        <TableRow key={row.notId} >
-                                                            <TableCell id={labelId} scope="row" align="left">
-                                                                <CardSelect labelPara="วันที่ไม่สะดวกสอน" menuItemPara={dayOfWeekOptions} onChangePara={handleChangeDayOfWeek} valuePara={dayOfWeekSelected} />
-                                                            </TableCell>
-                                                            <TableCell align="left">
-                                                                <CardSelect labelPara="เลือกเวลาเริ่ม" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart} valuePara={timeStartSelected} />
-                                                            </TableCell>
-                                                            <TableCell align="left">
-                                                                <CardSelect labelPara="เลือกเวลาสิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd} valuePara={timeEndSelected} />
-                                                            </TableCell>
-                                                            <TableCell align="left">
-                                                                <Stack direction="row" spacing={2}>
-                                                                    <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
-                                                                    <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
-                                                                </Stack>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )
-                                                }
-                                            })
-                                        }
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Grid>
+    return (
+        <Container maxWidth='false' sx={{ pt: 2, pb: 2, display: props.disableState ? 'none' : 'block' }}   >
+            <Card sx={{ boxShadow: 5, }}>
+                <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+                <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+                    <Grid item sm={12} xs={12}>
+                        <TableContainer >
+                            <Box dir="rtl" sx={{ pb: 3, display: 'flex', alignItems: 'flex-end', }}>
+                                <TextField
+                                    dir="ltr"
+                                    sx={{ width: 300, }}
+                                    fullWidth
+                                    id="filled-flexible"
+                                    label="ค้นหา"
+                                    value={searchValue || ''}
+                                    onChange={handleChange}
+                                    variant="standard"
+                                />
+                                <SearchIcon />
+                            </Box>
+                            <Table sx={{ minWidth: 650, }} aria-label="simple table">
+                                <EnhancedTableHead
+                                    order={order}
+                                    orderBy={orderBy}
+                                    onRequestSort={handleRequestSort}
+                                    rowCount={filteredData.length}
+                                />
+                                <TableBody>
+                                    {stableSort(filteredData, getComparator(order, orderBy))
+                                        .map((row, index) => {
+                                            const labelId = index;
+                                            if (editTemp !== row.notId) {
+                                                return (
+                                                    <TableRow key={row.notId} >
+                                                        <TableCell width="25%" id={labelId} scope="row" align="left" >{dayConvert(row.dayOfWeek)}</TableCell>
+                                                        <TableCell width="25%" align="left">{row.timeStart}</TableCell>
+                                                        <TableCell width="25%" align="left">{row.timeEnd}</TableCell>
+                                                        <TableCell align="left">
+                                                            <Stack direction="row" spacing={2}>
+                                                                <Button sx={{ width: 75 }} color="inherit" onClick={handleEdit(row)} variant="contained" >แก้ไข</Button>
+                                                                <Button sx={{ width: 75 }} color="error" endIcon={<DeleteForeverIcon />} onClick={handleDelete(row)} variant="contained"  >ลบ</Button>
+                                                            </Stack>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            } else {
+                                                return (
+                                                    <TableRow key={row.notId} >
+                                                        <TableCell id={labelId} scope="row" align="left">
+                                                            <CardSelect labelPara="วันที่ไม่สะดวกสอน" menuItemPara={dayOfWeekOptions} onChangePara={handleChangeDayOfWeek} valuePara={dayOfWeekSelected} />
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            <CardSelect labelPara="เลือกเวลาเริ่ม" menuItemPara={timeStartOptions} onChangePara={handleChangeTimeStart} valuePara={timeStartSelected} />
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            <CardSelect labelPara="เลือกเวลาสิ้นสุด" menuItemPara={timeEndOptions} onChangePara={handleChangeTimeEnd} valuePara={timeEndSelected} />
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            <Stack direction="row" spacing={2}>
+                                                                <Button sx={{ width: 75 }} color="success" endIcon={<SaveIcon />} disabled={buttonState} onClick={handleConfirm(row)} variant="contained" >ยืนยัน</Button>
+                                                                <Button sx={{ width: 75 }} color="inherit" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
+                                                            </Stack>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            }
+                                        })
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Grid>
-                </Card>
-            </Container>
-        )
-    
+                </Grid>
+            </Card>
+        </Container>
+    )
+
 }
 
 

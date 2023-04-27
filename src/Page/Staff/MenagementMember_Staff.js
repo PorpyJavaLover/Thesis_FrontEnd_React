@@ -21,6 +21,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 import MemberAPIService from '../../Service/MemberAPIService';
 
+
+
 export default class MenagementMemberStaff extends Component {
 
     constructor(props) {
@@ -100,7 +102,7 @@ function MenagementBox(props) {
     const roleOption = [
         { key: '1', value: 1, text: "อาจารย์" },
         { key: '2', value: 2, text: "เจ้าหน้าที่" },
-        { key: '3', value: 3, text: "แอดมิน" },
+        { key: '3', value: 3, text: "ผู้ดูแลระบบ" },
     ];
 
     const activeStatusOption = [
@@ -190,7 +192,7 @@ function MenagementBox(props) {
         } else if (dataInside.role == 2) {
             return "เจ้าหน้าที่";
         } else if (dataInside.role == 3) {
-            return "แอดมิน";
+            return "ผู้ดูแลระบบ";
         }
     }
 

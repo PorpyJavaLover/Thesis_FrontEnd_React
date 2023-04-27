@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from 'react'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography, } from '@mui/material';
 import CardSelect from '../../Component/CardSelect'
-import { TimetableAPIServiceTeacher , TimetableAPIServiceStaff } from '../../Service/TimetableAPIService';
+import { TimetableAPIServiceTeacher, TimetableAPIServiceStaff } from '../../Service/TimetableAPIService';
 import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -27,18 +27,39 @@ export default class TimetableTeacher extends Component {
   constructor(props) {
     super(props);
     this.updateState.bind(this);
+    this.setYearSelected = this.setYearSelected.bind(this);
+    this.setSemesterSelected = this.setSemesterSelected.bind(this);
+    this.setDisable = this.setDisable.bind(this);
     this.state = {
-      dataTimetable: []
+      dataTimetable: [],
+      yearSelected: null,
+      semesterSelected: null,
+      disableState: true
     }
   }
 
-  componentDidMount() {
-    this.updateState();
+  updateState = () => {
+    TimetableAPIServiceTeacher.getTimetable(this.state.yearSelected, this.state.semesterSelected).then((res) => {
+      this.setState({ dataTimetable: res.data });
+    })
   }
 
-  updateState = () => {
-    TimetableAPIServiceTeacher.getTimetable().then((res) => {
-      this.setState({ dataTimetable: res.data });
+  setYearSelected = (item) => {
+    this.setState({
+      yearSelected: item,
+    })
+  }
+
+  setSemesterSelected = (item) => {
+    this.setState({
+      semesterSelected: item,
+    })
+  }
+
+  setDisable = () => {
+    this.updateState();
+    this.setState({
+      disableState: false
     })
   }
 
@@ -46,7 +67,11 @@ export default class TimetableTeacher extends Component {
     return (
       <div >
         <HeaderBox title={"การจัดการรายวิชา"} />
-        <ManagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
+        <SelectYearsAndSemesterBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)}
+          setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+        <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState}
+          yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected}
+          updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
       </div>
     )
   }
@@ -57,6 +82,59 @@ function HeaderBox(props) {
     <Box sx={{ pt: 2, pl: 3, pr: 2 }}>
       <Typography variant="h3" component="h3" fontWeight="bold" > {props.title} </Typography>
     </Box>
+  )
+}
+
+function SelectYearsAndSemesterBox(props) {
+
+  const currentYear = new Date().getFullYear();
+
+  const yearOptions = [
+    { key: '1', value: currentYear, text: currentYear + 543 },
+    { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
+    { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
+    { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
+  ];
+
+  const semesterOptions = [
+    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
+    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
+    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
+  ]
+
+  const [yearsSelected, setYearsSelected] = useState(null);
+  const [semesterSelected, setSemesterSelected] = useState(null);
+
+  const handleChangeYear = (event) => {
+    props.setYearSelected(event.target.value);
+    setYearsSelected(event.target.value);
+  };
+
+  const handleChangeSemester = (event) => {
+    props.setSemesterSelected(event.target.value);
+    setSemesterSelected(event.target.value);
+  };
+
+  useEffect(() => {
+    if (yearsSelected != null && semesterSelected != null) {
+      props.setDisable();
+    }
+  }, [yearsSelected, semesterSelected])
+
+  return (
+    <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
+      <Card sx={{ boxShadow: 5, }}>
+        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+          <Grid item sm={6} xs={6}>
+            <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
+          </Grid>
+          <Grid item sm={6} xs={6}>
+            <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
+          </Grid>
+        </Grid>
+      </Card>
+    </Container >
   )
 }
 
@@ -117,7 +195,7 @@ function ManagementBox(props) {
   const [timeEndSelected, setTimeEndSelected] = useState(null);
   const [roomSelected, setRoomSelected] = useState(null);
   const [buttonState, setButtonState] = useState(true);
-  
+
   //function
 
   useEffect(() => {
@@ -448,15 +526,15 @@ function ManagementBox(props) {
   const TableCellTime = (row) => {
     if (row.time_locker === true) {
       return <>
-        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ?  null : dayConvert(parseInt(row.day_of_week))}  🔒</TableCell>
-        <TableCell width="8%" align="left">{row.start_time  == "null" ?  null : row.start_time}  🔒</TableCell>
-        <TableCell width="8%" align="left">{row.end_time == "null" ?  null : row.end_time}  🔒</TableCell>
+        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ? null : dayConvert(parseInt(row.day_of_week))}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.start_time == "null" ? null : row.start_time}  🔒</TableCell>
+        <TableCell width="8%" align="left">{row.end_time == "null" ? null : row.end_time}  🔒</TableCell>
       </>
     } else {
       return <>
-        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ?  null : dayConvert(parseInt(row.day_of_week))}</TableCell>
-        <TableCell width="8%" align="left">{row.start_time  == "null" ?  null : row.start_time} </TableCell>
-        <TableCell width="8%" align="left">{row.end_time == "null" ?  null : row.end_time}</TableCell>
+        <TableCell width="8%" align="left">{dayConvert(parseInt(row.day_of_week)) == "null" ? null : dayConvert(parseInt(row.day_of_week))}</TableCell>
+        <TableCell width="8%" align="left">{row.start_time == "null" ? null : row.start_time} </TableCell>
+        <TableCell width="8%" align="left">{row.end_time == "null" ? null : row.end_time}</TableCell>
       </>
     }
   };
@@ -483,9 +561,9 @@ function ManagementBox(props) {
 
   const TableCellRoom = (row) => {
     if (row.room_locker === true) {
-      return <TableCell width="8%" align="left">{row.room_name  == "null" ?  null : row.room_name} 🔒</TableCell>
+      return <TableCell width="8%" align="left">{row.room_name == "null" ? null : row.room_name} 🔒</TableCell>
     } else {
-      return <TableCell width="8%" align="left">{row.room_name  == "null" ?  null : row.room_name}</TableCell>
+      return <TableCell width="8%" align="left">{row.room_name == "null" ? null : row.room_name}</TableCell>
     }
   };
 
@@ -497,12 +575,6 @@ function ManagementBox(props) {
     }
   };
 
-  const autoPilot = () => {
-    TimetableAPIServiceStaff.autoPilot().then((res) => {
-      props.updateState();
-    });
-  };
-
   const clean = (dataInside) => () => {
     TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time, dataInside.room_id, dataInside.time_locker, dataInside.room_locker).then((res) => {
       props.updateState();
@@ -510,15 +582,14 @@ function ManagementBox(props) {
   };
 
   const cleanAll = () => {
-    TimetableAPIServiceStaff.cleanAll().then((res) => {
+    TimetableAPIServiceStaff.cleanAll(props.yearSelected).then((res) => {
       props.updateState();
     });
   };
 
   return (
-    
-    <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
-        
+
+    <Container maxWidth='false' sx={{ pt: 2, pb: 2, display: props.disableState ? 'none' : 'block' }} >
       <Card sx={{ boxShadow: 5, }}>
         <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
         <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
@@ -568,7 +639,7 @@ function ManagementBox(props) {
                             <TableCell width="25%" align="left">{row.course_name}</TableCell>
                             <TableCell width="8%" align="left">{row.group_name}</TableCell>
                             <TableCell width="15%" align="left">{row.member.map((inMember) => {
-                              return  <TableRow key={inMember.member_id}> {inMember.member_name} </TableRow>;
+                              return <TableRow key={inMember.member_id}> {inMember.member_name} </TableRow>;
                             })}</TableCell>
                             {TableCellTime(row)}
                             {TableCellRoom(row)}
@@ -590,7 +661,7 @@ function ManagementBox(props) {
                             <TableCell width="25%" align="left">{row.course_name}</TableCell>
                             <TableCell width="8%" align="left">{row.course_type_name}</TableCell>
                             <TableCell width="15%" align="left">{row.member.map((inMember) => {
-                              return  <TableRow key={inMember.member_id} > {inMember.member_name} </TableRow>;
+                              return <TableRow key={inMember.member_id} > {inMember.member_name} </TableRow>;
                             })}</TableCell>
                             {CardSelectTime(row)}
                             {CardSelectRoom(row)}

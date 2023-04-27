@@ -40,6 +40,12 @@ export default class TimetableStaff extends Component {
     }
   }
 
+  updateState = () => {
+    TimetableAPIServiceStaff.getTimetable(this.state.yearSelected, this.state.semesterSelected).then((res) => {
+      this.setState({ dataTimetable: res.data });
+    })
+  }
+
   setYearSelected = (item) => {
     this.setState({
       yearSelected: item,
@@ -57,21 +63,17 @@ export default class TimetableStaff extends Component {
     this.setState({
       disableState: false
     })
-
-  }
-
-  updateState = () => {
-    TimetableAPIServiceStaff.getTimetable(this.state.yearSelected,this.state.semesterSelected).then((res) => {
-      this.setState({ dataTimetable: res.data });
-    })
   }
 
   render() {
     return (
       <div >
         <HeaderBox title={"การจัดการรายวิชา"} />
-        <SelectYearsAndSemesterBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)} setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
-        <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
+        <SelectYearsAndSemesterBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)}
+          setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+        <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState}
+          yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected}
+          updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
       </div>
     )
   }
@@ -122,14 +124,14 @@ function SelectYearsAndSemesterBox(props) {
   }, [yearsSelected, semesterSelected])
 
   return (
-    <Container maxWidth='false' sx={{ pt: 2, pb: 3 }} >
+    <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
       <Card sx={{ boxShadow: 5, }}>
         <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
         <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
-          <Grid item sm={12} xs={12}>
+          <Grid item sm={6} xs={6}>
             <CardSelect labelPara="เลือกปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangeYear} valuePara={yearsSelected} />
           </Grid>
-          <Grid item sm={12} xs={12}>
+          <Grid item sm={6} xs={6}>
             <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
           </Grid>
         </Grid>
@@ -542,7 +544,7 @@ function ManagementBox(props) {
   };
 
   const autoPilot = () => {
-    TimetableAPIServiceStaff.autoPilot(props.yearSelected , props.semesterSelected).then((res) => {
+    TimetableAPIServiceStaff.autoPilot(props.yearSelected, props.semesterSelected).then((res) => {
       props.updateState();
     });
   };
@@ -554,7 +556,7 @@ function ManagementBox(props) {
   };
 
   const cleanAll = () => {
-    TimetableAPIServiceStaff.cleanAll(props.yearSelected , props.semesterSelected).then((res) => {
+    TimetableAPIServiceStaff.cleanAll(props.yearSelected, props.semesterSelected).then((res) => {
       props.updateState();
     });
   };
