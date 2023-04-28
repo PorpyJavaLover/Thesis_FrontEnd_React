@@ -1,11 +1,11 @@
 import { Outlet, Navigate } from 'react-router-dom'
 
-const TeacherRoutes = () => {
+const AdminRoutes = () => {
 
-    const role = localStorage.getItem('role');
+    const role = localStorage.getItem('role') ;
     const roleTmp = localStorage.getItem('roleTmp') ;
 
-    if (role === "Teacher" || role == 'Admin' || roleTmp == 'Admin') {
+    if (role == 'Admin' || roleTmp == 'Admin') {
         return (<Outlet />);
     } else {
         return (<Navigate to="/Home" />);
@@ -13,4 +13,4 @@ const TeacherRoutes = () => {
     
 }
 
-export default TeacherRoutes
+export default AdminRoutes

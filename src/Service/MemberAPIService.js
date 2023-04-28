@@ -22,13 +22,8 @@ export default new class MemberAPIService extends BaseAPIService {
                 if (err.message === 'Network Error') {
                     console.log('Connection Refused');
                 }
-                console.log(err.XMLHttpRequest);
-                console.log(err.response.data.error);
-                console.log(err.response.data);
-                console.log(err.response);
-                console.log(err.data);
-
             }).finally(() => {
+
             });
     }
 
@@ -98,6 +93,40 @@ export const MemberAPIServiceStaff = new class MemberAPIServiceStaff extends Bas
     delete(memberId) {
         return axios.delete(this.url + '/member/staff/delete' + '/' + memberId, { headers: this.headers });
     }
+}
 
+export const MemberAPIServiceAdmin = new class MemberAPIServiceStaff extends BaseAPIService {
+
+    getMemberOption( organiz) {
+        return axios.get(this.url + '/member/admin/show/option' + '/' + organiz, { headers: this.headers });
+    }
+
+    rolePlay(memberId) {
+        const body = {
+            'memberId': memberId,
+        };
+        return axios.post(this.url + '/member/admin/role/play', body , { headers: this.headers })
+            .then(response => {
+                if(localStorage.getItem('tokenTmp') == null) {
+                    localStorage.setItem('tokenTmp', localStorage.getItem('token'));
+                    localStorage.setItem('member_idTmp', localStorage.getItem('member_id'));
+                    localStorage.setItem('roleTmp', localStorage.getItem('role'));
+                    localStorage.setItem('expTmp', localStorage.getItem('exp'));
+                    localStorage.setItem('nameTmp', localStorage.getItem('name'));
+                }
+                localStorage.setItem('token', JSON.stringify(response.data.token));
+                localStorage.setItem('member_id', jwt_decode(JSON.parse(localStorage.getItem('token'))).principal);
+                localStorage.setItem('role', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
+                localStorage.setItem('exp', jwt_decode(JSON.parse(localStorage.getItem('token'))).exp);
+                localStorage.setItem('name', jwt_decode(JSON.parse(localStorage.getItem('token'))).name);
+                window.location.reload(false);
+            }).catch((err) => {
+                /*if (err.message === 'Network Error') {
+                    console.log('Connection Refused');
+                }*/
+            }).finally(() => {
+
+            });
+    }
 
 }

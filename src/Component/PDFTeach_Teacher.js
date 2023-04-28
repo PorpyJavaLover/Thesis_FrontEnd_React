@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./PDFTeach_Teacher.css";
-import car from "../../logo.png";
+import car from "../logo.png";
 
 const date = new Date();
 const options = {

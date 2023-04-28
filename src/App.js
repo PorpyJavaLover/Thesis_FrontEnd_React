@@ -11,7 +11,8 @@ import LeaveTeachStaff from "./Page/Staff/LeaveTeach_Staff";
 import ReplaceTeachTeacher from "./Page/Teacher/ReplaceTeach_Teacher";
 import ReplaceTeachStaff from "./Page/Staff/ReplaceTeach_Staff";
 import MenagementMemberStaff from "./Page/Staff/MenagementMember_Staff";
-import PDFTeach from "./Page/Teacher/PDFTeach_Teacher";
+import PDFTeach from "./Component/PDFTeach_Teacher";
+import RolePlayAdmin from "./Page/Admin/RolePlay_Admin";
 import Replace2 from "./Page/Replace2";
 import SignIn from "./Page/SignIn";
 import Singup from "./Page/Singup";
@@ -20,6 +21,7 @@ import TableExampleApprove from "./Page/TableExampleApprove";
 import PrivateRoutes from './Util/PrivateRoutes';
 import TeacherRoutes from './Util/TeacherRoutes';
 import StaffRoutes from './Util/StaffRoutes';
+import AdminRoutes from './Util/AdminRoutes';
 import './App.css';
 import Navbor from "./Component/Navbor";
 import Norbar from "./Component/Norbar";
@@ -37,18 +39,21 @@ export default function App() {
             <Route path="/Teacher/NotTeach" element={<SelectNotTeachTeacher />} />
             <Route path="/Teacher/LeaveTeach" element={<LeaveTeachTeacher />} />
             <Route path="/Teacher/ReplaceTeach" element={<ReplaceTeachTeacher />} />
-            <Route path="/Teacher/PDFTeach" element={<PDFTeach />} />
           </Route>
           <Route element={<StaffRoutes />}>
             <Route path="/Staff/SelectSubject" element={<SelectSubjectStaff />} />
             <Route path="/Staff/Timetable" element={<TimetableStaff />} />
             <Route path="/Staff/NotTeach" element={<SelectNotTeachStaff />} />
-            <Route path="/Teacher/LeaveStaff" element={<LeaveTeachStaff />} />
-            <Route path="/Teacher/ReplaceStaff" element={<ReplaceTeachStaff />} />
-            <Route path="/Teacher/MenagementMemberStaff" element={<MenagementMemberStaff />} />
+            <Route path="/Staff/LeaveStaff" element={<LeaveTeachStaff />} />
+            <Route path="/Staff/ReplaceStaff" element={<ReplaceTeachStaff />} />
+            <Route path="/Staff/MenagementMemberStaff" element={<MenagementMemberStaff />} />
+          </Route>
+          <Route element={<AdminRoutes />}>
+            <Route path="/Admin/RolePlayAdmin" element={<RolePlayAdmin />} />
           </Route>
           <Route path="/" element={<Home />} />
           <Route path="/Home" element={<Home />} />
+          <Route path="/Teacher/PDFTeach" element={<PDFTeach />} />
           <Route path="/R2" element={<Replace2 />} />
           <Route path="/T1" element={<TableExampleApprove />} />
         </Route>

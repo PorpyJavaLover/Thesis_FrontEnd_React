@@ -25,7 +25,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 import { useReactToPrint } from "react-to-print";
-import { ComponentToPrint } from "../Teacher/PDFTeach_Teacher";
+import { ComponentToPrint } from "../../Component/PDFTeach_Teacher";
 import { savePDF } from "@progress/kendo-react-pdf";
 
 export default class ReplaceTeach extends Component {
