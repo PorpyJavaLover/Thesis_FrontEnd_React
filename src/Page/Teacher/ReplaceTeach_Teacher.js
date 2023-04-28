@@ -1,5 +1,4 @@
-import React, { Component, useState, useEffect, useRef } from 'react'
-import APIService from '../../Service/FernAPIService'
+import React, { Component, useState, useEffect, useRef } from 'react' 
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
 import { ReplaceTeachAPIServiceTeacher, ReplaceTeachAPIServiceStaff } from '../../Service/ReplaceTeachAPIService';
 import MemberAPIService from '../../Service/MemberAPIService';
@@ -7,9 +6,6 @@ import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 import CardDatePicker from '../../Component/CardDatePicker';
 import CardSelect from '../../Component/CardSelect'
-import CardTextField from '../../Component/CardTextField'
-import FullFeaturedCrudGrid from '../../Component/CardDataGrid';
-import Moment from 'react-moment';
 import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -21,12 +17,10 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TextField from '@mui/material/TextField';
 import PropTypes from 'prop-types';
 import { visuallyHidden } from '@mui/utils';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 import { useReactToPrint } from "react-to-print";
 import { ComponentToPrint } from "../../Component/PDFTeach_Teacher";
-import { savePDF } from "@progress/kendo-react-pdf";
 
 export default class ReplaceTeach extends Component {
 

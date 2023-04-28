@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
-import { Divider, Form, Label, Button } from 'semantic-ui-react'
-import APIService from '../Service/APIService'
 import { makeStyles } from "@mui/styles";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import { Card, CardMedia } from "@mui/material";
-import img1 from "./img/ยินดีต้อนรับ2.jpg";
-import img2 from "./img/ปี 2566.jpg";
-import img4 from "./img/ยินดีต้อนรับ.jpg";
+import ImgA from "../Image/WelcomeA.jpg";
+import ImgB from "../Image/HappySongkanDay.jpg";
+import ImgC from "../Image/WelcomeB.jpg";
 import {Box } from '@mui/material';
 
 const useStyles = makeStyles({
@@ -19,13 +17,13 @@ const useStyles = makeStyles({
 
 const items = [
     <Card>
-        <CardMedia component="img" height="500" width="200" image={img2} />
+        <CardMedia component="img" height="500" width="200" image={ImgA} />
     </Card>,
     <Card>
-        <CardMedia component="img" height="500" width="200" image={img1} />
+        <CardMedia component="img" height="500" width="200" image={ImgB} />
     </Card>,
     <Card>
-        <CardMedia component="img" height="500" width="200" image={img4} />
+        <CardMedia component="img" height="500" width="200" image={ImgC} />
     </Card>,
 ];
 

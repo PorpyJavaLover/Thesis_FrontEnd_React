@@ -97,6 +97,11 @@ export const MemberAPIServiceStaff = new class MemberAPIServiceStaff extends Bas
 
 export const MemberAPIServiceAdmin = new class MemberAPIServiceStaff extends BaseAPIService {
 
+    getMember(organiz) {
+        console.log(organiz);
+        return axios.get(this.url + '/member/admin/show/all' + '/' + organiz, { headers: this.headers });
+    }
+
     getMemberOption( organiz) {
         return axios.get(this.url + '/member/admin/show/option' + '/' + organiz, { headers: this.headers });
     }

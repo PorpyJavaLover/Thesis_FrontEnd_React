@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./PDFTeach_Teacher.css";
-import car from "../logo.png";
+import Logo from "../Image/Logo.png";
 
 const date = new Date();
 const options = {
@@ -66,7 +66,7 @@ export class ComponentToPrint extends React.Component {
       >
         <div>
           <p>
-            <img src={car} style={{ float: "left", width: "70px", height: "72px" }} />
+            <img src={Logo} style={{ float: "left", width: "70px", height: "72px" }} />
           </p>
           <p style={{ float: "left" }}>
             มหาวิทยาลัยเทคโนโลยีราชมงคลอีสาน

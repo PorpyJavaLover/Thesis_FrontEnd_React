@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
-import logo from '../logo.png';
+import Logo from '../Image/Logo.png';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Stack from '@mui/material/Stack';
@@ -69,7 +69,7 @@ function MenuAnonymous() {
                     <Toolbar disableGutters>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="60" height="60" />
+                                <img src={Logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} >
                                 <Stack spacing={1} sx={{ alignItems: 'flex-start' }} >
@@ -156,7 +156,7 @@ function MenuTeacher() {
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="60" height="60" />
+                                <img src={Logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block', height: '50px', }} >
                                 <Link style={{ textDecoration: "none", color: "white" }} to='/' > <HomeIcon /></Link>
@@ -173,7 +173,7 @@ function MenuTeacher() {
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="60" height="60" />
+                                <img src={Logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Button color="inherit" sx={{ color: "white", alignItems: 'center', }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
                         </Stack >
@@ -253,7 +253,7 @@ function MenuStaff() {
                     <Box sx={{ flexGrow: 1, alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="60" height="60" />
+                                <img src={Logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block', height: '50px', }} >
                                 <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon /></Link>
@@ -272,7 +272,7 @@ function MenuStaff() {
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="60" height="60" />
+                                <img src={Logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Button color="inherit" sx={{ color: "white", alignItems: 'center', }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
                         </Stack >
@@ -340,7 +340,7 @@ function MenuAdmin() {
                     <Box sx={{ flexGrow: 1, alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="60" height="60" />
+                                <img src={Logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Button color="inherit" sx={{ my: 2, color: 'white', display: 'block', height: '50px', }} >
                                 <Link style={{ textDecoration: "none", color: "white" }} to='/' ><HomeIcon /></Link>
@@ -359,7 +359,7 @@ function MenuAdmin() {
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }} >
                             <Box sx={{ p: 1 }}>
-                                <img src={logo} alt="Logo" width="60" height="60" />
+                                <img src={Logo} alt="Logo" width="60" height="60" />
                             </Box>
                             <Button color="inherit" sx={{ color: "white", alignItems: 'center', }} onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
                         </Stack >
@@ -615,7 +615,7 @@ function UserMenuAdmin() {
                 </ListItem>
                 <ListItem key={2} disablePadding>
                     <ListItemButton>
-                        <Link style={{ textDecoration: "none", }} to={'/Teacher/MenagementMemberStaff'} >
+                        <Link style={{ textDecoration: "none", }} to={'/Admin/MenagementMemberStaff'} >
                             <ListItemText primary={"การจัดการสมาชิก"} sx={{ color: "#4D4D4D" }} />
                         </Link>
                     </ListItemButton>

@@ -106,7 +106,7 @@ function UserCreate(props) {
     };
 
     return (
-        <Container sx={{ p: 2 }} maxWidth="md">
+        <Container sx={{ p: 2 }} maxWidth='false'>
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h6' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ p: 2 }} >

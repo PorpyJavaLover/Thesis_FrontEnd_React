@@ -5,10 +5,10 @@ const TeacherRoutes = () => {
     const role = localStorage.getItem('role');
     const roleTmp = localStorage.getItem('roleTmp') ;
 
-    if (role === "Teacher" || role == 'Admin' || roleTmp == 'Admin') {
+    if (role === "Teacher" || role === 'Admin' || roleTmp === 'Admin') {
         return (<Outlet />);
     } else {
-        return (<Navigate to="/Home" />);
+        return (<Navigate to= "/Home" />);
     }
     
 }

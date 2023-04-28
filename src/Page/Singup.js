@@ -197,7 +197,7 @@ function UserCreate(props) {
                         <CardTextField labelPara="รหัสผ่าน" errorPara={errerPassword} helperTextPara={"ต้องความยาว 8-12 ตัวอักษร และต้องมีตัวอักษรพิเศษ, ตัวพิมพ์ใหญ่, ตัวเลข อย่างน้อยอย่างละ 1 ตัวษร "} typePara="password" onChangePara={handleChangePassword} required valuePara={passwordRe} />
                     </Grid>
                     <Grid item sm={12} xs={12} >
-                        <CardTextField labelPara="ยืนยันรหัสผ่าน" errorPara={errerConfirmPassword} typePara="password" onChangePara={(e) => regexC.test(e.target.value) ? setConfirmPassword(e.target.value) : null} required valuePara={confirmPasswordRe} />
+                        <CardTextField labelPara="ยืนยันรหัสผ่าน" errorPara={errerConfirmPassword} typePara="password" onChangePara={(e) => e.target.value ? setConfirmPassword(e.target.value) : null} required valuePara={confirmPasswordRe} />
                     </Grid>
                     <Grid item sm={6} xs={12} dir="ltr" >
                         <Box dir="ltr" sx={{ display: 'flex', alignItems: 'flex-end', }}>
