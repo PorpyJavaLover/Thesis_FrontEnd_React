@@ -495,7 +495,7 @@ function UserMenuStaff() {
                 </ListItem>
                 <ListItem key={2} disablePadding>
                     <ListItemButton>
-                        <Link style={{ textDecoration: "none", }} to={'/Teacher/MenagementMemberStaff'} >
+                        <Link style={{ textDecoration: "none", }} to={'/Staff/MenagementMemberStaff'} >
                             <ListItemText primary={"การจัดการสมาชิก"} sx={{ color: "#4D4D4D" }} />
                         </Link>
                     </ListItemButton>

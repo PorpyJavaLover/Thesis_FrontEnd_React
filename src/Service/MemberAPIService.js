@@ -10,21 +10,8 @@ export default new class MemberAPIService extends BaseAPIService {
             'username': username,
             'password': password
         };
-        return axios.post(this.url + '/member/anonymous/login', body)
-            .then(response => {
-                localStorage.setItem('token', JSON.stringify(response.data.token));
-                localStorage.setItem('member_id', jwt_decode(JSON.parse(localStorage.getItem('token'))).principal);
-                localStorage.setItem('role', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
-                localStorage.setItem('exp', jwt_decode(JSON.parse(localStorage.getItem('token'))).exp);
-                localStorage.setItem('name', jwt_decode(JSON.parse(localStorage.getItem('token'))).name);
-                window.location.href = '/home';
-            }).catch((err) => {
-                if (err.message === 'Network Error') {
-                    console.log('Connection Refused');
-                }
-            }).finally(() => {
-
-            });
+        return axios.post(this.url + '/member/anonymous/login', body);
+            
     }
 
     register(titleNameSelected, organizSelected, firstNameTH, lastNameTH, firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected) {
@@ -98,7 +85,6 @@ export const MemberAPIServiceStaff = new class MemberAPIServiceStaff extends Bas
 export const MemberAPIServiceAdmin = new class MemberAPIServiceStaff extends BaseAPIService {
 
     getMember(organiz) {
-        console.log(organiz);
         return axios.get(this.url + '/member/admin/show/all' + '/' + organiz, { headers: this.headers });
     }
 
@@ -126,9 +112,9 @@ export const MemberAPIServiceAdmin = new class MemberAPIServiceStaff extends Bas
                 localStorage.setItem('name', jwt_decode(JSON.parse(localStorage.getItem('token'))).name);
                 window.location.reload(false);
             }).catch((err) => {
-                /*if (err.message === 'Network Error') {
-                    console.log('Connection Refused');
-                }*/
+                if (err.message === 'Network Error') {
+                    
+                }
             }).finally(() => {
 
             });

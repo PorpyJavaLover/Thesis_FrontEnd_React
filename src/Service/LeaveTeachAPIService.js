@@ -17,6 +17,7 @@ export const LeaveTeachAPIServiceTeacher = new class LeaveTeachAPIServiceTeacher
     }
 
     createLeaveTeach(semester, year, dateStart, dateEnd, note) {
+        console.log( year, semester, dateStart, dateEnd);
         const body = {
             'semester': semester,
             'year': year,
@@ -27,9 +28,10 @@ export const LeaveTeachAPIServiceTeacher = new class LeaveTeachAPIServiceTeacher
         return axios.post(this.url + '/leaveteach/teacher/create ', body, { headers: this.headers });
     }
 
-    updateTeacherLeaveTeach(leaveTeachId, years, semester, dateStart, dateEnd, reasonNote) {
+    updateTeacherLeaveTeach(leaveTeachId, year, semester, dateStart, dateEnd, reasonNote) {
+        console.log(leaveTeachId, year, semester, dateStart, dateEnd, reasonNote);
         const body = {
-            'years': years,
+            'year': year,
             'semester': semester,
             'dateStart': dateStart,
             'dateEnd': dateEnd,
@@ -51,6 +53,7 @@ export const LeaveTeachAPIServiceStaff = new class LeaveTeachAPIServiceStaff ext
     }
 
     createLeaveTeach(semester, year, memberId , dateStart, dateEnd, note) {
+        console.log( year, semester, dateStart, dateEnd);
         const body = {
             'semester': semester,
             'year': year,

@@ -45,6 +45,7 @@ export default class SelectSubjectStaff extends Component {
 
     updatePlanState = () => {
         this.setState({ plans: this.state.plans });
+        console.log("LookOutB",Date.now(),"Wow");
     }
 
     setMemberSelected = (item) => {
@@ -98,6 +99,7 @@ export default class SelectSubjectStaff extends Component {
                 }
                 return null;
             });
+            console.log("LookOutB",Date.now(),"Wow");
             return plan;
         });
 
@@ -209,6 +211,7 @@ function ManagementBox(props) {
     }
 
     const handleSwitchLect = (value) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         const courseType = 0;
         if (value.selected_lect === false) {
             TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {
@@ -223,6 +226,7 @@ function ManagementBox(props) {
         }
     };
     const handleSwitchPerf = (value) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         const courseType = 1;
         if (value.selected_perf === false) {
             TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {

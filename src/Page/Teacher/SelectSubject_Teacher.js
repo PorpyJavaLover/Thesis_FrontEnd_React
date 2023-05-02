@@ -7,7 +7,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { PlanAPIServiceTeacher , PlanAPIServiceStaff } from '../../Service/PlanAPIService'
+import { PlanAPIServiceTeacher, PlanAPIServiceStaff } from '../../Service/PlanAPIService'
 import { TimetableAPIServiceTeacher } from '../../Service/TimetableAPIService'
 import PropTypes from 'prop-types';
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -38,7 +38,8 @@ export default class SelectSubjectTeacher extends Component {
     }
 
     updatePlanState = () => {
-        this.setState({ plans: this.state.plans });
+        this.setState({ plans: this.state.plans })
+        console.log("LookOutB",Date.now(),"Wow");
     }
 
     setYearSelected = (item) => {
@@ -77,7 +78,7 @@ export default class SelectSubjectTeacher extends Component {
 
         tempPlans.map((plan) => {
             tempTimetables.map((timetable) => {
-                if (plan.years_value + plan.semester + plan.course_id + plan.group_id  === timetable.years + timetable.semester + timetable.course_id + timetable.group_id ) {
+                if (plan.years_value + plan.semester + plan.course_id + plan.group_id === timetable.years + timetable.semester + timetable.course_id + timetable.group_id) {
                     if (timetable.course_type == 0) {
                         plan.selected_lect = true;
                     } else {
@@ -88,7 +89,6 @@ export default class SelectSubjectTeacher extends Component {
             });
             return plan;
         });
-
         this.setState({
             plans: tempPlans
         });
@@ -305,8 +305,8 @@ function MenagementBox(props) {
         setOrderBy(property);
     };
 
-
     const handleSwitchLect = (value) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         const courseType = 0;
         if (value.selected_lect === false) {
             TimetableAPIServiceTeacher.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {
@@ -321,6 +321,7 @@ function MenagementBox(props) {
         }
     };
     const handleSwitchPerf = (value) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         const courseType = 1;
         if (value.selected_perf === false) {
             TimetableAPIServiceTeacher.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {

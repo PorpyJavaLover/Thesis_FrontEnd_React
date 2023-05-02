@@ -56,6 +56,7 @@ export default class ReplaceTeach extends Component {
   updateState = () => {
     ReplaceTeachAPIServiceStaff.getAll(this.state.yearSelected, this.state.semesterSelected, this.state.memberSelected).then((res) => {
       this.setState({ dataReplaceTeach: res.data });
+      console.log("LookOutB", Date.now(), "Wow");
     })
   }
 
@@ -134,7 +135,6 @@ function SelectionBox(props) {
   const handleChangeMember = (event) => {
     props.setMemberSelected(event.target.value);
     setMemberSelected(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleChangeYear = (event) => {
@@ -215,9 +215,11 @@ function MenagementBox(props) {
   };
 
   const handleChangOrganizSelected = (event) => {
+    console.log("LookOutA", Date.now(), "Wow");
     setOrganizSelected(event.target.value);
     setMemberReplaceSelected(null);
     setEditTemp(null);
+    console.log("LookOutB", Date.now(), "Wow");
   };
 
   const handleChangMemberReplace = (event) => {
@@ -230,7 +232,6 @@ function MenagementBox(props) {
   };
 
   const handleEdit = (dataInside) => () => {
-    console.log(dataInside);
     setEditTemp(dataInside.replaceTeachId);
     setMemberReplaceSelected(dataInside.memberReplaceId);
     ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId, OrganizSelected).then((res) => {
@@ -238,13 +239,8 @@ function MenagementBox(props) {
     });
   }
 
-  /*const handleDelete = (dataInside) => () => {
-    ReplaceTeachAPIServiceTeacher.delete(dataInside.replaceTeachId).then(() => {
-      props.updateState();
-    });
-  }*/
-
   const handleConfirm = (dataInside) => () => {
+    console.log("LookOutA", Date.now(), "Wow");
     ReplaceTeachAPIServiceTeacher.update(dataInside.replaceTeachId, memberReplaceSelected).then(() => {
       setMemberReplaceOptions([]);
       setMemberReplaceSelected(null);
@@ -281,13 +277,13 @@ function MenagementBox(props) {
     const [dataBB, setDataBB] = useState([]);
 
     const test = () => {
-      console.log(data.data.replaceTeachId);
+      console.log("LookOutA", Date.now(), "Wow");
       ReplaceTeachAPIServiceTeacher.getPDFHead(data.data.replaceTeachId).then((dataA) => {
         setDataAA(dataA.data);
-        console.log(dataAA);
         ReplaceTeachAPIServiceTeacher.getPDFBody(data.data.leaveTeachId, data.data.replaceTeachId).then((dataB) => {
           setDataBB(dataB.data);
           handlePrint();
+          console.log("LookOutB", Date.now(), "Wow");
         });
       });
     }
@@ -533,7 +529,9 @@ function MenagementBox(props) {
                             <TableCell width="5%" align="left">{row.group_name}</TableCell>
                             <TableCell width="8%" align="left">{row.start_time}</TableCell>
                             <TableCell width="8%" align="left">{row.end_time}</TableCell>
-                            <TableCell width="8%" align="left">{row.date}</TableCell>
+                            <TableCell width="8%" align="left">
+                              {new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </TableCell>
                             <TableCell width="15%" align="left">{row.memberTechingName}</TableCell>
                             <TableCell width="15%" align="left">{row.memberReplaceName}</TableCell>
                             <TableCell align="left">
@@ -566,7 +564,7 @@ function MenagementBox(props) {
                               {row.end_time}
                             </TableCell>
                             <TableCell width="8%" align="left">
-                              {row.date}
+                              {new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                             </TableCell>
                             <TableCell width="15%" align="left">
                               {row.memberTechingName}

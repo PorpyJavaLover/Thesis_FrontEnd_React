@@ -80,13 +80,16 @@ function UserCreate(props) {
     };
 
     const handleSubmit = (event) => {
+        console.log("LookOutA",Date.now(),"Wow");
         event.preventDefault();
         MemberAPIServiceAdmin.rolePlay(memberSelected).then(() => {
             setCancelButtonStatus(false);
+            console.log("LookOutB",Date.now(),"Wow");
         })
     };
 
-    const handleCancel = (event) => {
+    const handleCancel = (event) => {      
+        console.log("LookOutA",Date.now(),"Wow");
         event.preventDefault();
         if (localStorage.getItem('tokenTmp') != null) {
             localStorage.setItem('token', localStorage.getItem('tokenTmp'));
@@ -102,7 +105,7 @@ function UserCreate(props) {
             window.location.reload(false);
             setCancelButtonStatus(true);
         }
-
+        console.log("LookOutB",Date.now(),"Wow");
     };
 
     return (

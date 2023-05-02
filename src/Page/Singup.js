@@ -114,16 +114,13 @@ function UserCreate(props) {
     var regexD = { capital: /(?=.*[A-Z])/, length: /(?=.{8,12}$)/, specialChar: /[ -\/:-@\[-\`{-~]/, digit: /(?=.*[0-9])/, };
 
     const handleChangePassword = (event) => {
-
         setPassword(event.target.value);
-
         if ((regexD.capital.test(event.target.value) && regexD.length.test(event.target.value) &&
             regexD.specialChar.test(event.target.value) && regexD.digit.test(event.target.value))) {
             setErrerPassword(false);
         } else {
             setErrerPassword(true);
         }
-
     };
 
 
@@ -191,7 +188,7 @@ function UserCreate(props) {
                         <CardTextField labelPara="นามสกุลภาษาอังกฤษ" onChangePara={(e) => regexB.test(e.target.value) ? setLastNameEN(e.target.value) : null} required valuePara={lastNameEN} />
                     </Grid>
                     <Grid item sm={12} xs={12} >
-                        <CardTextField labelPara="ชื่อบัญชีสมาชิก" errorPara={errerUsernameSame} helperTextPara={errerUsernameSame == false ?  "ตัวอักษร a-Z และตัวเลข 0-9" : "**ชื่อบัญชีสมาชิกซ้ำ**" } onChangePara={(e) => regexC.test(e.target.value) ? setUsername(e.target.value) : null} required valuePara={usernameRe} />
+                        <CardTextField labelPara="ชื่อบัญชีสมาชิก" errorPara={errerUsernameSame} helperTextPara={errerUsernameSame == false ? "ตัวอักษร a-Z และตัวเลข 0-9" : "**ชื่อบัญชีสมาชิกซ้ำ**"} onChangePara={(e) => regexC.test(e.target.value) ? setUsername(e.target.value) : null} required valuePara={usernameRe} />
                     </Grid>
                     <Grid item sm={12} xs={12} >
                         <CardTextField labelPara="รหัสผ่าน" errorPara={errerPassword} helperTextPara={"ต้องความยาว 8-12 ตัวอักษร และต้องมีตัวอักษรพิเศษ, ตัวพิมพ์ใหญ่, ตัวเลข อย่างน้อยอย่างละ 1 ตัวษร "} typePara="password" onChangePara={handleChangePassword} required valuePara={passwordRe} />

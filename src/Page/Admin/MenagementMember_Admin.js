@@ -52,6 +52,7 @@ export default class MenagementMemberAdmin extends Component {
     updateState = (dataA) => {
         MemberAPIServiceAdmin.getMember(dataA).then((res) => {
             this.setState({ member: res.data });
+            console.log("LookOutB",Date.now(),"Wow");
         });
     }
 
@@ -270,9 +271,9 @@ function MenagementBox(props) {
     }
 
     const handleConfirm = (dataInside) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         MemberAPIServiceStaff.update(dataInside.memberId, titleNameSelected, firstNameTH, lastNameTH,
             firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected).then(() => {
-                props.updateState(props.organizSelecte);
                 setEditTemp(null);
                 setFirstNameTH(null);
                 setLastNameTH(null);
@@ -283,10 +284,12 @@ function MenagementBox(props) {
                 setTitleNameSelected(null);
                 setRoleSelected(null);
                 setActiveStatusSelected(null);
+                props.updateState(props.organizSelecte);
             })
     }
 
     const handleDelete = (dataInside) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         MemberAPIServiceStaff.delete(dataInside.memberId).then(() => {
             props.updateState(props.organizSelecte);
         })

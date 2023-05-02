@@ -45,6 +45,7 @@ export default class LeaveTeach extends Component {
   updateState = () => {
     LeaveTeachAPIServiceTeacher.getAllTeacherLeaveTeach(this.state.yearSelected,this.state.semesterSelected).then((res) => {
       this.setState({ dataLeaveTeach: res.data });
+      console.log("LookOutB",Date.now(),"Wow");
     })
   }
 
@@ -210,6 +211,7 @@ function CreationBox(props) {
   };
 
   const handleSubmit = () => {
+    console.log("LookOutA",Date.now(),"Wow");
     LeaveTeachAPIServiceTeacher.createLeaveTeach(props.semesterSelected, props.yearSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
       props.updateState();
       setYearSelected(null);
@@ -309,7 +311,6 @@ function MenagementBox(props) {
   };
 
   const handleChangDateEnd = (value) => {
-    console.log(value);
     setDateEndSelected(format(new Date(value), 'yyyy-MM-dd').toString());
   };
 
@@ -334,25 +335,23 @@ function MenagementBox(props) {
   }
 
   const handleEdit = (dataInside) => () => {
-
     setEditTemp(dataInside.id);
     setYearSelected(dataInside.years_value);
     setSemesterSelected(dataInside.semester);
     setDateStartSelected(format(new Date(convertDate(dataInside.dateStart_value)), 'yyyy-MM-dd').toString());
     setDateEndSelected(format(new Date(convertDate(dataInside.dateEnd_value)), 'yyyy-MM-dd').toString());
     setReasonNote(dataInside.note);
-
-    console.log(convertDate(dataInside.dateStart));
-
   }
 
   const handleDelete = (dataInside) => () => {
+    console.log("LookOutA",Date.now(),"Wow");
     LeaveTeachAPIServiceTeacher.deleteTeacherLeaveTeach(dataInside.id).then(() => {
       props.updateState();
     });
   }
 
   const handleConfirm = (dataInside) => () => {
+    console.log("LookOutA",Date.now(),"Wow");
     LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, yearSelected, semesterSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
       setEditTemp(null);
       setYearSelected(null);
@@ -384,16 +383,6 @@ function MenagementBox(props) {
       numeric: true,
       label: 'รหัส รายการงดสอน',
     },
-    /*{
-      id: 'years_name',
-      numeric: true,
-      label: 'ปีการศึกษา',
-    },
-    {
-      id: 'semester',
-      numeric: true,
-      label: 'ภาคการศึกษา',
-    },*/
     {
       id: 'dateStart',
       numeric: true,
@@ -557,10 +546,12 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id} >
                             <TableCell width="15%" id={labelId} scope="row" align="left" >{row.id}</TableCell>
-                            {/*<TableCell width="15%" id={labelId} scope="row" align="left" >{row.years_name}</TableCell>
-                            <TableCell width="15%" align="left">{row.semester}</TableCell>*/}
-                            <TableCell width="20%" align="left">{row.dateStart}</TableCell>
-                            <TableCell width="20%" align="left">{row.dateEnd}</TableCell>
+                            <TableCell width="20%" align="left">
+                              {new Date(row.dateStart).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {new Date(row.dateEnd).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </TableCell>
                             <TableCell width="15%" align="left">{row.note}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
@@ -576,14 +567,6 @@ function MenagementBox(props) {
                             <TableCell id={labelId} scope="row" align="left">
                               {row.id}
                             </TableCell>
-                            {/*
-                            <TableCell align="left">
-                              <CardSelect labelPara="ปีการศึกษา" menuItemPara={yearOptions} onChangePara={handleChangYear} valuePara={yearSelected} />
-                            </TableCell>
-                            <TableCell align="left">
-                              <CardSelect labelPara="ภาคการศึกษา" menuItemPara={semester} onChangePara={handleChangSemester} valuePara={semesterSelected} />
-                            </TableCell>
-                            */}
                             <TableCell align="left">
                               <CardDatePicker labelPara="วันที่งดสอน" onChangePara={handleChangDateStart} valuePara={dateStartSelected} />
                             </TableCell>

@@ -1,14 +1,12 @@
 import React, { Component, useState, useEffect } from 'react'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
 import { LeaveTeachAPIServiceTeacher, LeaveTeachAPIServiceStaff } from '../../Service/LeaveTeachAPIService';
-import MemberAPIService , { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
+import { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
 import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 import CardDatePicker from '../../Component/CardDatePicker';
 import CardSelect from '../../Component/CardSelect'
 import CardTextField from '../../Component/CardTextField'
-import FullFeaturedCrudGrid from '../../Component/CardDataGrid';
-import Moment from 'react-moment';
 import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -25,7 +23,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 
 
-//@todo 1.ฟังก์ชัน update  2.การแสดงผล วันที่ วว/ดด/ปปปป
+//@todo 1.ฟังก์ชัน update  
 export default class LeaveTeach extends Component {
 
   constructor(props) {
@@ -49,8 +47,9 @@ export default class LeaveTeach extends Component {
   }
 
   updateState = () => {
-    LeaveTeachAPIServiceStaff.getAllStaffLeaveTeach(this.state.yearSelected,this.state.semesterSelected,this.state.memberSelected).then((res) => {
+    LeaveTeachAPIServiceStaff.getAllStaffLeaveTeach(this.state.yearSelected, this.state.semesterSelected, this.state.memberSelected).then((res) => {
       this.setState({ dataLeaveTeach: res.data });
+      console.log("LookOutB", Date.now(), "Wow");
     })
   }
 
@@ -82,20 +81,20 @@ export default class LeaveTeach extends Component {
   render() {
     return (
       <div>
-        
+
         <HeaderBox title={"การจัดการวันงดสอน"} />
 
         <SelectionBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
-           member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
+          member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
           setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
 
         <CreationBox title={"เมนูสร้างรายการ"} updateState={this.updateState.bind(this)} disableState={this.state.disableState}
-        memberSelected={this.state.memberSelected} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
+          memberSelected={this.state.memberSelected} yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
 
         <MenagementBox title={"เมนูจัดการรายการ"} updateState={this.updateState.bind(this)} dataLeaveTeach={this.state.dataLeaveTeach}
-        disableState={this.state.disableState} memberSelected={this.state.memberSelected} 
-        yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected}  />
-      
+          disableState={this.state.disableState} memberSelected={this.state.memberSelected}
+          yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
+
       </div>
     )
   }
@@ -114,7 +113,7 @@ function SelectionBox(props) {
   const currentYear = new Date().getFullYear();
 
   const yearOptions = [
-    { key: '1', value: currentYear , text: currentYear + 543 },
+    { key: '1', value: currentYear, text: currentYear + 543 },
     { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
     { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
     { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
@@ -134,7 +133,6 @@ function SelectionBox(props) {
   const handleChangeMember = (event) => {
     props.setMemberSelected(event.target.value);
     setMemberSelected(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleChangeYear = (event) => {
@@ -211,6 +209,7 @@ function CreationBox(props) {
   };
 
   const handleSubmit = () => {
+    console.log("LookOutA", Date.now(), "Wow");
     LeaveTeachAPIServiceStaff.createLeaveTeach(props.semesterSelected, props.yearSelected, props.memberSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
       props.updateState();
       setDateStartSelected(null);
@@ -232,7 +231,7 @@ function CreationBox(props) {
   }
 
   return (
-    <Container maxWidth='false' sx={{ pt: 2 , display: props.disableState ? 'none' : 'block' }} >
+    <Container maxWidth='false' sx={{ pt: 2, display: props.disableState ? 'none' : 'block' }} >
       <Card sx={{ boxShadow: 5, }}>
         <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
         <Grid container spacing={2} sx={{ p: 2 }} >
@@ -293,7 +292,7 @@ function MenagementBox(props) {
   };
 
   const handleChangDateEnd = (value) => {
-    console.log(value);
+
     setDateEndSelected(format(new Date(value), 'yyyy-MM-dd').toString());
   };
 
@@ -331,20 +330,22 @@ function MenagementBox(props) {
   }
 
   const handleDelete = (dataInside) => () => {
+    console.log("LookOutA", Date.now(), "Wow");
     LeaveTeachAPIServiceTeacher.deleteTeacherLeaveTeach(dataInside.id).then(() => {
       props.updateState();
     });
   }
 
   const handleConfirm = (dataInside) => () => {
+    console.log("LookOutA", Date.now(), "Wow");
     LeaveTeachAPIServiceTeacher.updateTeacherLeaveTeach(dataInside.id, yearSelected, semesterSelected, dateStartSelected, dateEndSelected, reasonNote).then(() => {
-    setEditTemp(null);
-    setYearSelected(null);
-    setSemesterSelected(null);
-    setDateStartSelected(null);
-    setDateEndSelected(null);
-    setReasonNote(null);
-    props.updateState();
+      setEditTemp(null);
+      setYearSelected(null);
+      setSemesterSelected(null);
+      setDateStartSelected(null);
+      setDateEndSelected(null);
+      setReasonNote(null);
+      props.updateState();
     });
   }
 
@@ -541,8 +542,12 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id} >
                             <TableCell width="15%" id={labelId} scope="row" align="left" >{row.id}</TableCell>
-                            <TableCell width="20%" align="left">{row.dateStart}</TableCell>
-                            <TableCell width="20%" align="left">{row.dateEnd}</TableCell>
+                            <TableCell width="20%" align="left">
+                              {new Date(row.dateStart).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </TableCell>
+                            <TableCell width="20%" align="left">
+                              {new Date(row.dateEnd).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </TableCell>
                             <TableCell width="15%" align="left">{row.note}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={2}>
@@ -556,7 +561,7 @@ function MenagementBox(props) {
                         return (
                           <TableRow key={row.id} >
                             <TableCell id={labelId} scope="row" align="left">
-                            {row.id}
+                              {row.id}
                             </TableCell>
                             <TableCell align="left">
                               <CardDatePicker labelPara="วันที่งดสอน" onChangePara={handleChangDateStart} valuePara={dateStartSelected} />

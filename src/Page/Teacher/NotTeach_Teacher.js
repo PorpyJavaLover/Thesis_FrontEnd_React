@@ -34,6 +34,7 @@ export default class NotTeachTeacher extends Component {
     updateState = () => {
         NotTeachAPIServiceTeacher.getAllNotTeach(this.state.yearSelected, this.state.semesterSelected).then((res) => {
             this.setState({ dataNotTeach: res.data });
+            console.log("LookOutB",Date.now(),"Wow");
         })
     }
 
@@ -214,9 +215,7 @@ function CreationBox(props) {
     };
 
     const handleSubmit = (event, data) => {
-        console.log(dayOfWeekSelected);
-        console.log(timeStartSelected);
-        console.log(timeEndSelected);
+        console.log("LookOutA",Date.now(),"Wow");
         NotTeachAPIServiceTeacher.createNotTeach(props.yearSelected, props.semesterSelected, dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
@@ -425,6 +424,7 @@ function MenagementBox(props) {
     }
 
     const handleConfirm = (dataInside) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         NotTeachAPIServiceTeacher.updateNotTeach(dataInside.notId, dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
@@ -463,7 +463,7 @@ function MenagementBox(props) {
     }
 
     const handleDelete = (dataInside) => () => {
-        console.log(dataInside.notId);
+        console.log("LookOutA",Date.now(),"Wow");
         NotTeachAPIServiceTeacher.deleteNotTeach(dataInside.notId).then(() => {
             props.updateState();
         })

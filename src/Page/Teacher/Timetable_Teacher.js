@@ -41,6 +41,7 @@ export default class TimetableTeacher extends Component {
   updateState = () => {
     TimetableAPIServiceTeacher.getTimetable(this.state.yearSelected, this.state.semesterSelected).then((res) => {
       this.setState({ dataTimetable: res.data });
+      console.log("LookOutB",Date.now(),"Wow");
     })
   }
 
@@ -202,16 +203,12 @@ function ManagementBox(props) {
     handleConfirmTiggle();
   }, [dayOfWeekSelected, timeStartSelected, timeEndSelected]);
 
-  useEffect(() => {
-    console.log(timeEndSelected);
-  }, [timeEndSelected]);
-
-
-
   const handleChangeDayOfWeek = (data) => (event) => {
+    console.log("LookOutA",Date.now(),"Wow");
     setDayOfWeekSelected(event.target.value);
     TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeStartOptions(res.data);
+      console.log("LookOutB",Date.now(),"Wow");
     })
     TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeEndOptions(res.data);
@@ -224,11 +221,13 @@ function ManagementBox(props) {
   };
 
   const handleChangeTimeStart = (data) => (event) => {
+    console.log("LookOutA",Date.now(),"Wow");
     setTimeStartSelected(event.target.value);
     TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
       setTimeEndSelected(resA.data.value);
       TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value, resA.data.value).then((resB) => {
         setRoomOptions(resB.data);
+        console.log("LookOutB",Date.now(),"Wow");
       })
     })
     TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
@@ -252,7 +251,6 @@ function ManagementBox(props) {
 
   const handleChangeRoom = (data) => (event) => {
     setRoomSelected(event.target.value);
-
   };
 
   const handleConfirmTiggle = () => {
@@ -268,7 +266,7 @@ function ManagementBox(props) {
   }
 
   const handleConfirm = (dataInside) => () => {
-    console.log(dayOfWeekSelected, timeStartSelected, timeEndSelected, roomSelected);
+    console.log("LookOutA",Date.now(),"Wow");
     TimetableAPIServiceStaff.update(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dayOfWeekSelected, timeStartSelected, timeEndSelected, roomSelected).then(() => {
       setDayOfWeekSelected(null);
       setTimeStartSelected(null);
@@ -319,6 +317,7 @@ function ManagementBox(props) {
   }
 
   const handleDelete = (dataInside) => () => {
+    console.log("LookOutA",Date.now(),"Wow");
     TimetableAPIServiceStaff.deletTimetable(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.member_Id).then(() => {
       props.updateState();
     })
@@ -442,17 +441,17 @@ function ManagementBox(props) {
     {
       id: 'start_time',
       numeric: true,
-      label: 'เริ่มสอน',
+      label: 'เวลาเริ่มต้น',
     },
     {
       id: 'end_time',
       numeric: true,
-      label: 'สิ้นสุด',
+      label: 'เวลาสิ้นสุด',
     },
     {
       id: 'room_id',
       numeric: true,
-      label: 'ห้อง',
+      label: 'ห้องเรียน',
     },
     {
       id: 'option',
@@ -512,12 +511,14 @@ function ManagementBox(props) {
 
 
   const updateTimeLock = (row) => () => {
+    console.log("LookOutA",Date.now(),"Wow");
     TimetableAPIServiceStaff.updateLocker(row.years, row.semester, row.course_id, row.course_type, row.group_id, row.time_locker == false ? true : false, row.room_locker).then((res) => {
       props.updateState();
     });
   };
 
   const updateRoomLock = (row) => () => {
+    console.log("LookOutA",Date.now(),"Wow");
     TimetableAPIServiceStaff.updateLocker(row.years, row.semester, row.course_id, row.course_type, row.group_id, row.time_locker, row.room_locker == false ? true : false).then((res) => {
       props.updateState();
     });
@@ -576,12 +577,14 @@ function ManagementBox(props) {
   };
 
   const clean = (dataInside) => () => {
-    TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, dataInside.start_time, dataInside.end_time, dataInside.room_id, dataInside.time_locker, dataInside.room_locker).then((res) => {
+    console.log("LookOutA",Date.now(),"Wow");
+    TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id).then((res) => {
       props.updateState();
     });
   };
 
   const cleanAll = () => {
+    console.log("LookOutA",Date.now(),"Wow");
     TimetableAPIServiceStaff.cleanAll(props.yearSelected).then((res) => {
       props.updateState();
     });
@@ -656,10 +659,10 @@ function ManagementBox(props) {
                       } else {
                         return (
                           <TableRow key={row.id} >
-                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.group_name}</TableCell>
+                            <TableCell width="8%" id={labelId} scope="row" align="left" >{row.course_type_name}</TableCell>
                             <TableCell width="10%" align="left">{row.course_code}</TableCell>
                             <TableCell width="25%" align="left">{row.course_name}</TableCell>
-                            <TableCell width="8%" align="left">{row.course_type_name}</TableCell>
+                            <TableCell width="8%" align="left">{row.group_name}</TableCell>
                             <TableCell width="15%" align="left">{row.member.map((inMember) => {
                               return <TableRow key={inMember.member_id} > {inMember.member_name} </TableRow>;
                             })}</TableCell>

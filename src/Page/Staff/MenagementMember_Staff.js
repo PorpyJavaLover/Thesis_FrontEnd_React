@@ -49,7 +49,7 @@ export default class MenagementMemberStaff extends Component {
     updateState = () => {
         MemberAPIServiceStaff.getMember().then((res) => {
             this.setState({ member: res.data });
-            console.log(res.data);
+            console.log("LookOutB",Date.now(),"Wow");
         });
     }
 
@@ -102,7 +102,6 @@ function MenagementBox(props) {
     const roleOption = [
         { key: '1', value: 1, text: "อาจารย์" },
         { key: '2', value: 2, text: "เจ้าหน้าที่" },
-        { key: '3', value: 3, text: "ผู้ดูแลระบบ" },
     ];
 
     const activeStatusOption = [
@@ -226,6 +225,7 @@ function MenagementBox(props) {
     }
 
     const handleConfirm = (dataInside) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         MemberAPIServiceStaff.update(dataInside.memberId, titleNameSelected, firstNameTH, lastNameTH,
             firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected).then(() => {
                 props.updateState();
@@ -243,6 +243,7 @@ function MenagementBox(props) {
     }
 
     const handleDelete = (dataInside) => () => {
+        console.log("LookOutA",Date.now(),"Wow");
         MemberAPIServiceStaff.delete(dataInside.memberId).then(() => {
             props.updateState();
         })

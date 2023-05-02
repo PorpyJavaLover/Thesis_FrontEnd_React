@@ -13,48 +13,6 @@ const parts = thaiDate.split(" ");
 const year = parts[parts.length - 1];
 const formattedDate = `วันที่ ${parts[0]} เดือน ${parts[1]}  พ.ศ. ${year}`;
 
-const dataTestA = [
-  {
-    nameTeachingShort: "ดร.",
-    nameTeachingFirst: "เกตุกญจน์",
-    nameTeachingLast: "ไชยขันธุ์",
-    oganize: "วิศวกรรมคอมพิวเตอร์",
-    dateStart: "21",
-    monthStart: "ธันวาคม",
-    yearsStart: "2565",
-    dateEnd: "28",
-    monthEnd: "ธันวาคม",
-    yearsEnd: "2565",
-    note: "ไปราชการ",
-    nameReplaceShort: "นาย",
-    nameReplaceFirst: "สนั่น",
-    nameReplaceLast: "จันทร์พรม",
-  },
-];
-
-const dataTestB = [
-  {
-    course_code: "00-000-021-001",
-    course_title: "ทักษะการรู้สารสนเทศ",
-    group_name: "CPE.63231",
-    date: "พฤ. 22  ธ.ค. 65 ",
-    courseLect: "1",
-    coursePerf: "3",
-    courseSum: "4",
-    time: "1-4",
-  },
-  {
-    course_code: "00-000-021-001",
-    course_title: "ทักษะการรู้สารสนเทศ",
-    group_name: "CPE.63231",
-    date: "พฤ. 20  ธ.ค. 65 ",
-    courseLect: "0",
-    coursePerf: "3",
-    courseSum: "3",
-    time: "6-8",
-  },
-];
-
 export class ComponentToPrint extends React.Component {
 
   render() {
@@ -269,6 +227,7 @@ export class ComponentToPrint extends React.Component {
                 <p style={{ textAlign: "center" }}>รองคณบดีฝ่ายวิชาการและวิจัย</p>
                 <p style={{ textAlign: "center" }}>ปฏิบัติราชการแทนคณบดี</p>
                 <p style={{ textAlign: "center" }}>{formattedDate}</p>
+
               </td>
             </tr>
           </tbody>

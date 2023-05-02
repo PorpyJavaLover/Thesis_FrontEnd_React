@@ -38,13 +38,13 @@ export default class NotTeachStaff extends Component {
     componentDidMount() {
         MemberAPIServiceStaff.getMemberOption().then((res) => {
             this.setState({ member: res.data });
-            console.log(res.data);
         });
     }
 
     updateState = (memberId) => {
         NotTeachAPIServiceStaff.getAllNotTeachByMemberId(this.state.yearSelected, this.state.semesterSelected, memberId).then((res) => {
             this.setState({ dataNotTeach: res.data });
+            console.log("LookOutB", Date.now(), "Wow");
         })
     }
 
@@ -80,10 +80,10 @@ export default class NotTeachStaff extends Component {
                 <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
                     member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
                     setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
-                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected} 
-                semesterSelected={this.state.semesterSelected} updateState={this.updateState} memberSelected={this.state.memberSelected} />
-                <MenagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updateState={this.updateState} 
-                memberSelected={this.state.memberSelected} dataNotTeach={this.state.dataNotTeach} />
+                <CreationBox title={"เมนูสร้างรายการ"} disableState={this.state.disableState} yearSelected={this.state.yearSelected}
+                    semesterSelected={this.state.semesterSelected} updateState={this.updateState} memberSelected={this.state.memberSelected} />
+                <MenagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} updateState={this.updateState}
+                    memberSelected={this.state.memberSelected} dataNotTeach={this.state.dataNotTeach} />
             </div>
         )
     }
@@ -249,6 +249,7 @@ function CreationBox(props) {
     };
 
     const handleSubmit = (event, data) => {
+        console.log("LookOutA", Date.now(), "Wow");
         NotTeachAPIServiceStaff.createNotTeach(props.yearSelected, props.semesterSelected, dayOfWeekSelected, timeStartSelected, timeEndSelected, props.memberSelected).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
@@ -459,6 +460,7 @@ function MenagementBox(props) {
     }
 
     const handleConfirm = (dataInside) => () => {
+        console.log("LookOutA", Date.now(), "Wow");
         NotTeachAPIServiceStaff.updateNotTeach(dataInside.notId, dayOfWeekSelected, timeStartSelected, timeEndSelected).then(() => {
             setDayOfWeekSelected(null);
             setTimeStartSelected(null);
@@ -497,7 +499,7 @@ function MenagementBox(props) {
     }
 
     const handleDelete = (dataInside) => () => {
-        console.log(dataInside.notId);
+        console.log("LookOutA", Date.now(), "Wow");
         NotTeachAPIServiceStaff.deleteNotTeach(dataInside.notId).then(() => {
             props.updateState(props.memberSelected);
         })
