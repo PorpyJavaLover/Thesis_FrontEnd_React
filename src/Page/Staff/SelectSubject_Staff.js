@@ -45,7 +45,7 @@ export default class SelectSubjectStaff extends Component {
 
     updatePlanState = () => {
         this.setState({ plans: this.state.plans });
-        console.log("LookOutB",Date.now(),"Wow");
+        console.log("LookOutB", Date.now(), "Wow");
     }
 
     setMemberSelected = (item) => {
@@ -99,7 +99,7 @@ export default class SelectSubjectStaff extends Component {
                 }
                 return null;
             });
-            console.log("LookOutB",Date.now(),"Wow");
+            console.log("LookOutB", Date.now(), "Wow");
             return plan;
         });
 
@@ -136,10 +136,10 @@ function SelectTeacherBox(props) {
     const currentYear = new Date().getFullYear();
 
     const yearOptions = [
-        { key: '1', value: currentYear + 543, text: currentYear + 543 },
-        { key: '2', value: currentYear + 543 - 1, text: currentYear + 543 - 1 },
-        { key: '3', value: currentYear + 543 - 2, text: currentYear + 543 - 2 },
-        { key: '4', value: currentYear + 543 - 3, text: currentYear + 543 - 3 },
+        { key: '1', value: currentYear, text: currentYear + 543 },
+        { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
+        { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
+        { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
     ];
 
     const semesterOptions = [
@@ -156,18 +156,29 @@ function SelectTeacherBox(props) {
     const handleChangeMember = (event) => {
         props.setMemberSelected(event.target.value);
         setMemberSelected(event.target.value);
-        props.getPlanState(event.target.value);
+        localStorage.setItem('holderMember', event.target.value);
     };
 
     const handleChangeYear = (event) => {
         props.setYearSelected(event.target.value);
         setYearsSelected(event.target.value);
+        localStorage.setItem('holderYear', event.target.value);
     };
 
     const handleChangeSemester = (event) => {
         props.setSemesterSelected(event.target.value);
         setSemesterSelected(event.target.value);
+        localStorage.setItem('holderSemester', event.target.value);
     };
+
+    useEffect(() => {
+        props.setMemberSelected(localStorage.getItem('holderMember'));
+        setMemberSelected(localStorage.getItem('holderMember'));
+        props.setYearSelected(localStorage.getItem('holderYear'));
+        setYearsSelected(localStorage.getItem('holderYear'));
+        props.setSemesterSelected(localStorage.getItem('holderSemester'));
+        setSemesterSelected(localStorage.getItem('holderSemester'));
+    }, [])
 
     useEffect(() => {
         if (yearsSelected != null && semesterSelected != null && memberSelected != null) {
@@ -211,7 +222,7 @@ function ManagementBox(props) {
     }
 
     const handleSwitchLect = (value) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
+        console.log("LookOutA", Date.now(), "Wow");
         const courseType = 0;
         if (value.selected_lect === false) {
             TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {
@@ -226,7 +237,7 @@ function ManagementBox(props) {
         }
     };
     const handleSwitchPerf = (value) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
+        console.log("LookOutA", Date.now(), "Wow");
         const courseType = 1;
         if (value.selected_perf === false) {
             TimetableAPIServiceStaff.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id, props.memberSelected).then(() => {
@@ -245,16 +256,6 @@ function ManagementBox(props) {
 
     const headCells = [
         {
-            id: 'years_name',
-            numeric: false,
-            label: 'ปีการศึกษา',
-        },
-        {
-            id: 'semester',
-            numeric: false,
-            label: 'ภาคการศึกษา',
-        },
-        {
             id: 'group_name',
             numeric: true,
             label: 'กลุ่มเรียน',
@@ -267,9 +268,13 @@ function ManagementBox(props) {
         {
             id: 'course_title',
             numeric: true,
-            label: 'ชื่อวิชา',
+            label: 'ชื่อวิชาภาษาไทย',
         },
-
+        {
+            id: 'course_title_en',
+            numeric: true,
+            label: 'ชื่อวิชาภาษาอังกฤษ',
+        },
         {
             id: 'selected',
             numeric: true,
@@ -365,7 +370,7 @@ function ManagementBox(props) {
     };
 
     const [order, setOrder] = React.useState('desc');
-    const [orderBy, setOrderBy] = React.useState('years_name');
+    const [orderBy, setOrderBy] = React.useState('group_name');
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -408,11 +413,10 @@ function ManagementBox(props) {
                                             const labelId = index;
                                             return (
                                                 <TableRow key={row.years_name + row.semester + row.course_id + row.group_id} >
-                                                    <TableCell id={labelId} scope="row" align="center" >{row.years_name}</TableCell>
-                                                    <TableCell align="center">{row.semester}</TableCell>
                                                     <TableCell align="left">{row.group_name}</TableCell>
                                                     <TableCell align="left">{row.course_code}</TableCell>
                                                     <TableCell align="left">{row.course_title}</TableCell>
+                                                    <TableCell align="left">{row.course_title_en}</TableCell>
                                                     <TableCell align="left">
                                                         <FormControlLabel control={<Switch disabled={row.disable_lect} checked={row.selected_lect} onClick={handleSwitchLect(row)} />} label="ทฤษฎี" labelPlacement="start" />
                                                         <FormControlLabel control={<Switch disabled={row.disable_perf} checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />

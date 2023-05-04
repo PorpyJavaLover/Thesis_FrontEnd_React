@@ -23,8 +23,6 @@ import AdminRoutes from './Util/AdminRoutes';
 import Norbar from "./Component/Norbar";
 import './App.css';
 
-
-
 export default function App() {
   return (
     <BrowserRouter>

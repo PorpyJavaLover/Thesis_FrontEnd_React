@@ -59,10 +59,11 @@ export const MemberAPIServiceStaff = new class MemberAPIServiceStaff extends Bas
         return axios.get(this.url + '/member/staff/show/option', { headers: this.headers });
     }
 
-    update(memberId, titleNameSelected, firstNameTH, lastNameTH, firstNameEN,
+    update(memberId, memberIdNeo , titleNameSelected, firstNameTH, lastNameTH, firstNameEN,
         lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected) {
 
         const body = {
+            'memberIdNeo': DOMPurify.sanitize(memberIdNeo),
             'titleNameSelected': DOMPurify.sanitize(titleNameSelected),
             'firstNameTH': DOMPurify.sanitize(firstNameTH),
             'lastNameTH': DOMPurify.sanitize(lastNameTH),

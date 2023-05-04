@@ -41,7 +41,7 @@ export default class TimetableTeacher extends Component {
   updateState = () => {
     TimetableAPIServiceTeacher.getTimetable(this.state.yearSelected, this.state.semesterSelected).then((res) => {
       this.setState({ dataTimetable: res.data });
-      console.log("LookOutB",Date.now(),"Wow");
+      console.log("LookOutB", Date.now(), "Wow");
     })
   }
 
@@ -109,12 +109,19 @@ function SelectYearsAndSemesterBox(props) {
   const handleChangeYear = (event) => {
     props.setYearSelected(event.target.value);
     setYearsSelected(event.target.value);
+    localStorage.setItem('holderYear', event.target.value);
   };
 
   const handleChangeSemester = (event) => {
     props.setSemesterSelected(event.target.value);
     setSemesterSelected(event.target.value);
+    localStorage.setItem('holderSemester', event.target.value);
   };
+
+  useEffect(() => {
+    setYearsSelected(localStorage.getItem('holderYear'));
+    setSemesterSelected(localStorage.getItem('holderSemester'));
+  }, [])
 
   useEffect(() => {
     if (yearsSelected != null && semesterSelected != null) {
@@ -204,11 +211,12 @@ function ManagementBox(props) {
   }, [dayOfWeekSelected, timeStartSelected, timeEndSelected]);
 
   const handleChangeDayOfWeek = (data) => (event) => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
+    console.log("LookOutC", Date.now(), "Wow");
     setDayOfWeekSelected(event.target.value);
     TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeStartOptions(res.data);
-      console.log("LookOutB",Date.now(),"Wow");
+      console.log("LookOutB", Date.now(), "Wow");
     })
     TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeEndOptions(res.data);
@@ -216,18 +224,19 @@ function ManagementBox(props) {
     if (timeStartSelected !== null && timeEndSelected != null) {
       TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, timeStartSelected, timeEndSelected).then((res) => {
         setRoomOptions(res.data);
+        console.log("LookOutD", Date.now(), "Wow");
       })
     }
   };
 
   const handleChangeTimeStart = (data) => (event) => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
     setTimeStartSelected(event.target.value);
     TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
       setTimeEndSelected(resA.data.value);
       TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value, resA.data.value).then((resB) => {
         setRoomOptions(resB.data);
-        console.log("LookOutB",Date.now(),"Wow");
+        console.log("LookOutB", Date.now(), "Wow");
       })
     })
     TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
@@ -266,7 +275,7 @@ function ManagementBox(props) {
   }
 
   const handleConfirm = (dataInside) => () => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
     TimetableAPIServiceStaff.update(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dayOfWeekSelected, timeStartSelected, timeEndSelected, roomSelected).then(() => {
       setDayOfWeekSelected(null);
       setTimeStartSelected(null);
@@ -317,7 +326,7 @@ function ManagementBox(props) {
   }
 
   const handleDelete = (dataInside) => () => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
     TimetableAPIServiceStaff.deletTimetable(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.member_Id).then(() => {
       props.updateState();
     })
@@ -511,14 +520,14 @@ function ManagementBox(props) {
 
 
   const updateTimeLock = (row) => () => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
     TimetableAPIServiceStaff.updateLocker(row.years, row.semester, row.course_id, row.course_type, row.group_id, row.time_locker == false ? true : false, row.room_locker).then((res) => {
       props.updateState();
     });
   };
 
   const updateRoomLock = (row) => () => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
     TimetableAPIServiceStaff.updateLocker(row.years, row.semester, row.course_id, row.course_type, row.group_id, row.time_locker, row.room_locker == false ? true : false).then((res) => {
       props.updateState();
     });
@@ -577,14 +586,14 @@ function ManagementBox(props) {
   };
 
   const clean = (dataInside) => () => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
     TimetableAPIServiceStaff.clean(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id).then((res) => {
       props.updateState();
     });
   };
 
   const cleanAll = () => {
-    console.log("LookOutA",Date.now(),"Wow");
+    console.log("LookOutA", Date.now(), "Wow");
     TimetableAPIServiceStaff.cleanAll(props.yearSelected).then((res) => {
       props.updateState();
     });

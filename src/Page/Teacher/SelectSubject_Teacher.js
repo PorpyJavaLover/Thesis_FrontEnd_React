@@ -39,7 +39,7 @@ export default class SelectSubjectTeacher extends Component {
 
     updatePlanState = () => {
         this.setState({ plans: this.state.plans })
-        console.log("LookOutB",Date.now(),"Wow");
+        console.log("LookOutB", Date.now(), "Wow");
     }
 
     setYearSelected = (item) => {
@@ -121,10 +121,10 @@ function SelectionBox(props) {
     const currentYear = new Date().getFullYear();
 
     const yearOptions = [
-        { key: '1', value: currentYear + 543, text: currentYear + 543 },
-        { key: '2', value: currentYear + 543 - 1, text: currentYear + 543 - 1 },
-        { key: '3', value: currentYear + 543 - 2, text: currentYear + 543 - 2 },
-        { key: '4', value: currentYear + 543 - 3, text: currentYear + 543 - 3 },
+        { key: '1', value: currentYear, text: currentYear + 543 },
+        { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
+        { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
+        { key: '4', value: currentYear - 3, text: currentYear + 543 - 3 },
     ];
 
     const semesterOptions = [
@@ -139,12 +139,19 @@ function SelectionBox(props) {
     const handleChangeYear = (event) => {
         props.setYearSelected(event.target.value);
         setYearsSelected(event.target.value);
+        localStorage.setItem('holderYear', event.target.value);
     };
 
     const handleChangeSemester = (event) => {
         props.setSemesterSelected(event.target.value);
         setSemesterSelected(event.target.value);
+        localStorage.setItem('holderSemester', event.target.value);
     };
+
+    useEffect(() => {
+        setYearsSelected(localStorage.getItem('holderYear'));
+        setSemesterSelected(localStorage.getItem('holderSemester'));
+    }, [])
 
     useEffect(() => {
         if (yearsSelected != null && semesterSelected != null) {
@@ -227,16 +234,7 @@ function MenagementBox(props) {
     }
 
     const headCells = [
-        {
-            id: 'years_name',
-            numeric: false,
-            label: 'ปีการศึกษา',
-        },
-        {
-            id: 'semester',
-            numeric: false,
-            label: 'ภาคการศึกษา',
-        },
+
         {
             id: 'group_name',
             numeric: true,
@@ -250,9 +248,13 @@ function MenagementBox(props) {
         {
             id: 'course_title',
             numeric: true,
-            label: 'ชื่อวิชา',
+            label: 'ชื่อวิชาภาษาไทย',
         },
-
+        {
+            id: 'course_title_en',
+            numeric: true,
+            label: 'ชื่อวิชาภาษาอังกฤษ',
+        },
         {
             id: 'selected',
             numeric: true,
@@ -297,7 +299,7 @@ function MenagementBox(props) {
     };
 
     const [order, setOrder] = React.useState('desc');
-    const [orderBy, setOrderBy] = React.useState('years_name'); //set sort
+    const [orderBy, setOrderBy] = React.useState('group_name'); //set sort
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -306,7 +308,7 @@ function MenagementBox(props) {
     };
 
     const handleSwitchLect = (value) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
+        console.log("LookOutA", Date.now(), "Wow");
         const courseType = 0;
         if (value.selected_lect === false) {
             TimetableAPIServiceTeacher.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {
@@ -321,7 +323,7 @@ function MenagementBox(props) {
         }
     };
     const handleSwitchPerf = (value) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
+        console.log("LookOutA", Date.now(), "Wow");
         const courseType = 1;
         if (value.selected_perf === false) {
             TimetableAPIServiceTeacher.createTimetable(value.years_value, value.semester, value.course_id, courseType, value.group_id).then(() => {
@@ -369,11 +371,10 @@ function MenagementBox(props) {
                                             const labelId = index;
                                             return (
                                                 <TableRow key={row.years_name + row.semester + row.course_id + row.group_id} >
-                                                    <TableCell id={labelId} scope="row" align="center" >{row.years_name}</TableCell>
-                                                    <TableCell align="center">{row.semester}</TableCell>
                                                     <TableCell align="left">{row.group_name}</TableCell>
                                                     <TableCell align="left">{row.course_code}</TableCell>
                                                     <TableCell align="left">{row.course_title}</TableCell>
+                                                    <TableCell align="left">{row.course_title_en}</TableCell>
                                                     <TableCell align="left">
                                                         <FormControlLabel control={<Switch disabled={row.disable_lect} checked={row.selected_lect} onClick={handleSwitchLect(row)} />} label="ทฤษฎี" labelPlacement="start" />
                                                         <FormControlLabel control={<Switch disabled={row.disable_perf} checked={row.selected_perf} onClick={handleSwitchPerf(row)} />} label="ปฏิบัติ" labelPlacement="start" />

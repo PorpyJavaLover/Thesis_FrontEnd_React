@@ -17,7 +17,6 @@ export const LeaveTeachAPIServiceTeacher = new class LeaveTeachAPIServiceTeacher
     }
 
     createLeaveTeach(semester, year, dateStart, dateEnd, note) {
-        console.log( year, semester, dateStart, dateEnd);
         const body = {
             'semester': semester,
             'year': year,
@@ -29,7 +28,6 @@ export const LeaveTeachAPIServiceTeacher = new class LeaveTeachAPIServiceTeacher
     }
 
     updateTeacherLeaveTeach(leaveTeachId, year, semester, dateStart, dateEnd, reasonNote) {
-        console.log(leaveTeachId, year, semester, dateStart, dateEnd, reasonNote);
         const body = {
             'year': year,
             'semester': semester,
@@ -53,7 +51,6 @@ export const LeaveTeachAPIServiceStaff = new class LeaveTeachAPIServiceStaff ext
     }
 
     createLeaveTeach(semester, year, memberId , dateStart, dateEnd, note) {
-        console.log( year, semester, dateStart, dateEnd);
         const body = {
             'semester': semester,
             'year': year,

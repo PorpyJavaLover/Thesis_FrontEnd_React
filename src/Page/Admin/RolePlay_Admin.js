@@ -53,10 +53,10 @@ function UserCreate(props) {
     }, [props.faculty]);
 
     useEffect(() => {
-        if(localStorage.getItem('tokenTmp') != null ){
+        if (localStorage.getItem('tokenTmp') != null) {
             setCancelButtonStatus(false);
         }
-    }, []); 
+    }, []);
 
     const handleChangeFaculty = (event) => {
         setFacultySelected(event.target.value);
@@ -80,16 +80,16 @@ function UserCreate(props) {
     };
 
     const handleSubmit = (event) => {
-        console.log("LookOutA",Date.now(),"Wow");
+        console.log("LookOutA", Date.now(), "Wow");
         event.preventDefault();
         MemberAPIServiceAdmin.rolePlay(memberSelected).then(() => {
             setCancelButtonStatus(false);
-            console.log("LookOutB",Date.now(),"Wow");
+            console.log("LookOutB", Date.now(), "Wow");
         })
     };
 
-    const handleCancel = (event) => {      
-        console.log("LookOutA",Date.now(),"Wow");
+    const handleCancel = (event) => {
+        console.log("LookOutC", Date.now(), "Wow");
         event.preventDefault();
         if (localStorage.getItem('tokenTmp') != null) {
             localStorage.setItem('token', localStorage.getItem('tokenTmp'));
@@ -105,7 +105,7 @@ function UserCreate(props) {
             window.location.reload(false);
             setCancelButtonStatus(true);
         }
-        console.log("LookOutB",Date.now(),"Wow");
+        console.log("LookOutD", Date.now(), "Wow");
     };
 
     return (

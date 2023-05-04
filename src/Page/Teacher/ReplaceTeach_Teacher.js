@@ -112,12 +112,19 @@ function SelectionBox(props) {
   const handleChangeYear = (event) => {
     props.setYearSelected(event.target.value);
     setYearsSelected(event.target.value);
+    localStorage.setItem('holderYear', event.target.value);
   };
 
   const handleChangeSemester = (event) => {
     props.setSemesterSelected(event.target.value);
     setSemesterSelected(event.target.value);
+    localStorage.setItem('holderSemester', event.target.value);
   };
+
+  useEffect(() => {
+    setYearsSelected(localStorage.getItem('holderYear'));
+    setSemesterSelected(localStorage.getItem('holderSemester'));
+  }, [])
 
   useEffect(() => {
     if (yearsSelected != null && semesterSelected != null) {

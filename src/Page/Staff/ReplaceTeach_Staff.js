@@ -135,17 +135,29 @@ function SelectionBox(props) {
   const handleChangeMember = (event) => {
     props.setMemberSelected(event.target.value);
     setMemberSelected(event.target.value);
+    localStorage.setItem('holderMember', event.target.value);
   };
 
   const handleChangeYear = (event) => {
     props.setYearSelected(event.target.value);
     setYearsSelected(event.target.value);
+    localStorage.setItem('holderYear', event.target.value);
   };
 
   const handleChangeSemester = (event) => {
     props.setSemesterSelected(event.target.value);
     setSemesterSelected(event.target.value);
+    localStorage.setItem('holderSemester', event.target.value);
   };
+
+  useEffect(() => {
+    props.setMemberSelected(localStorage.getItem('holderMember'));
+    setMemberSelected(localStorage.getItem('holderMember'));
+    props.setYearSelected(localStorage.getItem('holderYear'));
+    setYearsSelected(localStorage.getItem('holderYear'));
+    props.setSemesterSelected(localStorage.getItem('holderSemester'));
+    setSemesterSelected(localStorage.getItem('holderSemester'));
+  }, [])
 
   useEffect(() => {
     if (yearsSelected != null && semesterSelected != null && memberSelected != null) {
@@ -232,15 +244,17 @@ function MenagementBox(props) {
   };
 
   const handleEdit = (dataInside) => () => {
+    console.log("LookOutA", Date.now(), "Wow");
     setEditTemp(dataInside.replaceTeachId);
     setMemberReplaceSelected(dataInside.memberReplaceId);
     ReplaceTeachAPIServiceTeacher.getMemberReplaceOption(dataInside.replaceTeachId, OrganizSelected).then((res) => {
       setMemberReplaceOptions(res.data);
+      console.log("LookOutB", Date.now(), "Wow");
     });
   }
 
   const handleConfirm = (dataInside) => () => {
-    console.log("LookOutA", Date.now(), "Wow");
+
     ReplaceTeachAPIServiceTeacher.update(dataInside.replaceTeachId, memberReplaceSelected).then(() => {
       setMemberReplaceOptions([]);
       setMemberReplaceSelected(null);

@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from 'react'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography, } from '@mui/material';
 import CardSelect from '../../Component/CardSelect'
 import CardTextField from '../../Component/CardTextField'
-import { MemberAPIServiceStaff , MemberAPIServiceAdmin } from '../../Service/MemberAPIService';
+import { MemberAPIServiceStaff, MemberAPIServiceAdmin } from '../../Service/MemberAPIService';
 import { NotTeachAPIServiceStaff } from '../../Service/NotTeachAPIService'
 import SendIcon from '@mui/icons-material/Send';
 import SearchIcon from '@mui/icons-material/Search';
@@ -33,7 +33,7 @@ export default class MenagementMemberAdmin extends Component {
         this.state = {
             member: [],
             titleName: [],
-            faculty : [],
+            faculty: [],
             facultySelected: null,
             organizSelected: null,
             disableState: true
@@ -49,10 +49,10 @@ export default class MenagementMemberAdmin extends Component {
         })
     }
 
-    updateState = (dataA) => {
-        MemberAPIServiceAdmin.getMember(dataA).then((res) => {
+    updateState = () => {
+        MemberAPIServiceAdmin.getMember(this.state.organizSelected).then((res) => {
             this.setState({ member: res.data });
-            console.log("LookOutB",Date.now(),"Wow");
+            console.log("LookOutB", Date.now(), "Wow");
         });
     }
 
@@ -68,8 +68,8 @@ export default class MenagementMemberAdmin extends Component {
         })
     }
 
-    setDisable = (data) => {
-        this.updateState(data);
+    setDisable = () => {
+        this.updateState();
         this.setState({
             disableState: false
         })
@@ -80,9 +80,9 @@ export default class MenagementMemberAdmin extends Component {
             <div >
                 <HeaderBox title={"การจัดการบัญชีสมาชิก"} />
                 <SelectionBox title={"เมนูเลือกสาขา"} faculty={this.state.faculty} setDisable={this.setDisable.bind(this)}
-                setFacultySelected={this.setFacultySelected.bind(this)} setOrganizSelected={this.setOrganizSelected.bind(this)} />
-                <MenagementBox titleName={this.state.titleName} title={"เมนูจัดการรายการ"} disableState={this.state.disableState} 
-                updateState={this.updateState} member={this.state.member} organizSelecte={this.state.organizSelected} dataNotTeach={this.state.dataNotTeach} />
+                    setFacultySelected={this.setFacultySelected.bind(this)} setOrganizSelected={this.setOrganizSelected.bind(this)} />
+                <MenagementBox titleName={this.state.titleName} title={"เมนูจัดการรายการ"} disableState={this.state.disableState}
+                    updateState={this.updateState} member={this.state.member} organizSelecte={this.state.organizSelected} dataNotTeach={this.state.dataNotTeach} />
             </div>
         )
     }
@@ -98,31 +98,47 @@ function HeaderBox(props) {
 
 function SelectionBox(props) {
 
-
     const [facultyOption, setFacultyOption] = useState([]);
     const [facultySelected, setFacultySelected] = useState(null);
     const [organizOption, setOrganizOption] = useState([]);
     const [organizSelected, setOrganizSelected] = useState(null);
-
     const [organizOptionStatus, setOrganizOptionStatus] = useState(true);
-
-    useEffect(() => {
-        setFacultyOption(props.faculty);
-    }, [props.faculty]);
 
     const handleChangeFaculty = (event) => {
         setFacultySelected(event.target.value);
         MemberAPIService.getAllOrganiz(event.target.value).then((res) => {
             setOrganizOption(res.data);
+            setOrganizOptionStatus(false);
         })
-        setOrganizOptionStatus(false);
+        localStorage.setItem('holderFaculty', event.target.value);
     };
 
     const handleChangeOrganiz = (event) => {
         setOrganizSelected(event.target.value);
         props.setOrganizSelected(event.target.value);
-        props.setDisable(event.target.value);
+        localStorage.setItem('holderOrganiz', event.target.value);
     };
+
+    useEffect(() => {
+        props.setFacultySelected(localStorage.getItem('holderFaculty'));
+        setFacultySelected(localStorage.getItem('holderFaculty'));
+        props.setOrganizSelected(localStorage.getItem('holderOrganiz'));
+        setOrganizSelected(localStorage.getItem('holderOrganiz'));
+        MemberAPIService.getAllOrganiz(localStorage.getItem('holderFaculty')).then((res) => {
+            setOrganizOption(res.data);
+            setOrganizOptionStatus(false);
+        })
+    }, [])
+
+    useEffect(() => {
+        if (organizSelected != null ) {
+            props.setDisable();
+        }
+    }, [organizSelected])
+
+    useEffect(() => {
+        setFacultyOption(props.faculty);
+    }, [props.faculty]);
 
     return (
         <Container sx={{ p: 2 }} maxWidth='false'>
@@ -157,6 +173,7 @@ function MenagementBox(props) {
 
     //state
 
+    const [memberIdNeo, setMemberIdNeo] = useState(null);
     const [editTemp, setEditTemp] = useState(null);
     const [confirmButtonStatus, setConfirmButtonStatus] = useState(true);
     const [titleNameOption, setTitleNameOption] = useState([]);
@@ -271,8 +288,8 @@ function MenagementBox(props) {
     }
 
     const handleConfirm = (dataInside) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
-        MemberAPIServiceStaff.update(dataInside.memberId, titleNameSelected, firstNameTH, lastNameTH,
+        console.log("LookOutA", Date.now(), "Wow");
+        MemberAPIServiceStaff.update(dataInside.memberId, memberIdNeo, titleNameSelected, firstNameTH, lastNameTH,
             firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected).then(() => {
                 setEditTemp(null);
                 setFirstNameTH(null);
@@ -289,7 +306,7 @@ function MenagementBox(props) {
     }
 
     const handleDelete = (dataInside) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
+        console.log("LookOutA", Date.now(), "Wow");
         MemberAPIServiceStaff.delete(dataInside.memberId).then(() => {
             props.updateState(props.organizSelecte);
         })

@@ -47,6 +47,7 @@ function UserCreate(props) {
         { key: '2', value: 2, text: "เจ้าหน้าที่" },
     ];
 
+
     const [titleNameOption, setTitleNameOption] = useState([]);
     const [titleNameSelected, setTitleNameSelected] = useState(null);
     const [facultyOption, setFacultyOption] = useState([]);
@@ -162,7 +163,6 @@ function UserCreate(props) {
             <Card sx={{ boxShadow: 5, }}>
                 <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h6' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
                 <Grid container spacing={2} sx={{ p: 2 }} >
-
                     <Grid item sm={6} xs={12} >
                         <CardSelect labelPara="เลือกคณะ" menuItemPara={facultyOption} onChangePara={handleChangeFaculty} valuePara={facultySelected} />
                     </Grid>

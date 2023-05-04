@@ -49,7 +49,7 @@ export default class MenagementMemberStaff extends Component {
     updateState = () => {
         MemberAPIServiceStaff.getMember().then((res) => {
             this.setState({ member: res.data });
-            console.log("LookOutB",Date.now(),"Wow");
+            console.log("LookOutB", Date.now(), "Wow");
         });
     }
 
@@ -111,6 +111,7 @@ function MenagementBox(props) {
 
     //state
 
+    const [memberIdNeo, setMemberIdNeo] = useState(null);
     const [editTemp, setEditTemp] = useState(null);
     const [confirmButtonStatus, setConfirmButtonStatus] = useState(true);
     const [titleNameOption, setTitleNameOption] = useState([]);
@@ -204,8 +205,9 @@ function MenagementBox(props) {
     }
 
     const handleEdit = (dataInside) => () => {
-
+        
         setEditTemp(dataInside.memberId);
+        setMemberIdNeo(dataInside.memberId);
         setFirstNameTH(dataInside.firstNameTH);
         setLastNameTH(dataInside.lastNameTH);
         setFirstNameEN(dataInside.firstNameEN);
@@ -225,10 +227,11 @@ function MenagementBox(props) {
     }
 
     const handleConfirm = (dataInside) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
-        MemberAPIServiceStaff.update(dataInside.memberId, titleNameSelected, firstNameTH, lastNameTH,
+        console.log("LookOutA", Date.now(), "Wow");
+        MemberAPIServiceStaff.update(dataInside.memberId, memberIdNeo , titleNameSelected, firstNameTH, lastNameTH,
             firstNameEN, lastNameEN, usernameRe, passwordRe, roleSelected, activeStatusSelected).then(() => {
                 props.updateState();
+                setMemberIdNeo(null);
                 setEditTemp(null);
                 setFirstNameTH(null);
                 setLastNameTH(null);
@@ -243,7 +246,7 @@ function MenagementBox(props) {
     }
 
     const handleDelete = (dataInside) => () => {
-        console.log("LookOutA",Date.now(),"Wow");
+        console.log("LookOutA", Date.now(), "Wow");
         MemberAPIServiceStaff.delete(dataInside.memberId).then(() => {
             props.updateState();
         })
@@ -256,6 +259,11 @@ function MenagementBox(props) {
     //sort and search
 
     const headCells = [
+        /*{
+            id: 'memberId',
+            numeric: true,
+            label: 'เลขสมาชิก',
+        },*/
         {
             id: 'titleName',
             numeric: true,
@@ -448,6 +456,7 @@ function MenagementBox(props) {
                                             if (editTemp !== row.memberId) {
                                                 return (
                                                     <TableRow key={row.memberId} >
+                                                        {/*<TableCell id={labelId} scope="row" align="left" >{row.memberId}</TableCell>*/}
                                                         <TableCell id={labelId} scope="row" align="left" >{row.titleName}</TableCell>
                                                         <TableCell id={labelId} scope="row" align="left" >{row.firstNameTH}</TableCell>
                                                         <TableCell id={labelId} scope="row" align="left" >{row.lastNameTH}</TableCell>
@@ -468,6 +477,9 @@ function MenagementBox(props) {
                                             } else {
                                                 return (
                                                     <TableRow key={row.memberId} >
+                                                        {/*<TableCell id={labelId} scope="row" align="left" >
+                                                            <CardTextField labelPara="เลขสมาชิก" onChangePara={(e) => setMemberIdNeo(e.target.value)} required valuePara={memberIdNeo} />
+                                                        </TableCell>*/}
                                                         <TableCell id={labelId} scope="row" align="left" >
                                                             <CardSelect minWidthPara={80} labelPara="เลือกคำนำหน้า" menuItemPara={titleNameOption} onChangePara={handleChangeTitle} valuePara={titleNameSelected} />
                                                         </TableCell>

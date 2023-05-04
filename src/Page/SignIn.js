@@ -21,7 +21,7 @@ function UserSignIn(props) {
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
     const [errerUsernameSame, setErrerUsernameSame] = useState(false);
-    const [errerPassword, setErrerPassword] = useState(false);
+    const [errerText, setErrerText] = useState(null);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -36,9 +36,11 @@ function UserSignIn(props) {
             console.log(err.response.data.error);
             if (err.response.data.error === "Member.login.member.NotActive") {
                 setErrerUsernameSame(true);
+                setErrerText("**บัญชีสมาชิกนี้ไม่ได้ถูกเปิดใช้งาน**");
             }
             else if(err.response.data.error === "Member.login.usernameAndPassword.Wrong"){
-                setErrerPassword(true);
+                setErrerUsernameSame(true);
+                setErrerText("**ชื่อบัญชีสมาชิกหรือรหัสผ่านไม่ถูกต้อง**");
             }
         }).finally(() => {
 
@@ -47,7 +49,7 @@ function UserSignIn(props) {
 
     useEffect(() => {
         setErrerUsernameSame(false);
-        setErrerPassword(false);
+        setErrerText(null);
     }, [username,password]);
 
 
@@ -58,10 +60,10 @@ function UserSignIn(props) {
                 <Grid container spacing={2} sx={{ p: 2 }} >
 
                     <Grid item xs={12}>
-                        <CardTextField errorPara={errerUsernameSame} helperTextPara={errerUsernameSame == false ? "" : "**บัญชีสมาชิกไม่ถูกเปิดใช้งาน**"} labelPara="ชื่อสมาชิก" onChangePara={(e) => setUsername(e.target.value)} required valuePara={username} />
+                        <CardTextField errorPara={errerUsernameSame} helperTextPara={errerText} labelPara="ชื่อสมาชิก" onChangePara={(e) => setUsername(e.target.value)} required valuePara={username} />
                     </Grid>
                     <Grid item xs={12}>
-                        <CardTextField errorPara={errerPassword} helperTextPara={errerPassword == false ? "" : "**ชื่อบัญชีสมาชิกหรือรหัสผ่านไม่ถูกต้อง**"} labelPara="รหัสผ่าน" typePara="password" onChangePara={(e) => setPassword(e.target.value)} required valuePara={password} />
+                        <CardTextField labelPara="รหัสผ่าน" typePara="password" onChangePara={(e) => setPassword(e.target.value)} required valuePara={password} />
                     </Grid>
                     <Grid item sm={6} dir="ltr" >
                         <Box dir="ltr" sx={{ display: 'flex', alignItems: 'flex-end', }}>
