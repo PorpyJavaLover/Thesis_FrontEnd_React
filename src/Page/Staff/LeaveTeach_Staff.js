@@ -148,7 +148,7 @@ function SelectionBox(props) {
     localStorage.setItem('holderSemester', event.target.value);
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     props.setMemberSelected(localStorage.getItem('holderMember'));
     setMemberSelected(localStorage.getItem('holderMember'));
     props.setYearSelected(localStorage.getItem('holderYear'));

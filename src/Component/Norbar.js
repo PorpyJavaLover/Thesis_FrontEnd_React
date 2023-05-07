@@ -25,14 +25,16 @@ const pagesTeacher = [
     { key: 3, name: 'การจัดการรายวิชา', path: '/Teacher/Timetable' },
     { key: 4, name: 'การจัดการวันงดสอน', path: '/Teacher/LeaveTeach' },
     { key: 5, name: 'การจัดการสอนแทน', path: '/Teacher/ReplaceTeach' },
+
 ];
 
 const pagesStaff = [
     { key: 1, name: 'การจัดการรายวิชาที่จะเปิดสอน', path: '/Staff/SelectSubject' },
     { key: 2, name: 'การจัดการวันเวลาที่ไม่ขอสอน', path: '/Staff/NotTeach' },
     { key: 3, name: 'การจัดการรายวิชา', path: '/Staff/Timetable' },
-    { key: 4, name: 'การจัดการวันงดสอน', path: '/Staff/LeaveStaff' },
-    { key: 5, name: 'การจัดการสอนแทน', path: '/Staff/ReplaceStaff' },
+    { key: 4, name: 'การแสดงตารางสอน', path: '/Staff/ShowTimeTable' },
+    { key: 5, name: 'การจัดการวันงดสอน', path: '/Staff/LeaveTeach' },
+    { key: 6, name: 'การจัดการสอนแทน', path: '/Staff/ReplaceTeach' },
 ];
 
 export default function Norbar() {
@@ -391,6 +393,9 @@ function UserMenuTeacher() {
         localStorage.removeItem("roleTmp");
         localStorage.removeItem("expTmp");
         localStorage.removeItem("tokenTmp");
+        localStorage.removeItem("holderMember");
+        localStorage.removeItem("holderYear");
+        localStorage.removeItem("holderSemester");
         window.location.href = '/SignIn';
     };
 
@@ -459,6 +464,9 @@ function UserMenuStaff() {
         localStorage.removeItem("roleTmp");
         localStorage.removeItem("expTmp");
         localStorage.removeItem("tokenTmp");
+        localStorage.removeItem("holderMember");
+        localStorage.removeItem("holderYear");
+        localStorage.removeItem("holderSemester");
         window.location.href = '/SignIn';
     };
 
@@ -495,7 +503,7 @@ function UserMenuStaff() {
                 </ListItem>
                 <ListItem key={2} disablePadding>
                     <ListItemButton>
-                        <Link style={{ textDecoration: "none", }} to={'/Staff/MenagementMemberStaff'} >
+                        <Link style={{ textDecoration: "none", }} to={'/Staff/MenagementMember'} >
                             <ListItemText primary={"การจัดการสมาชิก"} sx={{ color: "#4D4D4D" }} />
                         </Link>
                     </ListItemButton>
@@ -535,6 +543,9 @@ function UserMenuAdmin() {
         localStorage.removeItem("roleTmp");
         localStorage.removeItem("expTmp");
         localStorage.removeItem("tokenTmp");
+        localStorage.removeItem("holderMember");
+        localStorage.removeItem("holderYear");
+        localStorage.removeItem("holderSemester");
         window.location.href = '/SignIn';
     };
 
@@ -615,7 +626,7 @@ function UserMenuAdmin() {
                 </ListItem>
                 <ListItem key={2} disablePadding>
                     <ListItemButton>
-                        <Link style={{ textDecoration: "none", }} to={'/Admin/MenagementMemberStaff'} >
+                        <Link style={{ textDecoration: "none", }} to={'/Admin/MenagementMember'} >
                             <ListItemText primary={"การจัดการสมาชิก"} sx={{ color: "#4D4D4D" }} />
                         </Link>
                     </ListItemButton>

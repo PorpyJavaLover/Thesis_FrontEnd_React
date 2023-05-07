@@ -22,6 +22,39 @@ import TodayIcon from '@mui/icons-material/Today';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 
+import styled from "styled-components";
+
+const Styles = styled.div`
+  padding: 1rem;
+
+  table {
+
+    border-spacing: 0;
+    border: 1px solid black;
+
+    tr {
+        lineHeight: 20px;
+        :last-child {
+            td {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    th {
+        margin: 0;
+        padding: 0.5rem;
+        border: 1px solid black;
+    }
+
+    td {
+        margin: 0;
+        padding: 0.5rem;
+        border: 1px solid black;
+    }
+  }
+`;
+
 export default class TimetableTeacher extends Component {
 
   constructor(props) {
@@ -29,18 +62,23 @@ export default class TimetableTeacher extends Component {
     this.updateState.bind(this);
     this.setYearSelected = this.setYearSelected.bind(this);
     this.setSemesterSelected = this.setSemesterSelected.bind(this);
+    this.setTest = this.setTest.bind(this);
+    this.setTestB = this.setTestB.bind(this);
     this.setDisable = this.setDisable.bind(this);
     this.state = {
       dataTimetable: [],
       yearSelected: null,
       semesterSelected: null,
-      disableState: true
+      disableState: true,
+      test: false
     }
   }
 
   updateState = () => {
     TimetableAPIServiceTeacher.getTimetable(this.state.yearSelected, this.state.semesterSelected).then((res) => {
       this.setState({ dataTimetable: res.data });
+      this.setState({ yearSelected: this.state.yearSelected, })
+      this.setState({ semesterSelected: this.state.semesterSelected, })
       console.log("LookOutB", Date.now(), "Wow");
     })
   }
@@ -64,15 +102,36 @@ export default class TimetableTeacher extends Component {
     })
   }
 
+  setTest = () => {
+    this.setState({
+      test: true
+    })
+  }
+
+  setTestB = () => {
+    this.setState({
+      test: false
+    })
+  }
+
+
   render() {
     return (
       <div >
+
         <HeaderBox title={"การจัดการรายวิชา"} />
+
         <SelectYearsAndSemesterBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)}
           setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
-        <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState}
+
+        <ShoweTable title={"แสดงตารางสอน"} test ={this.state.test} setTestB={this.setTestB.bind(this)}
+          updateState={this.updateState.bind(this)} disableState={this.state.disableState}  
+          yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
+
+        <ManagementBox title={"เมนูจัดการรายการ"} disableState={this.state.disableState} setTest={this.setTest.bind(this)}
           yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected}
           updateState={this.updateState} dataTimetable={this.state.dataTimetable} />
+
       </div>
     )
   }
@@ -119,7 +178,9 @@ function SelectYearsAndSemesterBox(props) {
   };
 
   useEffect(() => {
+    props.setYearSelected(localStorage.getItem('holderYear'));
     setYearsSelected(localStorage.getItem('holderYear'));
+    props.setSemesterSelected(localStorage.getItem('holderSemester'));
     setSemesterSelected(localStorage.getItem('holderSemester'));
   }, [])
 
@@ -143,6 +204,179 @@ function SelectYearsAndSemesterBox(props) {
         </Grid>
       </Card>
     </Container >
+  )
+}
+
+function ShoweTable(props) {
+
+  const [monday, setMonday] = useState([]);
+  const [tuesday, setTuesday] = useState([]);
+  const [wednesday, setWednesday] = useState([]);
+  const [thursday, setThursday] = useState([]);
+  const [friday, setFriday] = useState([]);
+  const [saturday, setSaturday] = useState([]);
+  const [sunday, setSunday] = useState([]);
+
+  useEffect(() => {
+      getTable();
+  }, [props.yearSelected, props.semesterSelected ,  props.test === true ])
+
+  const getTable = () => {
+    if (props.yearSelected !== null && props.semesterSelected !== null) {
+      TimetableAPIServiceTeacher.getTable(props.yearSelected, props.semesterSelected, 1).then((res) => {
+        setMonday(res.data);
+      });
+      TimetableAPIServiceTeacher.getTable(props.yearSelected, props.semesterSelected, 2).then((res) => {
+        setTuesday(res.data);
+      });
+      TimetableAPIServiceTeacher.getTable(props.yearSelected, props.semesterSelected, 3).then((res) => {
+        setWednesday(res.data);
+      });
+      TimetableAPIServiceTeacher.getTable(props.yearSelected, props.semesterSelected, 4).then((res) => {
+        setThursday(res.data);
+      });
+      TimetableAPIServiceTeacher.getTable(props.yearSelected, props.semesterSelected, 5).then((res) => {
+        setFriday(res.data);
+      });
+      TimetableAPIServiceTeacher.getTable(props.yearSelected, props.semesterSelected, 6).then((res) => {
+        setSaturday(res.data);
+      });
+      TimetableAPIServiceTeacher.getTable(props.yearSelected, props.semesterSelected, 7).then((res) => {
+        setSunday(res.data);
+      });
+    }
+    props.setTestB();
+  }
+
+
+  const CreateTable = (item) => {
+
+    if (item.activeStatus === 1) {
+      return <td key={item.index} colSpan={item.timeLect + item.timePerf} >
+        <div> [{item.course_code}]</div>
+        <div> [{item.course_title}]</div>
+        <div>[{item.group_name}]</div>
+        <div>[{item.room_name}]</div>
+        <div>[{item.member_name}]</div>
+        <div>[{item.courseLect === 0 ? null : `ท.(${item.courseLect})`}&nbsp;{item.coursePerf === 0 ? null : `ป.(${item.coursePerf})`}]</div>
+      </td>
+    } else if (item.activeStatus === 3) {
+      return <td key={item.index} colSpan={item.timeLect + item.timePerf} >
+      </td>;
+    }
+
+    return null;
+
+  };
+
+  return (
+
+    <Container maxWidth='false' sx={{ pt: 2, pb: 2, display: props.disableState ? 'none' : 'block' }} >
+      <Card sx={{ boxShadow: 5, }}>
+        <CardHeader title={props.title} titleTypographyProps={{ fontWeight: 'bold', variant: 'h5' }} sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText', p: 1, }} />
+        <Grid container spacing={2} sx={{ pt: 2, pb: 3, pl: 3, pr: 3 }} >
+          <Grid item sm={12} xs={12}>
+            <Styles>
+              <Table >
+                <thead >
+                  <tr >
+                    <th key={1} rowSpan="2" ></th>
+                    <th key={2} >&nbsp;1&nbsp;</th>
+                    <th key={3} >&nbsp;2&nbsp;</th>
+                    <th key={4} >&nbsp;3&nbsp;</th>
+                    <th key={5} >&nbsp;4&nbsp;</th>
+                    <th key={6} >&nbsp;5&nbsp;</th>
+                    <th key={7} >&nbsp;6&nbsp;</th>
+                    <th key={8} >&nbsp;7&nbsp;</th>
+                    <th key={9} >&nbsp;8&nbsp;</th>
+                    <th key={10} >&nbsp;9&nbsp;</th>
+                    <th key={11} >&nbsp;10&nbsp;</th>
+                    <th key={12} >&nbsp;11&nbsp;</th>
+                    <th key={13} >&nbsp;12&nbsp;</th>
+                    <th key={14} >&nbsp;13&nbsp;</th>
+                    <th key={15} >&nbsp;14&nbsp;</th>
+                  </tr>
+                  <tr>
+                    <th align="center">
+                      <span>08:00 - 09:00</span>
+                    </th>
+                    <th align="center">
+                      <span>09:00 - 10:00</span>
+                    </th>
+                    <th align="center">
+                      <span>10:00 - 11:00</span>
+                    </th>
+                    <th align="center">
+                      <span>11:00 - 12:00</span>
+                    </th>
+                    <th align="center">
+                      <span>12:00 - 13:00</span>
+                    </th>
+                    <th align="center">
+                      <span>13:00 - 14:00</span>
+                    </th>
+                    <th align="center">
+                      <span>14:00 - 15:00</span>
+                    </th>
+                    <th align="center">
+                      <span>15:00 - 16:00</span>
+                    </th>
+                    <th align="center">
+                      <span>16:00 - 17:00</span>
+                    </th>
+                    <th align="center">
+                      <span>17:00 - 18:00</span>
+                    </th>
+                    <th align="center">
+                      <span>18:00 - 19:00</span>
+                    </th>
+                    <th align="center">
+                      <span>19:00 - 20:00</span>
+                    </th>
+                    <th align="center">
+                      <span>20:00 - 21:00</span>
+                    </th>
+                    <th align="center">
+                      <span>21:00 - 22:00</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td key={16} >&nbsp;จันทร์&nbsp;</td>
+                    {monday.map((item) => (CreateTable(item)))}
+                  </tr>
+                  <tr>
+                    <td key={17} >&nbsp;อังคาร&nbsp;</td>
+                    {tuesday.map((item) => (CreateTable(item)))}
+                  </tr>
+                  <tr>
+                    <td key={18} >&nbsp;พุธ&nbsp;</td>
+                    {wednesday.map((item) => (CreateTable(item)))}
+                  </tr>
+                  <tr>
+                    <td key={19} >&nbsp;พฤหัสบดี&nbsp;</td>
+                    {thursday.map((item) => (CreateTable(item)))}
+                  </tr>
+                  <tr>
+                    <td key={20} >&nbsp;ศุกร์&nbsp;</td>
+                    {friday.map((item) => (CreateTable(item)))}
+                  </tr>
+                  <tr>
+                    <td key={21} >&nbsp;เสาร์&nbsp;</td>
+                    {saturday.map((item) => (CreateTable(item)))}
+                  </tr>
+                  <tr>
+                    <td key={22} >&nbsp;อาทิตย์&nbsp;</td>
+                    {sunday.map((item) => (CreateTable(item)))}
+                  </tr>
+                </tbody>
+              </Table>
+            </Styles>
+          </Grid>
+        </Grid>
+      </Card>
+    </Container>
   )
 }
 
@@ -285,6 +519,7 @@ function ManagementBox(props) {
       setTimeStartOptions([]);
       setTimeEndOptions([]);
       setRoomOptions([])
+      props.setTest();
       props.updateState();
     });
   }

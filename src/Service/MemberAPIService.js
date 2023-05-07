@@ -36,6 +36,7 @@ export default new class MemberAPIService extends BaseAPIService {
     }
 
     getAllOrganiz(parent) {
+        console.log(parent);
         return axios.get(this.url + '/organization/public/show/option/organiz' + '/' + parent);
     }
 
@@ -46,6 +47,10 @@ export default new class MemberAPIService extends BaseAPIService {
 }
 
 export const MemberAPIServiceTeacher = new class MemberAPIServiceTeacher extends BaseAPIService {
+
+    getMemberOrganiz() {
+        return axios.get(this.url + '/organization/teacher/show/member/organiz', { headers: this.headers });
+    }
 
 }
 
@@ -81,6 +86,11 @@ export const MemberAPIServiceStaff = new class MemberAPIServiceStaff extends Bas
     delete(memberId) {
         return axios.delete(this.url + '/member/staff/delete' + '/' + memberId, { headers: this.headers });
     }
+
+    getMemberOrganiz(memberId) {
+        return axios.get(this.url + '/organization/staff/show/member/organiz' + '/' + memberId, { headers: this.headers });
+    }
+
 }
 
 export const MemberAPIServiceAdmin = new class MemberAPIServiceStaff extends BaseAPIService {

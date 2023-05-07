@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from "./Page/Home";
 import SelectSubjectTeacher from "./Page/Teacher/SelectSubject_Teacher";
 import TimetableTeacher from "./Page/Teacher/Timetable_Teacher";
+import ShowTimeTableStaff from "./Page/Staff/ShowTimeTable_Staff";
 import TimetableStaff from "./Page/Staff/Timetable_Staff";
 import SelectSubjectStaff from "./Page/Staff/SelectSubject_Staff";
 import SelectNotTeachTeacher from "./Page/Teacher/NotTeach_Teacher";
@@ -39,14 +40,15 @@ export default function App() {
           <Route element={<StaffRoutes />}>
             <Route path="/Staff/SelectSubject" element={<SelectSubjectStaff />} />
             <Route path="/Staff/Timetable" element={<TimetableStaff />} />
+            <Route path="/Staff/ShowTimeTable" element={<ShowTimeTableStaff />} />
             <Route path="/Staff/NotTeach" element={<SelectNotTeachStaff />} />
-            <Route path="/Staff/LeaveStaff" element={<LeaveTeachStaff />} />
-            <Route path="/Staff/ReplaceStaff" element={<ReplaceTeachStaff />} />
-            <Route path="/Staff/MenagementMemberStaff" element={<MenagementMemberStaff />} />
+            <Route path="/Staff/LeaveTeach" element={<LeaveTeachStaff />} />
+            <Route path="/Staff/ReplaceTeach" element={<ReplaceTeachStaff />} />
+            <Route path="/Staff/MenagementMember" element={<MenagementMemberStaff />} />
           </Route>
           <Route element={<AdminRoutes />}>
-            <Route path="/Admin/MenagementMemberStaff" element={<MenagementMemberAdmin />} />
-            <Route path="/Admin/RolePlayAdmin" element={<RolePlayAdmin />} />
+            <Route path="/Admin/MenagementMember" element={<MenagementMemberAdmin />} />
+            <Route path="/Admin/RolePlay" element={<RolePlayAdmin />} />
           </Route>
           <Route path="/" element={<Home />} />
           <Route path="/Home" element={<Home />} />

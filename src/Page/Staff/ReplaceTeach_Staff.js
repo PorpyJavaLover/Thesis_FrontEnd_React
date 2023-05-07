@@ -1,14 +1,8 @@
 import React, { Component, useState, useEffect, useRef } from 'react'
-import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
+import { CardHeader, Typography, Card, Container,  Button, Grid, Box } from '@mui/material';
 import { ReplaceTeachAPIServiceTeacher, ReplaceTeachAPIServiceStaff } from '../../Service/ReplaceTeachAPIService';
-import MemberAPIService, { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
-import SendIcon from '@mui/icons-material/Send';
-import { format } from 'date-fns';
-import CardDatePicker from '../../Component/CardDatePicker';
+import MemberAPIService, { MemberAPIServiceTeacher, MemberAPIServiceStaff } from '../../Service/MemberAPIService';
 import CardSelect from '../../Component/CardSelect'
-import CardTextField from '../../Component/CardTextField'
-import FullFeaturedCrudGrid from '../../Component/CardDataGrid';
-import Moment from 'react-moment';
 import SearchIcon from '@mui/icons-material/Search';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -20,12 +14,10 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TextField from '@mui/material/TextField';
 import PropTypes from 'prop-types';
 import { visuallyHidden } from '@mui/utils';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import Stack from '@mui/material/Stack';
 import { useReactToPrint } from "react-to-print";
 import { ComponentToPrint } from "../../Component/PDFTeach_Teacher";
-import { savePDF } from "@progress/kendo-react-pdf";
 
 export default class ReplaceTeach extends Component {
 
@@ -215,6 +207,19 @@ function MenagementBox(props) {
   }, [OrganizSelected]);
 
   useEffect(() => {
+    if (props.memberSelected !== null) {
+      MemberAPIServiceStaff.getMemberOrganiz(props.memberSelected).then((res) => {
+        setFacultySelected(res.data.faculty);
+        MemberAPIService.getAllOrganiz(res.data.faculty).then((resB) => {
+          setOrganizOption(resB.data);
+          setOrganizSelected(res.data.organiz);
+        })
+      })
+      setOrganizOptionStatus(false);
+    }
+  }, [props.memberSelected]);
+
+  useEffect(() => {
     setFacultyOption(props.faculty);
   }, [props.faculty]);
 
@@ -224,6 +229,7 @@ function MenagementBox(props) {
       setOrganizOption(res.data);
     })
     setOrganizOptionStatus(false);
+    setOrganizSelected(null);
   };
 
   const handleChangOrganizSelected = (event) => {

@@ -129,7 +129,9 @@ function SelectionBox(props) {
   };
 
   useEffect(() => {
+    props.setYearSelected(localStorage.getItem('holderYear'));
     setYearsSelected(localStorage.getItem('holderYear'));
+    props.setSemesterSelected(localStorage.getItem('holderSemester'));
     setSemesterSelected(localStorage.getItem('holderSemester'));
   }, [])
 
@@ -159,19 +161,6 @@ function SelectionBox(props) {
 function CreationBox(props) {
 
   const currentYear = new Date().getFullYear();
-
-  const yearOptions = [
-    { key: '1', value: currentYear, text: currentYear + 543 },
-    { key: '2', value: currentYear - 1, text: currentYear + 543 - 1 },
-    { key: '3', value: currentYear - 2, text: currentYear + 543 - 2 },
-    { key: '3', value: currentYear - 3, text: currentYear + 543 - 3 }
-  ];
-
-  const semester = [
-    { key: '1', value: '1', text: 'ภาคการศึกษาที่ 1' },
-    { key: '2', value: '2', text: 'ภาคการศึกษาที่ 2' },
-    { key: '3', value: '3', text: 'ภาคการศึกษาฤดูร้อน' }
-  ]
 
   //state
   const [confirmButtonState, setConfirmButtonState] = useState(true);
@@ -261,7 +250,7 @@ function CreationBox(props) {
               <Button color="error" onClick={handleCancel} variant="contained" >ยกเลิก</Button>
             </Box>
             <Box component="span" sx={{ pr: 2 }} >
-              <Button color="success" disabled={confirmButtonState} endIcon={<SendIcon />} onClick={handleSubmit} variant="contained"  >บันทึก</Button>
+              <Button color="success" endIcon={<SendIcon />} onClick={handleSubmit} variant="contained"  >บันทึก</Button>
             </Box>
           </Grid>
         </Grid>

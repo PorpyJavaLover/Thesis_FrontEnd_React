@@ -113,7 +113,9 @@ function SelectTeacherBox(props) {
     };
 
     useEffect(() => {
+        props.setYearSelected(localStorage.getItem('holderYear'));
         setYearsSelected(localStorage.getItem('holderYear'));
+        props.setSemesterSelected(localStorage.getItem('holderSemester'));
         setSemesterSelected(localStorage.getItem('holderSemester'));
     }, [])
 

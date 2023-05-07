@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect, useRef } from 'react'
 import { CardHeader, Box, Card, Button, Grid, Container, Typography } from '@mui/material';
 import { ReplaceTeachAPIServiceTeacher, ReplaceTeachAPIServiceStaff } from '../../Service/ReplaceTeachAPIService';
-import MemberAPIService from '../../Service/MemberAPIService';
+import MemberAPIService, { MemberAPIServiceTeacher, MemberAPIServiceStaff } from '../../Service/MemberAPIService';
 import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 import CardDatePicker from '../../Component/CardDatePicker';
@@ -122,7 +122,9 @@ function SelectionBox(props) {
   };
 
   useEffect(() => {
+    props.setYearSelected(localStorage.getItem('holderYear'));
     setYearsSelected(localStorage.getItem('holderYear'));
+    props.setSemesterSelected(localStorage.getItem('holderSemester'));
     setSemesterSelected(localStorage.getItem('holderSemester'));
   }, [])
 
@@ -175,6 +177,19 @@ function MenagementBox(props) {
   }, [OrganizSelected]);
 
   useEffect(() => {
+
+    MemberAPIServiceTeacher.getMemberOrganiz().then((res) => {
+      setFacultySelected(res.data.faculty);
+      MemberAPIService.getAllOrganiz(res.data.faculty).then((resB) => {
+        setOrganizOption(resB.data);
+        setOrganizSelected(res.data.organiz);
+      })
+    })
+    setOrganizOptionStatus(false);
+
+  }, []);
+
+  useEffect(() => {
     setFacultyOption(props.faculty);
   }, [props.faculty]);
 
@@ -184,6 +199,7 @@ function MenagementBox(props) {
       setOrganizOption(res.data);
     })
     setOrganizOptionStatus(false);
+    setOrganizSelected(null)
   };
 
   const handleChangOrganizSelected = (event) => {

@@ -26,19 +26,20 @@ function UserSignIn(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         MemberAPIService.login(username, password).then(response => {
-            localStorage.setItem('token', JSON.stringify(response.data.token));
-            localStorage.setItem('member_id', jwt_decode(JSON.parse(localStorage.getItem('token'))).principal);
-            localStorage.setItem('role', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
-            localStorage.setItem('exp', jwt_decode(JSON.parse(localStorage.getItem('token'))).exp);
-            localStorage.setItem('name', jwt_decode(JSON.parse(localStorage.getItem('token'))).name);
-            window.location.href = '/home';
+            if (event !== null) {
+                localStorage.setItem('token', JSON.stringify(response.data.token));
+                localStorage.setItem('member_id', jwt_decode(JSON.parse(localStorage.getItem('token'))).principal);
+                localStorage.setItem('role', jwt_decode(JSON.parse(localStorage.getItem('token'))).role);
+                localStorage.setItem('exp', jwt_decode(JSON.parse(localStorage.getItem('token'))).exp);
+                localStorage.setItem('name', jwt_decode(JSON.parse(localStorage.getItem('token'))).name);
+                window.location.href = '/home';
+            }
         }).catch((err) => {
-            console.log(err.response.data.error);
-            if (err.response.data.error === "Member.login.member.NotActive") {
+            if (err?.response?.data.error === "Member.login.member.NotActive") {
                 setErrerUsernameSame(true);
                 setErrerText("**บัญชีสมาชิกนี้ไม่ได้ถูกเปิดใช้งาน**");
             }
-            else if(err.response.data.error === "Member.login.usernameAndPassword.Wrong"){
+            else if (err?.response?.data.error === "Member.login.usernameAndPassword.Wrong") {
                 setErrerUsernameSame(true);
                 setErrerText("**ชื่อบัญชีสมาชิกหรือรหัสผ่านไม่ถูกต้อง**");
             }
@@ -50,7 +51,7 @@ function UserSignIn(props) {
     useEffect(() => {
         setErrerUsernameSame(false);
         setErrerText(null);
-    }, [username,password]);
+    }, [username, password]);
 
 
     return (
