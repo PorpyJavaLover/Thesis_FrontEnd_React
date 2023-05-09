@@ -37,7 +37,7 @@ function UserSignIn(props) {
         }).catch((err) => {
             if (err?.response?.data.error === "Member.login.member.NotActive") {
                 setErrerUsernameSame(true);
-                setErrerText("**บัญชีสมาชิกนี้ไม่ได้ถูกเปิดใช้งาน**");
+                setErrerText("**บัญชีสมาชิกนี้รอการอนุมัติ**");
             }
             else if (err?.response?.data.error === "Member.login.usernameAndPassword.Wrong") {
                 setErrerUsernameSame(true);
