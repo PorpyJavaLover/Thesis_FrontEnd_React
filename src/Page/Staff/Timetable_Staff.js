@@ -153,7 +153,7 @@ function SelectYearsAndSemesterBox(props) {
           </Grid>
         </Grid>
       </Card>
-    </Container >
+    </Container>
   )
 }
 
@@ -179,70 +179,82 @@ function ManagementBox(props) {
   const [dayOfWeekSelected, setDayOfWeekSelected] = useState(null);
   const [timeStartSelected, setTimeStartSelected] = useState(null);
   const [timeEndSelected, setTimeEndSelected] = useState(null);
+  const [timeStartWarning, setTimeStartWarning] = useState(true);
+  const [timeEndWarning, setTimeEndWarning] = useState(true);
   const [roomSelected, setRoomSelected] = useState(null);
   const [buttonState, setButtonState] = useState(true);
   //function
 
   useEffect(() => {
     handleConfirmTiggle();
-  }, [dayOfWeekSelected, timeStartSelected, timeEndSelected]);
+  }, [dayOfWeekSelected, timeStartSelected, timeEndSelected, timeStartWarning, timeEndWarning]);
 
   const handleChangeDayOfWeek = (data) => (event) => {
     console.log("LookOutA", Date.now(), "Wow");
     setDayOfWeekSelected(event.target.value);
     TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeStartOptions(res.data);
-      console.log("LookOutB", Date.now(), "Wow");
     })
     TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, null).then((res) => {
       setTimeEndOptions(res.data);
-
     })
     if (timeStartSelected !== null && timeEndSelected != null) {
       TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, event.target.value, timeStartSelected, timeEndSelected).then((res) => {
         setRoomOptions(res.data);
-
       })
     }
   };
 
-  const handleChangeTimeStart = (data) => (event) => {
+  const handleChangeTimeStart = (data) => (event, event2, event3) => {
     setTimeStartSelected(event.target.value);
-    console.log("LookOutA", Date.now(), "Wow");
-    TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
-      setTimeEndSelected(resA.data.value);
-      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value, resA.data.value).then((resB) => {
-        setRoomOptions(resB.data);
-        console.log("LookOutB", Date.now(), "Wow");
-      })
-    })
+    const foundA = timeStartOptions.find(obj => {
+      return obj.value === event.target.value;
+    });
+    setTimeStartWarning(foundA.warning);
     TimetableAPIServiceStaff.getEndTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
       setTimeEndOptions(resA.data);
-    })
+      TimetableAPIServiceStaff.getEndTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resB) => {
+        setTimeEndSelected(resB.data.value);
+        const foundB = timeEndOptions.find(obj => {
+          return obj.value === resB.data.value;
+        });
+        setTimeEndWarning(foundB.warning);
+        TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value, resB.data.value).then((resC) => {
+          setRoomOptions(resC.data);
+        });
+      });
+    });
   };
 
   const handleChangeTimeEnd = (data) => (event) => {
     setTimeEndSelected(event.target.value);
-    TimetableAPIServiceStaff.getStartTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
-      setTimeStartSelected(resA.data.value);
-      TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, resA.data.value, event.target.value).then((resB) => {
-        setRoomOptions(resB.data);
-      })
-    })
+    const foundA = timeEndOptions.find(obj => {
+      return obj.value === event.target.value;
+    });
+    setTimeEndWarning(foundA.warning);
     TimetableAPIServiceStaff.getStartTimeOption(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resA) => {
       setTimeStartOptions(resA.data);
+      TimetableAPIServiceStaff.getStartTime(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, event.target.value).then((resB) => {
+        setTimeStartSelected(resB.data.value);
+        const foundB = timeStartOptions.find(obj => {
+          return obj.value === resB.data.value;
+        });
+        setTimeStartWarning(foundB.warning);
+        TimetableAPIServiceStaff.getRoom(data.years, data.semester, data.course_id, data.course_type, data.group_id, dayOfWeekSelected, resB.data.value, event.target.value).then((resC) => {
+          setRoomOptions(resC.data);
+        })
+      })
     })
-
   };
 
   const handleChangeRoom = (data) => (event) => {
     setRoomSelected(event.target.value);
-
   };
 
   const handleConfirmTiggle = () => {
-    if (dayOfWeekSelected !== null && timeStartSelected !== null && timeEndSelected !== null) {
-      if (dayOfWeekSelected === '' || timeStartSelected === '' || timeEndSelected === '') {
+    if ((dayOfWeekSelected !== null && timeStartSelected !== null && timeEndSelected !== null)) {
+      if ((dayOfWeekSelected === '' || timeStartSelected === '' || timeEndSelected === '')
+        || (timeStartWarning === false || timeEndWarning === false)) {
         setButtonState(true)
       } else {
         setButtonState(false)
@@ -285,9 +297,17 @@ function ManagementBox(props) {
     if (dataInside.day_of_week != "null") {
       TimetableAPIServiceStaff.getEndTimeOption(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
         setTimeEndOptions(res.data);
+        const foundB = res.data.find(obj => {
+          return obj.value === dataInside.end_time;
+        });
+        setTimeEndWarning(foundB.warning);
       })
       TimetableAPIServiceStaff.getStartTimeOption(dataInside.years, dataInside.semester, dataInside.course_id, dataInside.course_type, dataInside.group_id, dataInside.day_of_week, null).then((res) => {
         setTimeStartOptions(res.data);
+        const foundB = res.data.find(obj => {
+          return obj.value === dataInside.start_time;
+        });
+        setTimeEndWarning(foundB.warning);
       })
     } else {
       setTimeEndOptions([]);

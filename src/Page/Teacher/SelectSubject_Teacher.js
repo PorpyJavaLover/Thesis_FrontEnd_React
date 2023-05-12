@@ -9,6 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { PlanAPIServiceTeacher, PlanAPIServiceStaff } from '../../Service/PlanAPIService'
 import { TimetableAPIServiceTeacher } from '../../Service/TimetableAPIService'
+import { MemberAPIServiceStaff } from '../../Service/MemberAPIService';
 import PropTypes from 'prop-types';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TextField from '@mui/material/TextField';
@@ -24,17 +25,28 @@ export default class SelectSubjectTeacher extends Component {
         super(props);
         this.updatePlanState = this.updatePlanState.bind(this);
         this.getPlanState = this.getPlanState.bind(this);
+        this.setGroupSelected = this.setGroupSelected.bind(this);
         this.state = {
             plans: [],
             timetables: [],
             yearSelected: null,
             semesterSelected: null,
+            group: [],
+            groupSelected: null,
             disableState: true
         }
     }
 
     componentDidMount() {
+        MemberAPIServiceStaff.getGroupOption().then((res) => { //<--
+            this.setState({ group: res.data });  //<--
+        });
+    }
 
+    setGroupSelected = (item) => {
+        this.setState({
+            groupSelected: item,
+        })
     }
 
     updatePlanState = () => {
@@ -62,7 +74,7 @@ export default class SelectSubjectTeacher extends Component {
     }
 
     getPlanState = () => {
-        PlanAPIServiceStaff.getPlan(this.state.yearSelected, this.state.semesterSelected).then((resPlan) => {
+        PlanAPIServiceStaff.getPlan(this.state.yearSelected, this.state.semesterSelected, this.state.groupSelected).then((resPlan) => {
             this.setState({ plans: resPlan.data });
             TimetableAPIServiceTeacher.getTimetableForPlan().then((resTimetable) => {
                 this.setState({ timetables: resTimetable.data })
@@ -98,7 +110,9 @@ export default class SelectSubjectTeacher extends Component {
         return (
             <div>
                 <HeaderBox title={"การจัดการรายวิชาที่จะเปิดสอน"} />
-                <SelectionBox title={"เมนูตัวเลือกรายการ"} setYearSelected={this.setYearSelected.bind(this)} getPlanState={this.getPlanState.bind(this)}
+                <SelectionBox title={"เมนูตัวเลือกรายการ"}
+                    setGroupSelected={this.setGroupSelected.bind(this)} group={this.state.group}
+                    setYearSelected={this.setYearSelected.bind(this)} getPlanState={this.getPlanState.bind(this)}
                     setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
                 <MenagementBox title={"เมนูจัดการรายการ"} updatePlanState={this.updatePlanState.bind(this)}
                     disableState={this.state.disableState} plans={this.state.plans} timetables={this.state.timetables} />
@@ -135,6 +149,14 @@ function SelectionBox(props) {
 
     const [yearsSelected, setYearsSelected] = useState(null);
     const [semesterSelected, setSemesterSelected] = useState(null);
+    const [group, setGroup] = useState(props.group);
+    const [groupSelected, setGroupSelected] = useState(null);
+
+    const handleChangeGroup = (event) => {
+        props.setGroupSelected(event.target.value);
+        setGroupSelected(event.target.value);
+        localStorage.setItem('holderGroup', event.target.value);
+    };
 
     const handleChangeYear = (event) => {
         props.setYearSelected(event.target.value);
@@ -153,13 +175,21 @@ function SelectionBox(props) {
         setYearsSelected(localStorage.getItem('holderYear'));
         props.setSemesterSelected(localStorage.getItem('holderSemester'));
         setSemesterSelected(localStorage.getItem('holderSemester'));
+        props.setGroupSelected(localStorage.getItem('holderGroup'));
+        setGroupSelected(localStorage.getItem('holderGroup'));
     }, [])
 
     useEffect(() => {
-        if (yearsSelected != null && semesterSelected != null) {
+        if (yearsSelected != null && semesterSelected != null
+            && groupSelected != null) {
             props.setDisable();
         }
-    }, [yearsSelected, semesterSelected])
+    }, [yearsSelected, semesterSelected, groupSelected])
+
+    useEffect(() => {
+        setGroup(props.group);
+    }, [props.group])
+
 
     return (
         <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
@@ -171,6 +201,9 @@ function SelectionBox(props) {
                     </Grid>
                     <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
+                    </Grid>
+                    <Grid item sm={12} xs={12}>
+                        <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={group} onChangePara={handleChangeGroup} valuePara={groupSelected} />
                     </Grid>
                 </Grid>
             </Card>

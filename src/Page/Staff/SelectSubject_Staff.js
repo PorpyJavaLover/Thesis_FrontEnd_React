@@ -26,9 +26,12 @@ export default class SelectSubjectStaff extends Component {
         this.updatePlanState = this.updatePlanState.bind(this);
         this.getPlanState = this.getPlanState.bind(this);
         this.setMemberSelected = this.setMemberSelected.bind(this);
+        this.setGroupSelected = this.setGroupSelected.bind(this);
         this.state = {
             plans: [],
             timetables: [],
+            group: [],
+            groupSelected: null,
             member: [],
             memberSelected: null,
             yearSelected: null,
@@ -41,11 +44,20 @@ export default class SelectSubjectStaff extends Component {
         MemberAPIServiceStaff.getMemberOption().then((res) => {
             this.setState({ member: res.data });
         });
+        MemberAPIServiceStaff.getGroupOption().then((res) => { 
+            this.setState({ group: res.data });
+        });
     }
 
     updatePlanState = () => {
         this.setState({ plans: this.state.plans });
         console.log("LookOutB", Date.now(), "Wow");
+    }
+
+    setGroupSelected = (item) => {
+        this.setState({
+            groupSelected: item,
+        })
     }
 
     setMemberSelected = (item) => {
@@ -74,7 +86,7 @@ export default class SelectSubjectStaff extends Component {
     }
 
     getPlanState = (memberId) => {
-        PlanAPIServiceStaff.getPlan(this.state.yearSelected, this.state.semesterSelected).then((resPlan) => {
+        PlanAPIServiceStaff.getPlan(this.state.yearSelected, this.state.semesterSelected, this.state.groupSelected).then((resPlan) => {
             this.setState({ plans: resPlan.data });
             TimetableAPIServiceStaff.getTimetableByMemberId(memberId).then((resTimetable) => {
                 this.setState({ timetables: resTimetable.data })
@@ -112,8 +124,10 @@ export default class SelectSubjectStaff extends Component {
         return (
             <div>
                 <HeaderBox title={"การจัดการรายวิชาที่จะเปิดสอน"} />
-                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
-                    getPlanState={this.getPlanState.bind(this)} member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
+                <SelectTeacherBox title={"เมนูตัวเลือกรายการ"}
+                    setGroupSelected={this.setGroupSelected.bind(this)} group={this.state.group}  //<--
+                    setMemberSelected={this.setMemberSelected.bind(this)} member={this.state.member}
+                    getPlanState={this.getPlanState.bind(this)}  setYearSelected={this.setYearSelected.bind(this)}
                     setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
                 <ManagementBox title={"เมนูจัดการรายการ"} updatePlanState={this.updatePlanState.bind(this)}
                     disableState={this.state.disableState} plans={this.state.plans} timetables={this.state.timetables}
@@ -150,8 +164,16 @@ function SelectTeacherBox(props) {
 
     const [yearsSelected, setYearsSelected] = useState(null);
     const [semesterSelected, setSemesterSelected] = useState(null);
+    const [group, setGroup] = useState(props.group);
+    const [groupSelected, setGroupSelected] = useState(null);
     const [member, setMember] = useState(props.member);
     const [memberSelected, setMemberSelected] = useState(null);
+
+    const handleChangeGroup = (event) => { 
+        props.setGroupSelected(event.target.value);
+        setGroupSelected(event.target.value);
+        localStorage.setItem('holderGroup', event.target.value);
+    };
 
     const handleChangeMember = (event) => {
         props.setMemberSelected(event.target.value);
@@ -172,23 +194,30 @@ function SelectTeacherBox(props) {
     };
 
     useEffect(() => {
-        props.setMemberSelected(localStorage.getItem('holderMember'));
-        setMemberSelected(localStorage.getItem('holderMember'));
         props.setYearSelected(localStorage.getItem('holderYear'));
         setYearsSelected(localStorage.getItem('holderYear'));
         props.setSemesterSelected(localStorage.getItem('holderSemester'));
         setSemesterSelected(localStorage.getItem('holderSemester'));
+        props.setGroupSelected(localStorage.getItem('holderGroup'));
+        setGroupSelected(localStorage.getItem('holderGroup'));
+        props.setMemberSelected(localStorage.getItem('holderMember'));
+        setMemberSelected(localStorage.getItem('holderMember'));
     }, [])
 
     useEffect(() => {
-        if (yearsSelected != null && semesterSelected != null && memberSelected != null) {
+        if (yearsSelected != null && semesterSelected != null 
+            && memberSelected != null && groupSelected != null) {
             props.setDisable();
         }
-    }, [yearsSelected, semesterSelected, memberSelected])
+    }, [yearsSelected, semesterSelected, memberSelected , groupSelected ])
 
     useEffect(() => {
         setMember(props.member);
     }, [props.member])
+
+    useEffect(() => {
+        setGroup(props.group);
+    }, [props.group])
 
     return (
         <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
@@ -201,7 +230,10 @@ function SelectTeacherBox(props) {
                     <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
                     </Grid>
-                    <Grid item sm={12} xs={12}>
+                    <Grid item sm={6} xs={6}>
+                        <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={group} onChangePara={handleChangeGroup} valuePara={groupSelected} />
+                    </Grid>
+                    <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={member} onChangePara={handleChangeMember} valuePara={memberSelected} />
                     </Grid>
                 </Grid>
@@ -255,11 +287,6 @@ function ManagementBox(props) {
     //sort and search
 
     const headCells = [
-        {
-            id: 'group_name',
-            numeric: true,
-            label: 'กลุ่มเรียน',
-        },
         {
             id: 'course_code',
             numeric: true,
@@ -413,7 +440,6 @@ function ManagementBox(props) {
                                             const labelId = index;
                                             return (
                                                 <TableRow key={row.years_name + row.semester + row.course_id + row.group_id} >
-                                                    <TableCell align="left">{row.group_name}</TableCell>
                                                     <TableCell align="left">{row.course_code}</TableCell>
                                                     <TableCell align="left">{row.course_title}</TableCell>
                                                     <TableCell align="left">{row.course_title_en}</TableCell>

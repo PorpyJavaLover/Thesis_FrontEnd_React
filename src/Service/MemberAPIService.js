@@ -91,6 +91,10 @@ export const MemberAPIServiceStaff = new class MemberAPIServiceStaff extends Bas
         return axios.get(this.url + '/organization/staff/show/member/organiz' + '/' + memberId, { headers: this.headers });
     }
 
+    getGroupOption(){
+        return axios.get(this.url + '/group/staff/show/option', { headers: this.headers });
+    }
+
 }
 
 export const MemberAPIServiceAdmin = new class MemberAPIServiceStaff extends BaseAPIService {
