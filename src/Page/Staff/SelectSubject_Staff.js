@@ -125,7 +125,7 @@ export default class SelectSubjectStaff extends Component {
             <div>
                 <HeaderBox title={"การจัดการรายวิชาที่จะเปิดสอน"} />
                 <SelectTeacherBox title={"เมนูตัวเลือกรายการ"}
-                    setGroupSelected={this.setGroupSelected.bind(this)} group={this.state.group}  //<--
+                    setGroupSelected={this.setGroupSelected.bind(this)} group={this.state.group}
                     setMemberSelected={this.setMemberSelected.bind(this)} member={this.state.member}
                     getPlanState={this.getPlanState.bind(this)}  setYearSelected={this.setYearSelected.bind(this)}
                     setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
@@ -231,7 +231,7 @@ function SelectTeacherBox(props) {
                         <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
                     </Grid>
                     <Grid item sm={6} xs={6}>
-                        <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={group} onChangePara={handleChangeGroup} valuePara={groupSelected} />
+                        <CardSelect labelPara="เลือกกลุ่มเรียน" menuItemPara={group} onChangePara={handleChangeGroup} valuePara={groupSelected} />
                     </Grid>
                     <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={member} onChangePara={handleChangeMember} valuePara={memberSelected} />

@@ -20,7 +20,7 @@ export const TimetableAPIServiceTeacher = new class TimetableAPIServiceTeacher e
     }
 
     getTable(yId, sId, dayOfWeek) {
-        return axios.get(this.url + '/timetable/teacher/show/table' + '/' + yId + '/' + sId  + '/' + dayOfWeek , { headers: this.headers });
+        return axios.get(this.url + '/timetable/teacher/show/teacher/table' + '/' + yId + '/' + sId  + '/' + dayOfWeek , { headers: this.headers });
     }
 
     createTimetable(yId, sId, cId, cType, gId) {
@@ -74,10 +74,15 @@ export const TimetableAPIServiceStaff = new class TimetableAPIServiceStaff exten
         return axios.get(this.url + '/timetable/staff/auto_pilot' + '/' + yId + '/' + sId, { headers: this.headers });
     }
 
-    getTable(yId, sId, memberId, dayOfWeek) {
+    getTableTeacher(yId, sId, memberId, dayOfWeek) {
         console.log(yId, sId, memberId, dayOfWeek);
-        return axios.get(this.url + '/timetable/staff/show/table' + '/' + yId + '/' + sId  + '/' + memberId + '/' + dayOfWeek , { headers: this.headers });
+        return axios.get(this.url + '/timetable/staff/show/table/teacher' + '/' + yId + '/' + sId  + '/' + memberId + '/' + dayOfWeek , { headers: this.headers });
     }
+
+    getTableStudent(yId, sId, gId, dayOfWeek) {
+        console.log(yId, sId, gId, dayOfWeek);
+        return axios.get(this.url + '/timetable/staff/show/table/student' + '/' + yId + '/' + sId  + '/' + gId + '/' + dayOfWeek , { headers: this.headers });
+    }    
 
     createTimetable(yId, sId, cId, cType, gId, mId) {
         const body = {

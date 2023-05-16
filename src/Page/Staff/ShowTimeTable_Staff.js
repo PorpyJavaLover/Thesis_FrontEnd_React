@@ -42,8 +42,11 @@ export default class ShowTimeTable_staff extends Component {
     constructor(props) {
         super(props);
         this.updateState = this.updateState.bind(this);
+        this.setGroupSelected = this.setGroupSelected.bind(this);
         this.setMemberSelected = this.setMemberSelected.bind(this);
         this.state = {
+            group: [],
+            groupSelected: null,
             member: [],
             memberSelected: null,
             yearSelected: null,
@@ -56,10 +59,19 @@ export default class ShowTimeTable_staff extends Component {
         MemberAPIServiceStaff.getMemberOption().then((res) => {
             this.setState({ member: res.data });
         });
+        MemberAPIServiceStaff.getGroupOption().then((res) => {
+            this.setState({ group: res.data });
+        });
     }
 
     updateState = () => {
 
+    }
+
+    setGroupSelected = (item) => {
+        this.setState({
+            groupSelected: item,
+        })
     }
 
     setMemberSelected = (item) => {
@@ -93,13 +105,16 @@ export default class ShowTimeTable_staff extends Component {
 
                 <HeaderBox title={"การแสดงตารางสอน"} />
 
-                <SelectionBox title={"เมนูตัวเลือกรายการ"} setMemberSelected={this.setMemberSelected.bind(this)}
-                    member={this.state.member} setYearSelected={this.setYearSelected.bind(this)}
-                    setSemesterSelected={this.setSemesterSelected.bind(this)} setDisable={this.setDisable.bind(this)} />
+                <SelectionBox title={"เมนูตัวเลือกรายการ"}
+                    setGroupSelected={this.setGroupSelected.bind(this)} group={this.state.group}
+                    setMemberSelected={this.setMemberSelected.bind(this)} member={this.state.member}
+                    setYearSelected={this.setYearSelected.bind(this)} setSemesterSelected={this.setSemesterSelected.bind(this)}
+                    setDisable={this.setDisable.bind(this)} />
 
-                <ShoweTable title={"แสดงตารางสอน"} updateState={this.updateState.bind(this)}
-                    disableState={this.state.disableState} memberSelected={this.state.memberSelected}
-                    yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected} />
+                <ShoweTable title={"แสดงตารางสอน"}
+                    groupSelected={this.state.groupSelected} memberSelected={this.state.memberSelected}
+                    yearSelected={this.state.yearSelected} semesterSelected={this.state.semesterSelected}
+                    updateState={this.updateState.bind(this)} disableState={this.state.disableState} />
 
             </div>
         )
@@ -133,10 +148,22 @@ function SelectionBox(props) {
 
     const [yearsSelected, setYearsSelected] = useState(null);
     const [semesterSelected, setSemesterSelected] = useState(null);
+    const [group, setGroup] = useState(props.group);
+    const [groupSelected, setGroupSelected] = useState(null);
     const [member, setMember] = useState(props.member);
     const [memberSelected, setMemberSelected] = useState(null);
 
+    const handleChangeGroup = (event) => {
+        props.setGroupSelected(event.target.value);
+        setGroupSelected(event.target.value);
+        props.setMemberSelected(null);
+        setMemberSelected(null);
+        localStorage.setItem('holderGroup', event.target.value);
+    };
+
     const handleChangeMember = (event) => {
+        props.setGroupSelected(null);
+        setGroupSelected(null);
         props.setMemberSelected(event.target.value);
         setMemberSelected(event.target.value);
         localStorage.setItem('holderMember', event.target.value);
@@ -155,23 +182,34 @@ function SelectionBox(props) {
     };
 
     useEffect(() => {
-        props.setMemberSelected(localStorage.getItem('holderMember'));
-        setMemberSelected(localStorage.getItem('holderMember'));
         props.setYearSelected(localStorage.getItem('holderYear'));
         setYearsSelected(localStorage.getItem('holderYear'));
         props.setSemesterSelected(localStorage.getItem('holderSemester'));
         setSemesterSelected(localStorage.getItem('holderSemester'));
+        if (localStorage.getItem('holderMember') !== null) {
+            props.setMemberSelected(localStorage.getItem('holderMember'));
+            setMemberSelected(localStorage.getItem('holderMember'));
+        } else {
+            props.setGroupSelected(localStorage.getItem('holderGroup'));
+            setGroupSelected(localStorage.getItem('holderGroup'));
+        }
+
     }, [])
 
     useEffect(() => {
-        if (yearsSelected != null && semesterSelected != null && memberSelected != null) {
+        if (yearsSelected != null && semesterSelected != null
+            && (memberSelected != null || groupSelected != null)) {
             props.setDisable();
         }
-    }, [yearsSelected, semesterSelected, memberSelected])
+    }, [yearsSelected, semesterSelected, memberSelected, groupSelected])
 
     useEffect(() => {
         setMember(props.member);
     }, [props.member])
+
+    useEffect(() => {
+        setGroup(props.group);
+    }, [props.group])
 
     return (
         <Container maxWidth='false' sx={{ pt: 2, pb: 2 }} >
@@ -184,7 +222,10 @@ function SelectionBox(props) {
                     <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกภาคการศึกษา" menuItemPara={semesterOptions} onChangePara={handleChangeSemester} valuePara={semesterSelected} />
                     </Grid>
-                    <Grid item sm={12} xs={12}>
+                    <Grid item sm={6} xs={6}>
+                        <CardSelect labelPara="เลือกกลุ่มเรียน" menuItemPara={group} onChangePara={handleChangeGroup} valuePara={groupSelected} />
+                    </Grid>
+                    <Grid item sm={6} xs={6}>
                         <CardSelect labelPara="เลือกอาจารย์ผู้สอน" menuItemPara={member} onChangePara={handleChangeMember} valuePara={memberSelected} />
                     </Grid>
                 </Grid>
@@ -205,29 +246,51 @@ function ShoweTable(props) {
 
     useEffect(() => {
         if (props.yearSelected !== null && props.semesterSelected !== null && props.memberSelected !== null) {
-            TimetableAPIServiceStaff.getTable(props.yearSelected, props.semesterSelected, props.memberSelected, 1).then((res) => {
+            TimetableAPIServiceStaff.getTableTeacher(props.yearSelected, props.semesterSelected, props.memberSelected, 1).then((res) => {
                 setMonday(res.data);
             });
-            TimetableAPIServiceStaff.getTable(props.yearSelected, props.semesterSelected, props.memberSelected, 2).then((res) => {
+            TimetableAPIServiceStaff.getTableTeacher(props.yearSelected, props.semesterSelected, props.memberSelected, 2).then((res) => {
                 setTuesday(res.data);
             });
-            TimetableAPIServiceStaff.getTable(props.yearSelected, props.semesterSelected, props.memberSelected, 3).then((res) => {
+            TimetableAPIServiceStaff.getTableTeacher(props.yearSelected, props.semesterSelected, props.memberSelected, 3).then((res) => {
                 setWednesday(res.data);
             });
-            TimetableAPIServiceStaff.getTable(props.yearSelected, props.semesterSelected, props.memberSelected, 4).then((res) => {
+            TimetableAPIServiceStaff.getTableTeacher(props.yearSelected, props.semesterSelected, props.memberSelected, 4).then((res) => {
                 setThursday(res.data);
             });
-            TimetableAPIServiceStaff.getTable(props.yearSelected, props.semesterSelected, props.memberSelected, 5).then((res) => {
+            TimetableAPIServiceStaff.getTableTeacher(props.yearSelected, props.semesterSelected, props.memberSelected, 5).then((res) => {
                 setFriday(res.data);
             });
-            TimetableAPIServiceStaff.getTable(props.yearSelected, props.semesterSelected, props.memberSelected, 6).then((res) => {
+            TimetableAPIServiceStaff.getTableTeacher(props.yearSelected, props.semesterSelected, props.memberSelected, 6).then((res) => {
                 setSaturday(res.data);
             });
-            TimetableAPIServiceStaff.getTable(props.yearSelected, props.semesterSelected, props.memberSelected, 7).then((res) => {
+            TimetableAPIServiceStaff.getTableTeacher(props.yearSelected, props.semesterSelected, props.memberSelected, 7).then((res) => {
+                setSunday(res.data);
+            });
+        } else if (props.yearSelected !== null && props.semesterSelected !== null && props.groupSelected !== null) {
+            TimetableAPIServiceStaff.getTableStudent(props.yearSelected, props.semesterSelected, props.groupSelected, 1).then((res) => {
+                setMonday(res.data);
+            });
+            TimetableAPIServiceStaff.getTableStudent(props.yearSelected, props.semesterSelected, props.groupSelected, 2).then((res) => {
+                setTuesday(res.data);
+            });
+            TimetableAPIServiceStaff.getTableStudent(props.yearSelected, props.semesterSelected, props.groupSelected, 3).then((res) => {
+                setWednesday(res.data);
+            });
+            TimetableAPIServiceStaff.getTableStudent(props.yearSelected, props.semesterSelected, props.groupSelected, 4).then((res) => {
+                setThursday(res.data);
+            });
+            TimetableAPIServiceStaff.getTableStudent(props.yearSelected, props.semesterSelected, props.groupSelected, 5).then((res) => {
+                setFriday(res.data);
+            });
+            TimetableAPIServiceStaff.getTableStudent(props.yearSelected, props.semesterSelected, props.groupSelected, 6).then((res) => {
+                setSaturday(res.data);
+            });
+            TimetableAPIServiceStaff.getTableStudent(props.yearSelected, props.semesterSelected, props.groupSelected, 7).then((res) => {
                 setSunday(res.data);
             });
         }
-    }, [props.yearSelected, props.semesterSelected, props.memberSelected])
+    }, [props.yearSelected, props.semesterSelected, props.memberSelected, props.groupSelected])
 
 
     const CreateTable = (item) => {
